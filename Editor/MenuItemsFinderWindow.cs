@@ -51,6 +51,8 @@ namespace SKTools.MenuItemsFinder
 
         private void Awake()
         {
+            _finder = new MenuItemsFinder();
+            _finder.Load();
             CreateStyles();
         }
 
@@ -61,7 +63,7 @@ namespace SKTools.MenuItemsFinder
                 return;
             }
 
-            if (_finder == null)
+            if (_finder == null)//after recompiling and remaining opened window
             {
                 _finder = new MenuItemsFinder();
                 _finder.Load();
