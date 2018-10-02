@@ -43,6 +43,7 @@ namespace SKTools.MenuItemsFinder
                 _prefsFilePath = editorDirectory + "Prefs.json";
                 var starFilePath = editorDirectory.Replace("Editor", "Editor Resources")
                     .Substring(Application.dataPath.Length - "Assets".Length);
+                
                 UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "unstarred.png");
                 StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "starred.png");
 
@@ -67,7 +68,6 @@ namespace SKTools.MenuItemsFinder
                 
                 Assert.IsNotNull(StarredImage, "Check path="+ starFilePath + "starred.png");
                 Assert.IsNotNull(UnstarredImage, "Check path="+ starFilePath + "unstarred.png");
-                
             }
             catch(Exception ex)
             {

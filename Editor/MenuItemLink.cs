@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace SKTools.MenuItemsFinder
                 var k = s;
                 if (s.Contains('%') || s.Contains('#') || s.Contains('&'))
                 {
-                        s =
+                    s =
     #if UNITY_EDITOR_OSX
                     s.Replace("%", "cmd+").
     #else
@@ -62,10 +63,7 @@ namespace SKTools.MenuItemsFinder
         
         public void Execute()
         {
-            if (CanExecute())
-            {
-                _menuItem.TargetMethod.Invoke(null, null);
-            }
+            _menuItem.TargetMethod.Invoke(null, null);
         }
 
         public override string ToString()

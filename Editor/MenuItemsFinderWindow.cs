@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    //[Done] windows doesn work starred + hotkeys ctrl + shift..
-    //[Done] replace special hotkeys to readable symbols
-    //[Done] to separate searchbox
-    //to plan: check validate method
-    //to provide and check context for menu item
-    //[Done] to add star prefs
-    //[Done] add json prefs
     internal class MenuItemsFinderWindow : EditorWindow
     {
         private Vector2 _scrollPosition;
@@ -24,6 +16,7 @@ namespace SKTools.MenuItemsFinder
         {
             var finderWindow = (MenuItemsFinderWindow) GetWindow(typeof(MenuItemsFinderWindow), false,
                 typeof(MenuItemsFinderWindow).Name);
+            finderWindow.autoRepaintOnSceneChange = true;
             finderWindow.Show();
         }
 
@@ -58,21 +51,32 @@ namespace SKTools.MenuItemsFinder
 
         private void Awake()
         {
-            _finder = new MenuItemsFinder();
-            _finder.Load();
             CreateStyles();
         }
 
         private void OnGUI()
         {
+            if (EditorApplication.isCompiling)
+            {
+                return;
+            }
+
+            if (_finder == null)
+            {
+                _finder = new MenuItemsFinder();
+                _finder.Load();
+            }
+
             _finder.Prefs.SearchString =
                 GUILayoutCollection.SearchTextField(_finder.Prefs.SearchString, GUILayout.MinWidth(200));
 
             if (!_finder.Prefs.SearchString.Equals(_finder.Prefs.PreviousSearchString))
             {
                 _finder.Prefs.PreviousSearchString = _finder.Prefs.SearchString;
-                 var key = _finder.Prefs.PreviousSearchString.ToLower();
-                _finder.SelectedItems = _finder.MenuItems.FindAll(m => m.SearchingKey.Contains(key));// && !m.MenuItem.validate);
+                var key = _finder.Prefs.PreviousSearchString.ToLower();
+                _finder.SelectedItems =
+                    _finder.MenuItems.FindAll(m => m.SearchingKey.Contains(key));
+                ;
             }
 
             GUILayout.BeginHorizontal();
@@ -101,6 +105,7 @@ namespace SKTools.MenuItemsFinder
                 {
                     if (!item.Starred)
                         continue;
+
                     if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
                     {
                         continue;
@@ -116,6 +121,7 @@ namespace SKTools.MenuItemsFinder
                 {
                     if (item.Starred)
                         continue;
+
                     if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
                     {
                         continue;
@@ -128,22 +134,41 @@ namespace SKTools.MenuItemsFinder
             GUILayout.EndScrollView();
         }
 
-        private void OnDestroy()
-        {
-            _finder.SavePrefs();
-            AssetDatabase.Refresh();
-        }
 
-        private void Draw(MenuItemLink item, Color color)
+        private void Draw(MenuItemLink item, Color defaultColor)
         {
+            bool? validated;
+            if (item.HasValidate)
+            {
+                try
+                {
+                    validated = item.CanExecute();
+                }
+                catch
+                {
+                    validated = false;
+                }
+
+                if (validated == false) defaultColor = Color.gray;
+            }
+
             GUILayout.BeginHorizontal();
+
             var previousColor = GUI.color;
-            GUI.color = color;
+            GUI.color = defaultColor;
+
             if (GUILayout.Button(item.Label, _menuItemButtonStyle, GUILayout.MaxWidth(300)))
             {
                 Debug.Log("Try execute menuItem=" + item);
                 try
                 {
+                    if (validated == false)
+                    {
+                        EditorUtility.DisplayDialog("Validation fail!", "Cant validate this option\n" + item.Label,
+                            "ok");
+                        return;
+                    }
+
                     item.Execute();
                 }
                 catch (Exception ex)
@@ -166,6 +191,7 @@ namespace SKTools.MenuItemsFinder
         private void ToggleStarred(MenuItemLink item)
         {
             item.Starred = !item.Starred;
+
             if (item.Starred && !_finder.Prefs.StarredMenuItems.Contains(item.MenuItemPath))
             {
                 _finder.Prefs.StarredMenuItems.Add(item.MenuItemPath);
@@ -174,6 +200,21 @@ namespace SKTools.MenuItemsFinder
             {
                 _finder.Prefs.StarredMenuItems.Remove(item.MenuItemPath);
             }
+        }
+
+        private void OnSelectionChange()
+        {
+            Repaint();
+        }
+
+        private void OnDestroy()
+        {
+            _finder.SavePrefs();
+        }
+
+        private void OnLostFocus()
+        {
+            _finder.SavePrefs();
         }
     }
 }

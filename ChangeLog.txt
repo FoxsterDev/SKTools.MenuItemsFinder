@@ -1,0 +1,9 @@
+[Done]fix exceptions when recompiling code
+*to try opening file that contains a menuitem
+[Done] windows doesn work starred + hotkeys ctrl + shift..
+[Done] replace special hotkeys to readable symbols
+[Done] to separate searchbox
+[Done] to plan: check validate method
+ *to provide and check context for menu item
+[Done] to add star prefs
+[Done] add json prefs
