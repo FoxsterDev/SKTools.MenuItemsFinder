@@ -53,13 +53,21 @@ namespace SKTools.MenuItemsFinder
         {
             _finder = new MenuItemsFinder();
             _finder.Load();
-            CreateStyles();
+             CreateStyles();
         }
-
+        
         private void OnGUI()
         {
             if (EditorApplication.isCompiling)
             {
+                //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
+                //var matrixBackup = GUI.matrix;
+                //GUIUtility.RotateAroundPivot(angle%360, pivot);
+                var width = _finder.LoadingImage.width;
+                var height = _finder.LoadingImage.height;
+                var rect = new Rect(position.width * 0.5f - width*0.5f, position.height * 0.5f - height*0.5f, width, height);
+                GUI.DrawTexture(rect, _finder.LoadingImage);   
+                //GUI.matrix = matrixBackup;
                 return;
             }
 
@@ -68,7 +76,7 @@ namespace SKTools.MenuItemsFinder
                 _finder = new MenuItemsFinder();
                 _finder.Load();
             }
-
+            
             _finder.Prefs.SearchString =
                 GUILayoutCollection.SearchTextField(_finder.Prefs.SearchString, GUILayout.MinWidth(200));
 

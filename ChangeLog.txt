@@ -1,3 +1,4 @@
+[*] added custom name 
 [Done]fix exceptions when recompiling code
 *to try opening file that contains a menuitem
 [Done] windows doesn work starred + hotkeys ctrl + shift..

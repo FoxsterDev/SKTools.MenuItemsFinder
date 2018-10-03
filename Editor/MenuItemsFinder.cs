@@ -16,7 +16,7 @@ namespace SKTools.MenuItemsFinder
         private string _prefsFilePath;
 
         public List<MenuItemLink> MenuItems, SelectedItems = new List<MenuItemLink>();
-        public Texture2D StarredImage, UnstarredImage;
+        public Texture2D StarredImage, UnstarredImage, LoadingImage;
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
         {
             SearchString = "Please type menuitem name here.."
@@ -46,7 +46,9 @@ namespace SKTools.MenuItemsFinder
                 
                 UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "unstarred.png");
                 StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "starred.png");
-
+                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "loading.png");
+                ;
+                
                 if (File.Exists(_prefsFilePath))
                 {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(_prefsFilePath), Prefs);
