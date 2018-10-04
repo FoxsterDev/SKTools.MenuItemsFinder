@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -18,34 +19,6 @@ namespace SKTools.MenuItemsFinder
                 typeof(MenuItemsFinderWindow).Name);
             finderWindow.autoRepaintOnSceneChange = true;
             finderWindow.Show();
-        }
-
-        private void CreateStyles()
-        {
-            _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
-            _menuItemButtonStyle.fixedHeight = 20;
-            //_menuItemButtonStyle.fixedWidth = 200;
-            _menuItemButtonStyle.alignment = TextAnchor.MiddleLeft;
-            _menuItemButtonStyle.richText = true;
-
-            _unstarredMenuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
-            _unstarredMenuItemButtonStyle.fixedHeight = 32;
-            _unstarredMenuItemButtonStyle.fixedWidth = 32;
-            _unstarredMenuItemButtonStyle.stretchHeight = false;
-            _unstarredMenuItemButtonStyle.stretchWidth = false;
-            _unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
-            _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 6, -6);
-            _unstarredMenuItemButtonStyle.active.background =
-                _unstarredMenuItemButtonStyle.focused.background =
-                    _unstarredMenuItemButtonStyle.hover.background =
-                        _unstarredMenuItemButtonStyle.normal.background = _finder.UnstarredImage;
-
-            _starredMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
-
-            _starredMenuItemButtonStyle.active.background =
-                _starredMenuItemButtonStyle.focused.background =
-                    _starredMenuItemButtonStyle.hover.background =
-                        _starredMenuItemButtonStyle.normal.background = _finder.StarredImage;
         }
 
         private void Awake()
@@ -69,6 +42,21 @@ namespace SKTools.MenuItemsFinder
             DrawItems();
         }
 
+        private void OnSelectionChange()
+        {
+            Repaint();
+        }
+
+        private void OnDestroy()
+        {
+            _finder.SavePrefs();
+        }
+
+        private void OnLostFocus()
+        {
+            _finder.SavePrefs();
+        }
+        
         /// <summary>
         /// Need after recompiling
         /// </summary>
@@ -107,7 +95,7 @@ namespace SKTools.MenuItemsFinder
             {
                 var key = _finder.Prefs.FilterString.ToLower();
                 _finder.Prefs.PreviousSearchString = _finder.Prefs.FilterString;
-                _finder.FilteredItems = _finder.MenuItems.FindAll(m => m.Key.Contains(key));
+                _finder.FilteredMenuItems = _finder.MenuItems.FindAll(m => m.Key.Contains(key));
             }
         }
         
@@ -115,18 +103,11 @@ namespace SKTools.MenuItemsFinder
         {
             GUILayout.BeginHorizontal();
 
-            _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate",
-                GUILayout.MinWidth(100));
+            _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate", GUILayout.MinWidth(100));
 
             if (GUILayout.Button("All Unstarred", GUILayout.MaxWidth(100)))
             {
-                _finder.FilteredItems.ForEach(itemLink =>
-                {
-                    if (itemLink.Starred)
-                    {
-                        ToggleStarred(itemLink);
-                    }
-                });
+               _finder.AllUnstarred();
             }
 
             GUILayout.EndHorizontal();
@@ -136,35 +117,20 @@ namespace SKTools.MenuItemsFinder
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
-            var starred = _finder.MenuItems.FindAll(m => m.Starred);
-            foreach (var item in starred)
-            {
-                if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
-                {
-                    continue;
-                }
+            _finder.MenuItems.FindAll(m => m.Starred).ForEach(Draw);
+            _finder.FilteredMenuItems.FindAll(m => !m.Starred).ForEach(Draw);
 
-                Draw(item, Color.green);
-            }
-
-            if (_finder.FilteredItems.Count > 0)
-            {
-                var unstarred = _finder.FilteredItems.FindAll(m => !m.Starred);
-                foreach (var item in unstarred)
-                {
-                    Draw(item, Color.white);
-                }
-            }
             GUILayout.EndScrollView();
         }
-        
-        private void Draw(MenuItemLink item, Color defaultColor)
+
+        private void Draw(MenuItemLink item)
         {
             if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
             {
                 return;
             }
-            
+
+            var defaultColor = item.Starred ? Color.green : Color.white;
             bool? validated;
             if (item.HasValidate)
             {
@@ -210,39 +176,39 @@ namespace SKTools.MenuItemsFinder
             if (GUILayout.Button(string.Empty,
                 item.Starred ? _starredMenuItemButtonStyle : _unstarredMenuItemButtonStyle))
             {
-                ToggleStarred(item);
+                _finder.ToggleStarred(item);
             }
 
             GUILayout.EndHorizontal();
         }
 
-        private void ToggleStarred(MenuItemLink item)
-        {
-            item.Starred = !item.Starred;
 
-            if (item.Starred && !_finder.Prefs.StarredMenuItems.Contains(item.MenuItemPath))
-            {
-                _finder.Prefs.StarredMenuItems.Add(item.MenuItemPath);
-            }
-            else if (_finder.Prefs.StarredMenuItems.Contains(item.MenuItemPath))
-            {
-                _finder.Prefs.StarredMenuItems.Remove(item.MenuItemPath);
-            }
-        }
-
-        private void OnSelectionChange()
+        private void CreateStyles()
         {
-            Repaint();
-        }
+            _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
+            _menuItemButtonStyle.fixedHeight = 20;
+            //_menuItemButtonStyle.fixedWidth = 200;
+            _menuItemButtonStyle.alignment = TextAnchor.MiddleLeft;
+            _menuItemButtonStyle.richText = true;
 
-        private void OnDestroy()
-        {
-            _finder.SavePrefs();
-        }
+            _unstarredMenuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
+            _unstarredMenuItemButtonStyle.fixedHeight = 32;
+            _unstarredMenuItemButtonStyle.fixedWidth = 32;
+            _unstarredMenuItemButtonStyle.stretchHeight = false;
+            _unstarredMenuItemButtonStyle.stretchWidth = false;
+            _unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
+            _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 6, -6);
+            _unstarredMenuItemButtonStyle.active.background =
+                _unstarredMenuItemButtonStyle.focused.background =
+                    _unstarredMenuItemButtonStyle.hover.background =
+                        _unstarredMenuItemButtonStyle.normal.background = _finder.UnstarredImage;
 
-        private void OnLostFocus()
-        {
-            _finder.SavePrefs();
+            _starredMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
+
+            _starredMenuItemButtonStyle.active.background =
+                _starredMenuItemButtonStyle.focused.background =
+                    _starredMenuItemButtonStyle.hover.background =
+                        _starredMenuItemButtonStyle.normal.background = _finder.StarredImage;
         }
     }
 }

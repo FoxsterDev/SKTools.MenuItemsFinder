@@ -15,7 +15,7 @@ namespace SKTools.MenuItemsFinder
     {
         private string _prefsFilePath;
 
-        public List<MenuItemLink> MenuItems, FilteredItems = new List<MenuItemLink>();
+        public List<MenuItemLink> MenuItems, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage;
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
         {
@@ -150,6 +150,31 @@ namespace SKTools.MenuItemsFinder
                       "ms Count="+menuItems.Count); //for mac book pro 2018 it takes about 170 ms, it is not critical affects every time to run it
 
             return menuItems;
+        }
+
+        public void AllUnstarred()
+        {
+            MenuItems.ForEach(itemLink =>
+            {
+                if (itemLink.Starred)
+                {
+                    ToggleStarred(itemLink);
+                }
+            });
+        }
+        
+        public void ToggleStarred(MenuItemLink item)
+        {
+            item.Starred = !item.Starred;
+
+            if (item.Starred && !Prefs.StarredMenuItems.Contains(item.MenuItemPath))
+            {
+                Prefs.StarredMenuItems.Add(item.MenuItemPath);
+            }
+            else if (Prefs.StarredMenuItems.Contains(item.MenuItemPath))
+            {
+               Prefs.StarredMenuItems.Remove(item.MenuItemPath);
+            }
         }
     }
 }
