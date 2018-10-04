@@ -40,7 +40,6 @@ namespace SKTools.MenuItemsFinder
                     _unstarredMenuItemButtonStyle.hover.background =
                         _unstarredMenuItemButtonStyle.normal.background = _finder.UnstarredImage;
 
-
             _starredMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
 
             _starredMenuItemButtonStyle.active.background =
@@ -58,6 +57,32 @@ namespace SKTools.MenuItemsFinder
         
         private void OnGUI()
         {
+            if (IsCompiling())
+            {
+                return;
+            }
+
+            CheckMissedFinder();
+
+            DrawSearchTextField();
+            DrawMenuOptions();
+            DrawItems();
+        }
+
+        /// <summary>
+        /// Need after recompiling
+        /// </summary>
+        private void CheckMissedFinder()
+        {
+            if (_finder == null)//after recompiling and remaining opened window
+            {
+                _finder = new MenuItemsFinder();
+                _finder.Load();
+            }
+        }
+        
+        private bool IsCompiling()
+        {
             if (EditorApplication.isCompiling)
             {
                 //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
@@ -68,27 +93,26 @@ namespace SKTools.MenuItemsFinder
                 var rect = new Rect(position.width * 0.5f - width*0.5f, position.height * 0.5f - height*0.5f, width, height);
                 GUI.DrawTexture(rect, _finder.LoadingImage);   
                 //GUI.matrix = matrixBackup;
-                return;
+                return true;
             }
 
-            if (_finder == null)//after recompiling and remaining opened window
+            return false;
+        }
+        
+        private void DrawSearchTextField()
+        {
+            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, GUILayout.MinWidth(200));
+
+            if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousSearchString))
             {
-                _finder = new MenuItemsFinder();
-                _finder.Load();
+                var key = _finder.Prefs.FilterString.ToLower();
+                _finder.Prefs.PreviousSearchString = _finder.Prefs.FilterString;
+                _finder.FilteredItems = _finder.MenuItems.FindAll(m => m.Key.Contains(key));
             }
-            
-            _finder.Prefs.SearchString =
-                GUILayoutCollection.SearchTextField(_finder.Prefs.SearchString, GUILayout.MinWidth(200));
-
-            if (!_finder.Prefs.SearchString.Equals(_finder.Prefs.PreviousSearchString))
-            {
-                _finder.Prefs.PreviousSearchString = _finder.Prefs.SearchString;
-                var key = _finder.Prefs.PreviousSearchString.ToLower();
-                _finder.SelectedItems =
-                    _finder.MenuItems.FindAll(m => m.SearchingKey.Contains(key));
-                ;
-            }
-
+        }
+        
+        private void DrawMenuOptions()
+        {
             GUILayout.BeginHorizontal();
 
             _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate",
@@ -96,57 +120,51 @@ namespace SKTools.MenuItemsFinder
 
             if (GUILayout.Button("All Unstarred", GUILayout.MaxWidth(100)))
             {
-                _finder.SelectedItems.ForEach(i =>
+                _finder.FilteredItems.ForEach(itemLink =>
                 {
-                    if (i.Starred)
+                    if (itemLink.Starred)
                     {
-                        ToggleStarred(i);
+                        ToggleStarred(itemLink);
                     }
                 });
             }
 
             GUILayout.EndHorizontal();
-
+        }
+        
+        private void DrawItems()
+        {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
-            if (_finder.Prefs.StarredMenuItems.Count > 0)
+            var starred = _finder.MenuItems.FindAll(m => m.Starred);
+            foreach (var item in starred)
             {
-                foreach (var item in _finder.MenuItems)
+                if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
                 {
-                    if (!item.Starred)
-                        continue;
-
-                    if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
-                    {
-                        continue;
-                    }
-
-                    Draw(item, Color.green);
+                    continue;
                 }
+
+                Draw(item, Color.green);
             }
 
-            if (_finder.SelectedItems.Count > 0)
+            if (_finder.FilteredItems.Count > 0)
             {
-                foreach (var item in _finder.SelectedItems)
+                var unstarred = _finder.FilteredItems.FindAll(m => !m.Starred);
+                foreach (var item in unstarred)
                 {
-                    if (item.Starred)
-                        continue;
-
-                    if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
-                    {
-                        continue;
-                    }
-
                     Draw(item, Color.white);
                 }
             }
-
             GUILayout.EndScrollView();
         }
-
-
+        
         private void Draw(MenuItemLink item, Color defaultColor)
         {
+            if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
+            {
+                return;
+            }
+            
             bool? validated;
             if (item.HasValidate)
             {

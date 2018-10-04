@@ -10,7 +10,7 @@ namespace SKTools.MenuItemsFinder
     {
         private readonly MenuItemData _menuItem;
         public readonly string Label;
-        public readonly string SearchingKey;
+        public readonly string Key;
 
         public bool Starred;
 
@@ -48,7 +48,7 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            SearchingKey = Label.ToLower();
+            Key = Label.ToLower();
         }
 
         public bool CanExecute()

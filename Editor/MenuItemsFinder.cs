@@ -15,12 +15,17 @@ namespace SKTools.MenuItemsFinder
     {
         private string _prefsFilePath;
 
-        public List<MenuItemLink> MenuItems, SelectedItems = new List<MenuItemLink>();
+        public List<MenuItemLink> MenuItems, FilteredItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage;
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
         {
-            SearchString = "Please type menuitem name here.."
+            FilterString = "Please type menuitem name here.."
         };
+        
+        public MenuItemsFinder()
+        {
+            Debug.Log(typeof(MenuItemsFinder).Name +", version=" + MenuItemsFinderVersion.Version );
+        }
 
         public void SavePrefs()
         {
@@ -47,7 +52,6 @@ namespace SKTools.MenuItemsFinder
                 UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "unstarred.png");
                 StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "starred.png");
                 LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "loading.png");
-                ;
                 
                 if (File.Exists(_prefsFilePath))
                 {

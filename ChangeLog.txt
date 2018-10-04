@@ -1,4 +1,5 @@
-[*] added custom name 
+[*] check prefs missed items
+[*] added custom name for menuitem path
 [Done]fix exceptions when recompiling code
 *to try opening file that contains a menuitem
 [Done] windows doesn work starred + hotkeys ctrl + shift..
