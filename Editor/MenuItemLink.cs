@@ -14,6 +14,8 @@ namespace SKTools.MenuItemsFinder
 
         public bool Starred;
 
+        public string CustomName;
+        
         public string MenuItemPath
         {
             get { return _menuItem.TargetAttribute.menuItem; }
@@ -28,7 +30,8 @@ namespace SKTools.MenuItemsFinder
         {
             _menuItem = menuItem;
             //% (ctrl on Windows, cmd on macOS), # (shift), & (alt).
-            Label = menuItem.TargetAttribute.menuItem;// .menuItem;
+            Label = menuItem.TargetAttribute.menuItem;
+            Key = Label.ToLower();
             var index = Label.LastIndexOf(' ');
             if (index > -1)
             {
@@ -47,8 +50,6 @@ namespace SKTools.MenuItemsFinder
                     Label = Label.Replace(k, s);
                 }
             }
-
-            Key = Label.ToLower();
         }
 
         public bool CanExecute()

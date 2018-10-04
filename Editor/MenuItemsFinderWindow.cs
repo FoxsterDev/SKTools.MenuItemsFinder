@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -9,7 +8,12 @@ namespace SKTools.MenuItemsFinder
     internal class MenuItemsFinderWindow : EditorWindow
     {
         private Vector2 _scrollPosition;
-        private GUIStyle _menuItemButtonStyle, _unstarredMenuItemButtonStyle, _starredMenuItemButtonStyle;
+
+        private GUIStyle _menuItemButtonStyle,
+            _unstarredMenuItemButtonStyle,
+            _starredMenuItemButtonStyle,
+            _settingsMenuItemButtonStyle;
+
         private MenuItemsFinder _finder;
 
         [MenuItem("SKTools/MenuItems Finder %#m")]
@@ -25,9 +29,9 @@ namespace SKTools.MenuItemsFinder
         {
             _finder = new MenuItemsFinder();
             _finder.Load();
-             CreateStyles();
+            CreateStyles();
         }
-        
+
         private void OnGUI()
         {
             if (IsCompiling())
@@ -56,19 +60,19 @@ namespace SKTools.MenuItemsFinder
         {
             _finder.SavePrefs();
         }
-        
+
         /// <summary>
         /// Need after recompiling
         /// </summary>
         private void CheckMissedFinder()
         {
-            if (_finder == null)//after recompiling and remaining opened window
+            if (_finder == null) //after recompiling and remaining opened window
             {
                 _finder = new MenuItemsFinder();
                 _finder.Load();
             }
         }
-        
+
         private bool IsCompiling()
         {
             if (EditorApplication.isCompiling)
@@ -78,41 +82,44 @@ namespace SKTools.MenuItemsFinder
                 //GUIUtility.RotateAroundPivot(angle%360, pivot);
                 var width = _finder.LoadingImage.width;
                 var height = _finder.LoadingImage.height;
-                var rect = new Rect(position.width * 0.5f - width*0.5f, position.height * 0.5f - height*0.5f, width, height);
-                GUI.DrawTexture(rect, _finder.LoadingImage);   
+                var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width,
+                    height);
+                GUI.DrawTexture(rect, _finder.LoadingImage);
                 //GUI.matrix = matrixBackup;
                 return true;
             }
 
             return false;
         }
-        
+
         private void DrawSearchTextField()
         {
-            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, GUILayout.MinWidth(200));
+            _finder.Prefs.FilterString =
+                GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, GUILayout.MinWidth(200));
 
-            if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousSearchString))
+            if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
                 var key = _finder.Prefs.FilterString.ToLower();
-                _finder.Prefs.PreviousSearchString = _finder.Prefs.FilterString;
+                _finder.Prefs.PreviousFilterString = _finder.Prefs.FilterString;
                 _finder.FilteredMenuItems = _finder.MenuItems.FindAll(m => m.Key.Contains(key));
             }
         }
-        
+
         private void DrawMenuOptions()
         {
             GUILayout.BeginHorizontal();
 
-            _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate", GUILayout.MinWidth(100));
+            _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate",
+                GUILayout.MinWidth(100));
 
             if (GUILayout.Button("All Unstarred", GUILayout.MaxWidth(100)))
             {
-               _finder.AllUnstarred();
+                _finder.AllUnstarred();
             }
 
             GUILayout.EndHorizontal();
         }
-        
+
         private void DrawItems()
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
@@ -122,6 +129,8 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.EndScrollView();
         }
+
+        private MenuItemLink _current;
 
         private void Draw(MenuItemLink item)
         {
@@ -179,9 +188,36 @@ namespace SKTools.MenuItemsFinder
                 _finder.ToggleStarred(item);
             }
 
+            if (GUILayout.Button(string.Empty, _settingsMenuItemButtonStyle))
+            {
+                if (_current == null || _current.Key != item.Key)
+                {
+                    _current = item;
+                }
+                else
+                {
+                    _current = null;
+                }
+            }
+
             GUILayout.EndHorizontal();
+
+            if (_current != null && _current.Key.Equals(item.Key))
+            {
+                GUILayout.BeginHorizontal();
+
+                GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
+                _current.CustomName =
+                    GUILayout.TextField(_current.CustomName, GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
+                GUILayout.Label("");
+
+                GUILayout.EndHorizontal();
+            }
         }
 
+        private void DrawMenuItemCurrent(MenuItemLink item)
+        {
+        }
 
         private void CreateStyles()
         {
@@ -197,7 +233,7 @@ namespace SKTools.MenuItemsFinder
             _unstarredMenuItemButtonStyle.stretchHeight = false;
             _unstarredMenuItemButtonStyle.stretchWidth = false;
             _unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
-            _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 6, -6);
+            _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 8, -6);
             _unstarredMenuItemButtonStyle.active.background =
                 _unstarredMenuItemButtonStyle.focused.background =
                     _unstarredMenuItemButtonStyle.hover.background =
@@ -209,6 +245,12 @@ namespace SKTools.MenuItemsFinder
                 _starredMenuItemButtonStyle.focused.background =
                     _starredMenuItemButtonStyle.hover.background =
                         _starredMenuItemButtonStyle.normal.background = _finder.StarredImage;
+
+            _settingsMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
+            _settingsMenuItemButtonStyle.active.background =
+                _settingsMenuItemButtonStyle.focused.background =
+                    _settingsMenuItemButtonStyle.hover.background =
+                        _settingsMenuItemButtonStyle.normal.background = _finder.SettingsImage;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine.Serialization;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -7,9 +6,11 @@ namespace SKTools.MenuItemsFinder
     internal class MenuItemsFinderPreferences
     {
         [System.NonSerialized]
-        public string PreviousSearchString = null;
-        [FormerlySerializedAs("SearchString")] public string FilterString = string.Empty;
-        public bool OnlyWithValidate = false;
+        public string PreviousFilterString = null;
+        
+        public string FilterString = string.Empty;
+        public bool OnlyWithValidate;
         public List<string> StarredMenuItems = new List<string>();
+        public List<MenuItemPref> CustomMenuItems = new List<MenuItemPref>();
     }
 }
