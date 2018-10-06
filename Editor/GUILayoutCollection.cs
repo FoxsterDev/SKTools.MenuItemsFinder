@@ -8,7 +8,7 @@ namespace SKTools.MenuItemsFinder
     {
         private static GUIStyle _toolbarSearchFieldStyle, _toolbarSearchFieldCancelButtonStyle;
        
-        public static string SearchTextField(string text, params GUILayoutOption[] options)
+        public static string SearchTextField(string text, bool focusControl = true, params GUILayoutOption[] options)
         {
             if (_toolbarSearchFieldStyle == null || _toolbarSearchFieldCancelButtonStyle == null)
             {
@@ -37,7 +37,7 @@ namespace SKTools.MenuItemsFinder
                 text = string.Empty;
             }
 
-            if (GUI.GetNameOfFocusedControl() != "SearchTextField")
+            if (GUI.GetNameOfFocusedControl() != "SearchTextField" && focusControl)
             {
                 GUI.FocusControl("SearchTextField");
             }

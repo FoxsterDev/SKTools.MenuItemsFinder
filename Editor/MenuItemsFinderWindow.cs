@@ -94,8 +94,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSearchTextField()
         {
-            _finder.Prefs.FilterString =
-                GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, GUILayout.MinWidth(200));
+            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, _finder.RolledOutMenuItem == null, GUILayout.MinWidth(200));
 
             if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
@@ -129,8 +128,6 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.EndScrollView();
         }
-
-        private MenuItemLink _current;
 
         private void Draw(MenuItemLink item)
         {
@@ -190,33 +187,53 @@ namespace SKTools.MenuItemsFinder
 
             if (GUILayout.Button(string.Empty, _settingsMenuItemButtonStyle))
             {
-                if (_current == null || _current.Key != item.Key)
+                if (_finder.RolledOutMenuItem == null || _finder.RolledOutMenuItem.Key != item.Key)
                 {
-                    _current = item;
+                    GUI.FocusControl("RolledOutMenuItemCustomName");
+                    _finder.RolledOutMenuItem = item;
                 }
                 else
                 {
-                    _current = null;
+                    _finder.RolledOutMenuItem = null;
                 }
             }
 
             GUILayout.EndHorizontal();
 
-            if (_current != null && _current.Key.Equals(item.Key))
+            if (_finder.RolledOutMenuItem != null)
             {
-                GUILayout.BeginHorizontal();
+                if (_finder.RolledOutMenuItem.Key.Equals(item.Key))
+                {
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
-                _current.CustomName =
-                    GUILayout.TextField(_current.CustomName, GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
-                GUILayout.Label("");
+                    GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
 
-                GUILayout.EndHorizontal();
+                    GUI.SetNextControlName("RolledOutMenuItemCustomName");
+                    _finder.RolledOutMenuItem.CustomName = GUILayout.TextField(_finder.RolledOutMenuItem.CustomName,
+                        GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
+
+                    if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+                    {
+                        var c = _finder.Prefs.CustomizedMenuItems.Find(i => i.Key == item.Key);
+                        if (c == null)
+                        {
+                            c = new MenuItemCustomized{ Key = item.Key};
+                            _finder.Prefs.CustomizedMenuItems.Add(c);
+                        }
+
+                        c.CustomName = _finder.RolledOutMenuItem.CustomName;
+                    }
+
+                    GUILayout.Label("");
+
+                    GUILayout.EndHorizontal();
+                    
+                    /*if (GUI.GetNameOfFocusedControl() != "RolledOutMenuItemCustomName")
+                    {
+                        _finder.RolledOutMenuItem = null;
+                    }*/
+                }
             }
-        }
-
-        private void DrawMenuItemCurrent(MenuItemLink item)
-        {
         }
 
         private void CreateStyles()

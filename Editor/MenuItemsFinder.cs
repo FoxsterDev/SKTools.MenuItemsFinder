@@ -15,6 +15,7 @@ namespace SKTools.MenuItemsFinder
     {
         private string _prefsFilePath;
 
+        public MenuItemLink RolledOutMenuItem;
         public List<MenuItemLink> MenuItems, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences

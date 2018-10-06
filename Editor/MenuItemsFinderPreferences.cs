@@ -11,6 +11,6 @@ namespace SKTools.MenuItemsFinder
         public string FilterString = string.Empty;
         public bool OnlyWithValidate;
         public List<string> StarredMenuItems = new List<string>();
-        public List<MenuItemPref> CustomMenuItems = new List<MenuItemPref>();
+        public List<MenuItemCustomized> CustomizedMenuItems = new List<MenuItemCustomized>();
     }
 }
