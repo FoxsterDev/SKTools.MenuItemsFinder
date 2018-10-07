@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -101,7 +102,24 @@ namespace SKTools.MenuItemsFinder
             {
                 var key = _finder.Prefs.FilterString.ToLower();
                 _finder.Prefs.PreviousFilterString = _finder.Prefs.FilterString;
-                _finder.FilteredMenuItems = _finder.MenuItems.FindAll(m => m.Key.Contains(key));
+                _finder.FilteredMenuItems.Clear();// = new List<MenuItemLink>(_finder.MenuItems.Count);
+
+                foreach (var item in _finder.MenuItems)
+                {
+                    if (item.Key.Contains(key))
+                    {
+                        _finder.FilteredMenuItems.Add(item);
+                        continue;
+                    }
+                    
+                    if (string.IsNullOrEmpty(item.CustomName))
+                        continue;
+                    if (item.CustomName.Contains(key))
+                    {
+                        _finder.FilteredMenuItems.Add(item);
+                        continue;
+                    }
+                }
             }
         }
 
@@ -210,24 +228,16 @@ namespace SKTools.MenuItemsFinder
                     GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
 
                     GUI.SetNextControlName("RolledOutMenuItemCustomName");
-                    _finder.RolledOutMenuItem.CustomName = GUILayout.TextField(_finder.RolledOutMenuItem.CustomName,
+                    _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
+                        _finder.RolledOutMenuItem.CustomNameEditable,
                         GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
-                    if (!string.IsNullOrEmpty(_finder.RolledOutMenuItem.CustomName) &&
-                        GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+                    if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
                     {
-                        _finder.AddCustomizedNameToPrefs();
+                        _finder.AddCustomizedNameToPrefs(item);
                     }
 
-                    //EditorGUILayout.
-                    GUILayout.Label("");
-
                     GUILayout.EndHorizontal();
-
-                    /*if (GUI.GetNameOfFocusedControl() != "RolledOutMenuItemCustomName")
-                    {
-                        _finder.RolledOutMenuItem = null;
-                    }*/
                 }
             }
         }

@@ -7,21 +7,26 @@ using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
+    [Serializable]
     internal class MenuItemLink
     {
-        private readonly MenuItemData _menuItem;
-        public readonly string Label;
-        public readonly string Key;
-        public readonly string HotKey;
-        public readonly string HotKeyFormatted;
-
-        public bool Starred;
         public string CustomName;
+        public bool Starred;
+        public string Key;
+       
+        [NonSerialized]
+        private readonly MenuItemData _menuItem;
+        [NonSerialized]
+        public readonly string Path;
+        [NonSerialized]
+        public readonly string HotKey;
+        [NonSerialized]
+        public readonly string HotKeyFormatted;
+        
+        [NonSerialized]
+        public string CustomNameEditable;
 
-        public string MenuItemPath
-        {
-            get { return _menuItem.TargetAttribute.menuItem; }
-        }
+        public string Label { get; private set; }
 
         public bool HasValidate
         {
@@ -31,20 +36,33 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink(MenuItemData menuItem)
         {
             _menuItem = menuItem;
-            Label = menuItem.TargetAttribute.menuItem;
+            Path = menuItem.TargetAttribute.menuItem;
+            CustomNameEditable = CustomName;
             var hotkeyStartIndex = -1;
-            FindHotKey(Label, out hotkeyStartIndex, out HotKey);
-            
+            FindHotKey(Path, out hotkeyStartIndex, out HotKey);
+
             if (hotkeyStartIndex > -1)
             {
                 HotKeyFormatted = ToFormatHotKey(HotKey);
-                Label = Label.Substring(0, hotkeyStartIndex);
+                Path = Path.Substring(0, hotkeyStartIndex - 1);
             }
-        
-            Key = Label.ToLower(); //without hotkey
-            Label = string.Concat(Label, HotKeyFormatted);
+
+            Key = Path.ToLower();
+            UpdateLabel();
         }
 
+        public void UpdateLabel()
+        {
+            if (!string.IsNullOrEmpty(CustomName))
+            {
+                Label = string.Concat(CustomName, " ", HotKeyFormatted);
+            }
+            else
+            {
+                Label = string.Concat(Path, " ", HotKeyFormatted);
+            }
+        }
+        
         public bool CanExecute()
         {
             if (HasValidate)
@@ -86,7 +104,7 @@ namespace SKTools.MenuItemsFinder
 #else
                 hotkey.Replace("%", "ctrl+").
  #endif
-                Replace("#", "shift+").Replace("&", "alt+");
+                    Replace("#", "shift+").Replace("&", "alt+");
             formatted = string.Concat("<color=cyan>", formatted, "</color>");
             return formatted;
         }
@@ -95,16 +113,16 @@ namespace SKTools.MenuItemsFinder
         {
             hotkey = string.Empty;
             index = -1;
-            if(string.IsNullOrEmpty(itemPath))
+            if (string.IsNullOrEmpty(itemPath))
                 return;
-            
+
             var chars = itemPath.ToCharArray();
             var underScoreIndex = -1;
             var slashIndex = -1;
             var whiteSpaceIndex = -1;
             var hotkeyChars = new Stack<char>();
             var indecatorIndex = -1;
-            
+
             if (chars[chars.Length - 1] != ' ')
             {
                 for (int k = chars.Length - 1; k > -1; k--)

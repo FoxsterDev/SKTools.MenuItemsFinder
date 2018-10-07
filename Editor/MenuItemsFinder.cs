@@ -33,6 +33,15 @@ namespace SKTools.MenuItemsFinder
         {
             try
             {
+                Prefs.CustomizedMenuItems.Clear();
+                foreach (var item in MenuItems)
+                {
+                    if (item.Starred || !string.IsNullOrEmpty(item.CustomName))
+                    {
+                        Prefs.CustomizedMenuItems.Add(item);
+                    }
+                }
+
                 File.WriteAllText(_prefsFilePath, EditorJsonUtility.ToJson(Prefs));
             }
             catch
@@ -63,17 +72,6 @@ namespace SKTools.MenuItemsFinder
 
                 MenuItems = FindAllMenuItems();
                 MenuItems.Sort((x, y) => y.Label[0] - x.Label[0]);
-                if (Prefs.StarredMenuItems.Count > 0)
-                {
-                    MenuItems.ForEach(i =>
-                    {
-                        if (Prefs.StarredMenuItems.Contains(i.MenuItemPath))
-                        {
-                            i.Starred = true;
-                        }
-                    });
-                }
-
 
                 Assert.IsNotNull(StarredImage, "Check path=" + starFilePath + "starred.png");
                 Assert.IsNotNull(UnstarredImage, "Check path=" + starFilePath + "unstarred.png");
@@ -139,6 +137,8 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
+            var dictWithKeyMenuItem = new Dictionary<string, MenuItemLink>(dict.Count);
+
             foreach (var entry in dict)
             {
                 if (entry.Value.TargetMethodValidate != null && entry.Value.TargetMethod == null)
@@ -149,7 +149,22 @@ namespace SKTools.MenuItemsFinder
                     continue;
                 }
 
-                menuItems.Add(new MenuItemLink(entry.Value));
+                var link = new MenuItemLink(entry.Value);
+                menuItems.Add(link);
+                dictWithKeyMenuItem[link.Key] = link;
+            }
+
+            MenuItemLink menuItemLink;
+            foreach (var customized in Prefs.CustomizedMenuItems)
+            {
+                if(string.IsNullOrEmpty(customized.Key))
+                    continue;
+                dictWithKeyMenuItem.TryGetValue(customized.Key, out menuItemLink);
+                if (menuItemLink == null)
+                    continue;
+                menuItemLink.CustomName = customized.CustomName;
+                menuItemLink.Starred = customized.Starred;
+                menuItemLink.UpdateLabel();
             }
 
             watch.Stop();
@@ -160,18 +175,12 @@ namespace SKTools.MenuItemsFinder
             return menuItems;
         }
 
-        public void AddCustomizedNameToPrefs()
+        public void AddCustomizedNameToPrefs(MenuItemLink link)
         {
-            if (RolledOutMenuItem != null && !string.IsNullOrEmpty(RolledOutMenuItem.CustomName))
+            if (RolledOutMenuItem != null && !string.IsNullOrEmpty(RolledOutMenuItem.CustomNameEditable))
             {
-                var c = Prefs.CustomizedMenuItems.Find(i => i.Key == RolledOutMenuItem.Key);
-                if (c == null)
-                {
-                    c = new MenuItemCustomized {Key = RolledOutMenuItem.Key};
-                    Prefs.CustomizedMenuItems.Add(c);
-                }
-
-                c.CustomName = RolledOutMenuItem.CustomName;
+                link.CustomName = RolledOutMenuItem.CustomNameEditable;
+                link.UpdateLabel();
             }
         }
 
@@ -189,15 +198,6 @@ namespace SKTools.MenuItemsFinder
         public void ToggleStarred(MenuItemLink item)
         {
             item.Starred = !item.Starred;
-
-            if (item.Starred && !Prefs.StarredMenuItems.Contains(item.MenuItemPath))
-            {
-                Prefs.StarredMenuItems.Add(item.MenuItemPath);
-            }
-            else if (Prefs.StarredMenuItems.Contains(item.MenuItemPath))
-            {
-                Prefs.StarredMenuItems.Remove(item.MenuItemPath);
-            }
         }
     }
 }
