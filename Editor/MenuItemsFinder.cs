@@ -18,14 +18,15 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink RolledOutMenuItem;
         public List<MenuItemLink> MenuItems, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
+
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
         {
             FilterString = "Please type menuitem name here.."
         };
-        
+
         public MenuItemsFinder()
         {
-            Debug.Log(typeof(MenuItemsFinder).Name +", version=" + MenuItemsFinderVersion.Version );
+            Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
         }
 
         public void SavePrefs()
@@ -49,12 +50,12 @@ namespace SKTools.MenuItemsFinder
                 _prefsFilePath = editorDirectory + "Prefs.json";
                 var starFilePath = editorDirectory.Replace("Editor", "Editor Resources")
                     .Substring(Application.dataPath.Length - "Assets".Length);
-                
+
                 UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "unstarred.png");
                 StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "starred.png");
                 LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "loading.png");
                 SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "settings.png");
-                
+
                 if (File.Exists(_prefsFilePath))
                 {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(_prefsFilePath), Prefs);
@@ -72,12 +73,12 @@ namespace SKTools.MenuItemsFinder
                         }
                     });
                 }
-                
-                
-                Assert.IsNotNull(StarredImage, "Check path="+ starFilePath + "starred.png");
-                Assert.IsNotNull(UnstarredImage, "Check path="+ starFilePath + "unstarred.png");
+
+
+                Assert.IsNotNull(StarredImage, "Check path=" + starFilePath + "starred.png");
+                Assert.IsNotNull(UnstarredImage, "Check path=" + starFilePath + "unstarred.png");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError("Cant load prefs=" + ex);
             }
@@ -113,8 +114,9 @@ namespace SKTools.MenuItemsFinder
 
                             continue;
                         }
+
                         var key = items[0].menuItem;
-                        
+
                         MenuItemData data;
                         dict.TryGetValue(key, out data);
                         if (data == null)
@@ -122,7 +124,7 @@ namespace SKTools.MenuItemsFinder
                             data = new MenuItemData();
                             dict.Add(key, data);
                         }
-                        
+
                         if (items[0].validate)
                         {
                             data.TargetAttributeValidate = items[0];
@@ -141,15 +143,19 @@ namespace SKTools.MenuItemsFinder
             {
                 if (entry.Value.TargetMethodValidate != null && entry.Value.TargetMethod == null)
                 {
-                    Debug.LogWarning("There is a validate method without execution method="+entry.Value.TargetMethodValidate.Name+" menupath="+ entry.Value.TargetAttributeValidate.menuItem);
+                    Debug.LogWarning("There is a validate method without execution method=" +
+                                     entry.Value.TargetMethodValidate.Name + " menupath=" +
+                                     entry.Value.TargetAttributeValidate.menuItem);
                     continue;
                 }
+
                 menuItems.Add(new MenuItemLink(entry.Value));
             }
-            
+
             watch.Stop();
             Debug.Log("Time to FindAllMenuItems takes=" + watch.ElapsedMilliseconds +
-                      "ms Count="+menuItems.Count); //for mac book pro 2018 it takes about 170 ms, it is not critical affects every time to run it
+                      "ms Count=" +
+                      menuItems.Count); //for mac book pro 2018 it takes about 170 ms, it is not critical affects every time to run it
 
             return menuItems;
         }
@@ -168,7 +174,7 @@ namespace SKTools.MenuItemsFinder
                 c.CustomName = RolledOutMenuItem.CustomName;
             }
         }
-        
+
         public void AllUnstarred()
         {
             MenuItems.ForEach(itemLink =>
@@ -179,7 +185,7 @@ namespace SKTools.MenuItemsFinder
                 }
             });
         }
-        
+
         public void ToggleStarred(MenuItemLink item)
         {
             item.Starred = !item.Starred;
@@ -190,7 +196,7 @@ namespace SKTools.MenuItemsFinder
             }
             else if (Prefs.StarredMenuItems.Contains(item.MenuItemPath))
             {
-               Prefs.StarredMenuItems.Remove(item.MenuItemPath);
+                Prefs.StarredMenuItems.Remove(item.MenuItemPath);
             }
         }
     }

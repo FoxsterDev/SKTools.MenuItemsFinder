@@ -21,7 +21,7 @@ namespace SKTools.MenuItemsFinder
             MenuItemLink.FindHotKey("Window/Analysis/Profiler _g", out index, out hotkey);
             Assert.IsTrue(hotkey == "g");
         }
-        
+
         [Test]
         public void CheckNotValidHotKey()
         {
@@ -30,7 +30,7 @@ namespace SKTools.MenuItemsFinder
             MenuItemLink.FindHotKey("Window/Analysis/Profiler_g", out index, out hotkey);
             Assert.IsTrue(hotkey == string.Empty);
         }
-        
+
         [Test]
         public void CheckEmptyHotKey()
         {
@@ -39,7 +39,7 @@ namespace SKTools.MenuItemsFinder
             MenuItemLink.FindHotKey("Window/Analysis/Profiler Some", out index, out hotkey);
             Assert.IsTrue(hotkey == string.Empty);
         }
-        
+
         [Test]
         public void ExtractHotkeyWithSpecialKeyboardSymbols()
         {

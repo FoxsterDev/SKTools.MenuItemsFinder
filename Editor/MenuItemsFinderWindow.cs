@@ -94,7 +94,8 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSearchTextField()
         {
-            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString, _finder.RolledOutMenuItem == null, GUILayout.MinWidth(200));
+            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString,
+                _finder.RolledOutMenuItem == null, GUILayout.MinWidth(200));
 
             if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
@@ -212,16 +213,17 @@ namespace SKTools.MenuItemsFinder
                     _finder.RolledOutMenuItem.CustomName = GUILayout.TextField(_finder.RolledOutMenuItem.CustomName,
                         GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
-                    if (!string.IsNullOrEmpty(_finder.RolledOutMenuItem.CustomName) && GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+                    if (!string.IsNullOrEmpty(_finder.RolledOutMenuItem.CustomName) &&
+                        GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
                     {
-                       _finder.AddCustomizedNameToPrefs();
+                        _finder.AddCustomizedNameToPrefs();
                     }
 
                     //EditorGUILayout.
                     GUILayout.Label("");
 
                     GUILayout.EndHorizontal();
-                    
+
                     /*if (GUI.GetNameOfFocusedControl() != "RolledOutMenuItemCustomName")
                     {
                         _finder.RolledOutMenuItem = null;
