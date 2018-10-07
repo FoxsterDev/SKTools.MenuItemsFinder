@@ -154,6 +154,21 @@ namespace SKTools.MenuItemsFinder
             return menuItems;
         }
 
+        public void AddCustomizedNameToPrefs()
+        {
+            if (RolledOutMenuItem != null && !string.IsNullOrEmpty(RolledOutMenuItem.CustomName))
+            {
+                var c = Prefs.CustomizedMenuItems.Find(i => i.Key == RolledOutMenuItem.Key);
+                if (c == null)
+                {
+                    c = new MenuItemCustomized {Key = RolledOutMenuItem.Key};
+                    Prefs.CustomizedMenuItems.Add(c);
+                }
+
+                c.CustomName = RolledOutMenuItem.CustomName;
+            }
+        }
+        
         public void AllUnstarred()
         {
             MenuItems.ForEach(itemLink =>

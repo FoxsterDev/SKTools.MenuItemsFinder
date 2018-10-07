@@ -137,7 +137,7 @@ namespace SKTools.MenuItemsFinder
             }
 
             var defaultColor = item.Starred ? Color.green : Color.white;
-            bool? validated;
+            bool? validated = null;
             if (item.HasValidate)
             {
                 try
@@ -212,18 +212,12 @@ namespace SKTools.MenuItemsFinder
                     _finder.RolledOutMenuItem.CustomName = GUILayout.TextField(_finder.RolledOutMenuItem.CustomName,
                         GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
-                    if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+                    if (!string.IsNullOrEmpty(_finder.RolledOutMenuItem.CustomName) && GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
                     {
-                        var c = _finder.Prefs.CustomizedMenuItems.Find(i => i.Key == item.Key);
-                        if (c == null)
-                        {
-                            c = new MenuItemCustomized{ Key = item.Key};
-                            _finder.Prefs.CustomizedMenuItems.Add(c);
-                        }
-
-                        c.CustomName = _finder.RolledOutMenuItem.CustomName;
+                       _finder.AddCustomizedNameToPrefs();
                     }
 
+                    //EditorGUILayout.
                     GUILayout.Label("");
 
                     GUILayout.EndHorizontal();

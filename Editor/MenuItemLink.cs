@@ -11,7 +11,12 @@ namespace SKTools.MenuItemsFinder
         private readonly MenuItemData _menuItem;
         public readonly string Label;
         public readonly string Key;
-
+        
+        private static readonly char[] hotKeysIndicators = new []
+        {
+            '%', '#', '_', '&'
+        };
+        
         public bool Starred;
 
         public string CustomName;
@@ -20,6 +25,8 @@ namespace SKTools.MenuItemsFinder
         {
             get { return _menuItem.TargetAttribute.menuItem; }
         }
+
+        public readonly string HotKey;
         
         public bool HasValidate
         {
@@ -31,23 +38,45 @@ namespace SKTools.MenuItemsFinder
             _menuItem = menuItem;
             //% (ctrl on Windows, cmd on macOS), # (shift), & (alt).
             Label = menuItem.TargetAttribute.menuItem;
-            Key = Label.ToLower();
-            var index = Label.LastIndexOf(' ');
+            var hotkeyStartIndex = -1;
+            FindHotKey(Label, out hotkeyStartIndex, out HotKey);
+            Label = Label.Substring(0, hotkeyStartIndex);
+            Key = Label.ToLower();//without hotkey
+        }
+
+        /*
+         * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g". To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
+          Some special keyboard keys are supported as hotkeys, for example "#LEFT" would map to shift-left. The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
+          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
+         */
+        
+        internal static void FindHotKey(string itemPath, out int index, out string hotkey)
+        {
+            hotkey = string.Empty;
+
+            //var chars = itemPath.ToCharArray();
+            if (itemPath[itemPath.Length - 1] != ' ')
+            {
+                var splitted = itemPath.Split(hotKeysIndicators);
+                //chars. .Contains(hotKeysIndicators)
+            }
+            
+            index = itemPath.LastIndexOf(' ');
             if (index > -1)
             {
-                var s = Label.Substring(index);
-                var k = s;
-                if (s.Contains('%') || s.Contains('#') || s.Contains('&'))
+                hotkey = itemPath.Substring(index);
+                //
+                if (hotkey.Contains('%') || hotkey.Contains('#') || hotkey.Contains('&'))
                 {
-                    s =
-    #if UNITY_EDITOR_OSX
-                    s.Replace("%", "cmd+").
-    #else
-                    s.Replace("%", "ctrl+").
+                    hotkey =
+#if UNITY_EDITOR_OSX
+                        hotkey.Replace("%", "cmd+").
+#else
+                    hotkey.Replace("%", "ctrl+").
     #endif
-                    Replace("#", "shift+").Replace("&", "alt+");
-                    s = string.Concat("<color=cyan>", s, "</color>");
-                    Label = Label.Replace(k, s);
+                        
+                            Replace("#", "shift+").Replace("&", "alt+");
+                    hotkey = string.Concat("<color=cyan>", hotkey, "</color>");
                 }
             }
         }

@@ -1,7 +1,9 @@
 {
     "name": "SKTools.MenuItemsFinder",
     "references": [],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [
         "Editor"
     ],
