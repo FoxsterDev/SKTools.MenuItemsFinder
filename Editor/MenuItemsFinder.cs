@@ -159,9 +159,11 @@ namespace SKTools.MenuItemsFinder
             {
                 if(string.IsNullOrEmpty(customized.Key))
                     continue;
+                
                 dictWithKeyMenuItem.TryGetValue(customized.Key, out menuItemLink);
                 if (menuItemLink == null)
                     continue;
+                
                 menuItemLink.CustomName = customized.CustomName;
                 menuItemLink.Starred = customized.Starred;
                 menuItemLink.UpdateLabel();

@@ -100,9 +100,9 @@ namespace SKTools.MenuItemsFinder
 
             if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
-                var key = _finder.Prefs.FilterString.ToLower();
+                 var key = _finder.Prefs.FilterString.ToLower();
                 _finder.Prefs.PreviousFilterString = _finder.Prefs.FilterString;
-                _finder.FilteredMenuItems.Clear();// = new List<MenuItemLink>(_finder.MenuItems.Count);
+                _finder.FilteredMenuItems.Clear();
 
                 foreach (var item in _finder.MenuItems)
                 {
@@ -114,6 +114,7 @@ namespace SKTools.MenuItemsFinder
                     
                     if (string.IsNullOrEmpty(item.CustomName))
                         continue;
+                    
                     if (item.CustomName.Contains(key))
                     {
                         _finder.FilteredMenuItems.Add(item);
@@ -228,6 +229,7 @@ namespace SKTools.MenuItemsFinder
                     GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
 
                     GUI.SetNextControlName("RolledOutMenuItemCustomName");
+                    
                     _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
                         _finder.RolledOutMenuItem.CustomNameEditable,
                         GUILayout.MinWidth(150), GUILayout.MaxWidth(150));

@@ -38,6 +38,7 @@ namespace SKTools.MenuItemsFinder
             _menuItem = menuItem;
             Path = menuItem.TargetAttribute.menuItem;
             CustomNameEditable = CustomName;
+            
             var hotkeyStartIndex = -1;
             FindHotKey(Path, out hotkeyStartIndex, out HotKey);
 
@@ -104,11 +105,21 @@ namespace SKTools.MenuItemsFinder
 #else
                 hotkey.Replace("%", "ctrl+").
  #endif
-                    Replace("#", "shift+").Replace("&", "alt+");
+                       Replace("#", "shift+").
+                       Replace("&", "alt+");
+            
             formatted = string.Concat("<color=cyan>", formatted, "</color>");
             return formatted;
         }
 
+        
+        /*
+        * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
+         * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
+         Some special keyboard keys are supported as hotkeys, for example "#LEFT" would map to shift-left. 
+         The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
+         A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
+        */
         internal static void FindHotKey(string itemPath, out int index, out string hotkey)
         {
             hotkey = string.Empty;
@@ -159,13 +170,6 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            /*
-            * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
-             * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
-             Some special keyboard keys are supported as hotkeys, for example "#LEFT" would map to shift-left. 
-             The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
-             A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
-            */
             if (whiteSpaceIndex > -1 && slashIndex > -1 && whiteSpaceIndex > slashIndex)
             {
                 if (underScoreIndex > -1)

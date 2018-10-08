@@ -5,7 +5,8 @@ namespace SKTools.MenuItemsFinder
     [System.Serializable]
     internal class MenuItemsFinderPreferences
     {
-        [System.NonSerialized] public string PreviousFilterString = null;
+        [System.NonSerialized] 
+        public string PreviousFilterString = null;
 
         public string FilterString = string.Empty;
         public bool OnlyWithValidate;
