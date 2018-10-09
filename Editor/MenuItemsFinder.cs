@@ -210,14 +210,16 @@ namespace SKTools.MenuItemsFinder
         public void TryOpenFileThatContainsMenuItem(MenuItemLink item, out string error)
         {
             error = "";
-            
-            var fileName = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
+            //Unity.TextMeshPro.Editor
+            var assemblyFilePath = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
+            Debug.Log(assemblyFilePath);
             try
             {
-                var cproj = Application.dataPath.Replace("Assets", fileName + ".csproj");
+                //
+                var cproj = Application.dataPath.Replace("Assets", assemblyFilePath + ".csproj");
                 if (!File.Exists(cproj))
                 {
-                    error = "cant detect file in " + fileName + ".dll \n";
+                    error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
                     return;
                 }
                 
@@ -242,8 +244,7 @@ namespace SKTools.MenuItemsFinder
 
                 foreach (var assetPath in assemblyFiles)
                 {
-                    if (assetPath.Contains(itemDeclaringTypeName)
-                    ) //suppose that type and file name equals about another cases need to think
+                    if (assetPath.Contains(itemDeclaringTypeName)) //suppose that type and file name equals about another cases need to think
                     {
                         var fullPath = Path.Combine(Application.dataPath, assetPath.Substring(7));
 #if !UNITY_EDITOR_WIN
@@ -262,7 +263,8 @@ namespace SKTools.MenuItemsFinder
                Debug.LogException(ex);
             }
 
-            error = "cant detect file in " + fileName + ".dll \n";
+            error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
+            ///Users/sergeykha/Library/Unity/cache/packages/packages.unity.com/com.unity.textmeshpro@1.2.4/Scripts/Editor
         }
     }
 }
