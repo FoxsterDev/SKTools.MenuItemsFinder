@@ -248,54 +248,18 @@ namespace SKTools.MenuItemsFinder
         {
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Open in file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            if (GUILayout.Button("Try open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
             {
-//                Debug.Log(Application.dataPath);///Users/sergeykha/Projects/Foxster/SKToolsUnity/Assets
-                //_finder.AddCustomizedNameToPrefs(item);
-                ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
-                ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Library/ScriptAssemblies/SKTools.EditorCoroutine.dll
-                ///Applications/Unity/2018.2.8f1/Unity.app/Contents/Managed/UnityEditor.dll
-                /*
-                 <ItemGroup>
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\GUILayoutCollection.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemData.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemLink.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinder.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderPreferences.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderVersion.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderWindow.cs" />
-                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\Tests\MenuItemsTests.cs" />
-                    <None Include="Assets\SKTools\MenuItemsFinder\Editor\SKTools.MenuItemsFinder.asmdef" />*/
-                var filePath = item.AssemlyFilePath;
-                var fileInfo = new FileInfo(filePath);
-                
-                if (fileInfo.Name == "Assembly-CSharp-Editor.dll")
+                var error = "";
+                _finder.TryOpenFileThatContainsMenuItem(item, out error);
+                if (!string.IsNullOrEmpty(error))
                 {
-                    ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Assembly-CSharp-Editor.csproj
-                    var cproj = Application.dataPath.Replace("Assets", "Assembly-CSharp-Editor.csproj");
-                    var lines = File.ReadAllLines(cproj);// .ReadAllText(cproj);
-                    var assemblyFiles = new List<string>();
-                    var infoFound = false;
-                    
-                    foreach (var line in lines)
+                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem", 
+                        "There happens tgis="+error+"\n Do ypu want to open location of assembly?", "ok", "cancel");
+                    if (ok)
                     {
-                        if (line.Contains("<Compile Include="))
-                        {
-                            infoFound = true;
-                            assemblyFiles.Add(line.Split('"')[1]);
-                        }
-                        else if (infoFound)
-                        {
-                            break;
-                        }
+                        _finder.OpenAssemblyLocationThatContainsMenuItem(item);
                     }
-
-                    foreach (var file in assemblyFiles)
-                    {
-                        
-                    }
-                    var assetPath = GetAssetPathThatContainsContent(assemblyFiles, item.Path);
-                    Debug.Log("!!"+ assetPath);
                 }
             }
             
