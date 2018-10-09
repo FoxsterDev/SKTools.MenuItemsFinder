@@ -27,7 +27,8 @@ namespace SKTools.MenuItemsFinder
         public string CustomNameEditable;
 
         public string Label { get; private set; }
-
+        public string AssemlyFilePath { get; private set; }
+        public Type DeclaringType { get; private set; }
         public bool HasValidate
         {
             get { return _menuItem.TargetMethodValidate != null; }
@@ -38,6 +39,8 @@ namespace SKTools.MenuItemsFinder
             _menuItem = menuItem;
             Path = menuItem.TargetAttribute.menuItem;
             CustomNameEditable = CustomName;
+            DeclaringType = menuItem.TargetMethod.DeclaringType;
+            AssemlyFilePath = DeclaringType.Assembly.Location;
             
             var hotkeyStartIndex = -1;
             FindHotKey(Path, out hotkeyStartIndex, out HotKey);

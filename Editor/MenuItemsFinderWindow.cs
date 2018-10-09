@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -86,7 +87,7 @@ namespace SKTools.MenuItemsFinder
                 var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width,
                     height);
                 GUI.DrawTexture(rect, _finder.LoadingImage);
-                //GUI.matrix = matrixBackup;
+                //GUI.matrix = matrixBackup; 
                 return true;
             }
 
@@ -224,26 +225,96 @@ namespace SKTools.MenuItemsFinder
             {
                 if (_finder.RolledOutMenuItem.Key.Equals(item.Key))
                 {
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
-
-                    GUI.SetNextControlName("RolledOutMenuItemCustomName");
-                    
-                    _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
-                        _finder.RolledOutMenuItem.CustomNameEditable,
-                        GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
-
-                    if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
-                    {
-                        _finder.AddCustomizedNameToPrefs(item);
-                    }
-
-                    GUILayout.EndHorizontal();
+                    DrawSettings(item);
                 }
             }
         }
 
+        private string GetAssetPathThatContainsContent(List<string> assetPathes, string content)
+        {
+            Debug.Log("searcch content:="+ content);
+            foreach (var filePathThatContainsText in assetPathes)
+            {
+                var text = AssetDatabase.LoadAssetAtPath<TextAsset>(filePathThatContainsText).text;
+                Debug.Log(text);
+                if (text.Contains(content))
+                    return filePathThatContainsText;
+            }
+
+            return "";
+        }
+        
+        private void DrawSettings(MenuItemLink item)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Open in file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            {
+//                Debug.Log(Application.dataPath);///Users/sergeykha/Projects/Foxster/SKToolsUnity/Assets
+                //_finder.AddCustomizedNameToPrefs(item);
+                ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+                ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Library/ScriptAssemblies/SKTools.EditorCoroutine.dll
+                ///Applications/Unity/2018.2.8f1/Unity.app/Contents/Managed/UnityEditor.dll
+                /*
+                 <ItemGroup>
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\GUILayoutCollection.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemData.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemLink.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinder.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderPreferences.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderVersion.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\MenuItemsFinderWindow.cs" />
+                    <Compile Include="Assets\SKTools\MenuItemsFinder\Editor\Tests\MenuItemsTests.cs" />
+                    <None Include="Assets\SKTools\MenuItemsFinder\Editor\SKTools.MenuItemsFinder.asmdef" />*/
+                var filePath = item.AssemlyFilePath;
+                var fileInfo = new FileInfo(filePath);
+                
+                if (fileInfo.Name == "Assembly-CSharp-Editor.dll")
+                {
+                    ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Assembly-CSharp-Editor.csproj
+                    var cproj = Application.dataPath.Replace("Assets", "Assembly-CSharp-Editor.csproj");
+                    var lines = File.ReadAllLines(cproj);// .ReadAllText(cproj);
+                    var assemblyFiles = new List<string>();
+                    var infoFound = false;
+                    
+                    foreach (var line in lines)
+                    {
+                        if (line.Contains("<Compile Include="))
+                        {
+                            infoFound = true;
+                            assemblyFiles.Add(line.Split('"')[1]);
+                        }
+                        else if (infoFound)
+                        {
+                            break;
+                        }
+                    }
+
+                    foreach (var file in assemblyFiles)
+                    {
+                        
+                    }
+                    var assetPath = GetAssetPathThatContainsContent(assemblyFiles, item.Path);
+                    Debug.Log("!!"+ assetPath);
+                }
+            }
+            
+            GUILayout.Label("Custom name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
+
+            GUI.SetNextControlName("RolledOutMenuItemCustomName");
+                    
+            _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
+                _finder.RolledOutMenuItem.CustomNameEditable,
+                GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
+
+            if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+            {
+                _finder.AddCustomizedNameToPrefs(item);
+            }
+
+            GUILayout.EndHorizontal();
+        }
+        
         private void CreateStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
