@@ -1,11 +1,15 @@
+[*] add custom hotkey if is available
 [*] check prefs missed items
-[*] added custom name for menuitem path
-[Done]fix exceptions when recompiling code
-*to try opening file that contains a menuitem
+[*] to provide and check context for menu item
+[*] to try opening file that contains a menuitem
+[*] to hide some items
+
+[Done] to add custom name for menuitem path
+[Done] to extract hotkey 
+[Done] fix exceptions when recompiling code
 [Done] windows doesn work starred + hotkeys ctrl + shift..
 [Done] replace special hotkeys to readable symbols
 [Done] to separate searchbox
 [Done] to plan: check validate method
- *to provide and check context for menu item
 [Done] to add star prefs
 [Done] add json prefs
