@@ -230,20 +230,6 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private string GetAssetPathThatContainsContent(List<string> assetPathes, string content)
-        {
-            Debug.Log("searcch content:="+ content);
-            foreach (var filePathThatContainsText in assetPathes)
-            {
-                var text = AssetDatabase.LoadAssetAtPath<TextAsset>(filePathThatContainsText).text;
-                Debug.Log(text);
-                if (text.Contains(content))
-                    return filePathThatContainsText;
-            }
-
-            return "";
-        }
-        
         private void DrawSettings(MenuItemLink item)
         {
             GUILayout.BeginHorizontal();

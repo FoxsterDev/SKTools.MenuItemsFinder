@@ -210,13 +210,18 @@ namespace SKTools.MenuItemsFinder
         public void TryOpenFileThatContainsMenuItem(MenuItemLink item, out string error)
         {
             error = "";
-            var filePath = item.AssemlyFilePath;
-            var fileInfo = new FileInfo(filePath);
-
-            if (fileInfo.Name == "Assembly-CSharp-Editor.dll")
+            
+            var fileName = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
+            try
             {
-                var cproj = Application.dataPath.Replace("Assets", "Assembly-CSharp-Editor.csproj");
-                var lines = File.ReadAllLines(cproj); // .ReadAllText(cproj);
+                var cproj = Application.dataPath.Replace("Assets", fileName + ".csproj");
+                if (!File.Exists(cproj))
+                {
+                    error = "cant detect file in " + fileName + ".dll \n";
+                    return;
+                }
+                
+                var lines = File.ReadAllLines(cproj);
                 var assemblyFiles = new List<string>();
                 var infoFound = false;
 
@@ -237,14 +242,14 @@ namespace SKTools.MenuItemsFinder
 
                 foreach (var assetPath in assemblyFiles)
                 {
-                    if (assetPath.Contains(itemDeclaringTypeName)) //suppose that type and file name equals
+                    if (assetPath.Contains(itemDeclaringTypeName)
+                    ) //suppose that type and file name equals about another cases need to think
                     {
                         var fullPath = Path.Combine(Application.dataPath, assetPath.Substring(7));
-
 #if !UNITY_EDITOR_WIN
                         fullPath = "file://" + fullPath.Replace(@"\", @"/");
 #else
-                            fullPath = "file:\\" + fullPath;
+                        fullPath = "file:\\" + fullPath;
 #endif
                         Application.OpenURL(fullPath);
                         EditorGUIUtility.systemCopyBuffer = item.Path;
@@ -252,8 +257,12 @@ namespace SKTools.MenuItemsFinder
                     }
                 }
             }
+            catch(Exception ex)
+            {
+               Debug.LogException(ex);
+            }
 
-            error = "this doesn't place in Assembly-CSharp-Editor.dll";
+            error = "cant detect file in " + fileName + ".dll \n";
         }
     }
 }
