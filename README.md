@@ -13,7 +13,9 @@ Features:
 7) Supporting recompiling, it does not need to close and reopen a finder window. After recompiling a state of finder wndow will be restored.
 7) All settings will be saved onto the prefs json file. You can reuse it 
 
-Unity: checked 2018.2.8f1, scripting runtime version net 3.5
+Unity: 
+supported 5.6 and above
+checked 2018.2.8f1, 2017.3.1p4 ,2017.2.2p4, 5.6.5p1, scripting runtime version net 3.5
 
 This tool provide an actual collection of all menuitems from the current project and fast navigate by key words. There is hotkey MacOs= (cmd + shift+ m) , Win = (ctrl + shift+M). Or you can click SKTools->MenuItems Finder after it
 You see this:
