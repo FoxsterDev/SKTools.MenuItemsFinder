@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SKTools.MenuItemsFinder
 {
     [System.Serializable]
     internal class MenuItemsFinderPreferences
     {
-        [System.NonSerialized] 
-        public string PreviousFilterString = null;
+        [System.NonSerialized] public string PreviousFilterString = null;
 
         public string FilterString = string.Empty;
-        public bool OnlyWithValidate;
+        [NonSerialized] public bool HideAllMissed;
         public List<MenuItemLink> CustomizedMenuItems = new List<MenuItemLink>();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -44,7 +45,7 @@ namespace SKTools.MenuItemsFinder
             CheckMissedFinder();
 
             DrawSearchTextField();
-            //DrawMenuOptions();
+            DrawMenu();
             DrawItems();
         }
 
@@ -101,40 +102,28 @@ namespace SKTools.MenuItemsFinder
 
             if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
-                 var key = _finder.Prefs.FilterString.ToLower();
+                var key = _finder.Prefs.FilterString.ToLower();
                 _finder.Prefs.PreviousFilterString = _finder.Prefs.FilterString;
-                _finder.FilteredMenuItems.Clear();
 
                 foreach (var item in _finder.MenuItems)
                 {
-                    if (item.Key.Contains(key))
-                    {
-                        _finder.FilteredMenuItems.Add(item);
-                        continue;
-                    }
-                    
-                    if (string.IsNullOrEmpty(item.CustomName))
-                        continue;
-                    
-                    if (item.CustomName.Contains(key))
-                    {
-                        _finder.FilteredMenuItems.Add(item);
-                        continue;
-                    }
+                    item.IsFiltered = string.IsNullOrEmpty(key) || 
+                                      item.Key.Contains(key) || 
+                                      (!string.IsNullOrEmpty(item.CustomName) && item.CustomName.ToLower().Contains(key));
                 }
             }
         }
 
-        private void DrawMenuOptions()
+        private void DrawMenu()
         {
             GUILayout.BeginHorizontal();
 
-            _finder.Prefs.OnlyWithValidate = GUILayout.Toggle(_finder.Prefs.OnlyWithValidate, "=OnlyWithValidate",
-                GUILayout.MinWidth(100));
-
-            if (GUILayout.Button("All Unstarred", GUILayout.MaxWidth(100)))
+            if (!_finder.Prefs.HideAllMissed && _finder.MenuItems.Find(m => m.IsMissed) != null)
             {
-                _finder.AllUnstarred();
+                if (GUILayout.Button("Hide All Missed", GUILayout.MaxWidth(100)))
+                {
+                    _finder.Prefs.HideAllMissed = true;
+                }
             }
 
             GUILayout.EndHorizontal();
@@ -144,20 +133,80 @@ namespace SKTools.MenuItemsFinder
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
-            _finder.MenuItems.FindAll(m => m.Starred).ForEach(DrawItem);
-            _finder.FilteredMenuItems.FindAll(m => !m.Starred).ForEach(DrawItem);
+            _finder.MenuItems.FindAll(m => m.Starred && !m.IsMissed).ForEach(DrawItem);
+
+            if (!_finder.Prefs.HideAllMissed)
+            {
+                _finder.MenuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
+            }
+            
+            _finder.MenuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawItem);
+            _finder.CleanRemovedItems();
 
             GUILayout.EndScrollView();
         }
 
         private void DrawItem(MenuItemLink item)
         {
-            if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
+            GUILayout.BeginHorizontal();
+
+            if (item.IsMissed)
             {
-                return;
+                DrawMissedState(item);
+            }
+            else
+            {
+                DrawNormalState(item);
             }
 
+            GUILayout.EndHorizontal();
+
+            if (_finder.RolledOutMenuItem != null && _finder.RolledOutMenuItem.Key.Equals(item.Key))
+            {
+                GUILayout.BeginHorizontal();
+                DrawItemSettings(item);
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        private void DrawMissedState(MenuItemLink item)
+        {
+            if (GUILayout.Button(string.Concat("<color=red>", "[Missed]", "</color>") + item.Label,
+                _menuItemButtonStyle, GUILayout.MaxWidth(300)))
+            {
+                Debug.Log("Try execute menuItem=" + item);
+                try
+                {
+                    EditorUtility.DisplayDialog("Missing!", "Cant execute this option\n" + item.Label,
+                        "ok");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("cant execute this menu item: " + item + "\n" + ex);
+                }
+            }
+
+            var previousColor = GUI.color;
+            GUI.color = Color.red;
+
+            if (GUILayout.Button("[-]", GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+            {
+                if (EditorUtility.DisplayDialog("Missing item!", "Do you want to remove this item?\n" + item.Label,
+                    "ok", "cancel"))
+                {
+                    _finder.MarkAsRemoved(item);
+                }
+            }
+
+            GUI.color = previousColor;
+        }
+
+        private void DrawNormalState(MenuItemLink item)
+        {
             var defaultColor = item.Starred ? Color.green : Color.white;
+            var label = item.Label;
+
             bool? validated = null;
             if (item.HasValidate)
             {
@@ -173,13 +222,10 @@ namespace SKTools.MenuItemsFinder
                 if (validated == false) defaultColor = Color.gray;
             }
 
-            GUILayout.BeginHorizontal();
-
             var previousColor = GUI.color;
             GUI.color = defaultColor;
-            //GUI.contentColor = defaultColor;
-            //_menuItemButtonStyle.normal.c
-            if (GUILayout.Button(item.Label, _menuItemButtonStyle, GUILayout.MaxWidth(300)))
+
+            if (GUILayout.Button(label, _menuItemButtonStyle, GUILayout.MaxWidth(300)))
             {
                 Debug.Log("Try execute menuItem=" + item);
                 try
@@ -199,13 +245,12 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            GUI.contentColor =GUI.color = previousColor;
+            GUI.color = previousColor;
 
             var texture = (item.Starred ? _finder.StarredImage : _finder.UnstarredImage);
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 _finder.ToggleStarred(item);
-                return;
             }
 
             if (GUILayout.Button(_finder.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
@@ -220,41 +265,29 @@ namespace SKTools.MenuItemsFinder
                     _finder.RolledOutMenuItem = null;
                 }
             }
-
-            GUILayout.EndHorizontal();
-
-            if (_finder.RolledOutMenuItem != null)
-            {
-                if (_finder.RolledOutMenuItem.Key.Equals(item.Key))
-                {
-                    DrawSettings(item);
-                }
-            }
         }
 
-        private void DrawSettings(MenuItemLink item)
+        private void DrawItemSettings(MenuItemLink item)
         {
-            GUILayout.BeginHorizontal();
-
             if (GUILayout.Button("Try open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
             {
                 var error = "";
                 _finder.TryOpenFileThatContainsMenuItem(item, out error);
                 if (!string.IsNullOrEmpty(error))
                 {
-                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem", 
-                        "There happens tgis="+error+"\n Do ypu want to open location of assembly?", "ok", "cancel");
+                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
+                        "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
                     if (ok)
                     {
                         _finder.OpenAssemblyLocationThatContainsMenuItem(item);
                     }
                 }
             }
-            
+
             GUILayout.Label("Custom name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
 
             GUI.SetNextControlName("RolledOutMenuItemCustomName");
-                    
+
             _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
                 _finder.RolledOutMenuItem.CustomNameEditable,
                 GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
@@ -263,10 +296,8 @@ namespace SKTools.MenuItemsFinder
             {
                 _finder.AddCustomizedNameToPrefs(item);
             }
-
-            GUILayout.EndHorizontal();
         }
-        
+
         private void CreateStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
@@ -274,7 +305,7 @@ namespace SKTools.MenuItemsFinder
             //_menuItemButtonStyle.fixedWidth = 200;
             _menuItemButtonStyle.alignment = TextAnchor.MiddleLeft;
             _menuItemButtonStyle.richText = true;
-           
+
             _unstarredMenuItemButtonStyle = new GUIStyle();
             _unstarredMenuItemButtonStyle.fixedHeight = 32;
             _unstarredMenuItemButtonStyle.fixedWidth = 32;

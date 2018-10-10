@@ -14,9 +14,10 @@ namespace SKTools.MenuItemsFinder
     internal class MenuItemsFinder
     {
         private string _prefsFilePath;
+        private bool _wasRemoving = false;
 
         public MenuItemLink RolledOutMenuItem;
-        public List<MenuItemLink> MenuItems, FilteredMenuItems = new List<MenuItemLink>();
+        public List<MenuItemLink> MenuItems;//, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
@@ -36,7 +37,7 @@ namespace SKTools.MenuItemsFinder
                 Prefs.CustomizedMenuItems.Clear();
                 foreach (var item in MenuItems)
                 {
-                    if (item.Starred || !string.IsNullOrEmpty(item.CustomName))
+                    if (item.IsCustomized)
                     {
                         Prefs.CustomizedMenuItems.Add(item);
                     }
@@ -70,8 +71,8 @@ namespace SKTools.MenuItemsFinder
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(_prefsFilePath), Prefs);
                 }
 
-                MenuItems = FindAllMenuItems();
-                MenuItems.Sort((x, y) => y.Label[0] - x.Label[0]);
+                MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
+                MenuItems.Sort((left, right) => left.Path[0] - right.Path[0]);
 
                 Assert.IsNotNull(StarredImage, "Check path=" + starFilePath + "starred.png");
                 Assert.IsNotNull(UnstarredImage, "Check path=" + starFilePath + "unstarred.png");
@@ -82,7 +83,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private List<MenuItemLink> FindAllMenuItems()
+        private List<MenuItemLink> FindAllMenuItems(List<MenuItemLink> customizedItems)
         {
             var watch = new Stopwatch();
             watch.Start();
@@ -151,22 +152,24 @@ namespace SKTools.MenuItemsFinder
 
                 var link = new MenuItemLink(entry.Value);
                 menuItems.Add(link);
-                dictWithKeyMenuItem[link.Key] = link;
+                dictWithKeyMenuItem[link.Path] = link;
             }
 
             MenuItemLink menuItemLink;
-            foreach (var customized in Prefs.CustomizedMenuItems)
+            foreach (var customized in customizedItems)
             {
-                if(string.IsNullOrEmpty(customized.Key))
+                if (string.IsNullOrEmpty(customized.Path))
                     continue;
-                
-                dictWithKeyMenuItem.TryGetValue(customized.Key, out menuItemLink);
+
+                dictWithKeyMenuItem.TryGetValue(customized.Path, out menuItemLink);
                 if (menuItemLink == null)
+                {
+                    customized.Update();
+                    menuItems.Add(customized);
                     continue;
-                
-                menuItemLink.CustomName = customized.CustomName;
-                menuItemLink.Starred = customized.Starred;
-                menuItemLink.UpdateLabel();
+                }
+
+                menuItemLink.UpdateFrom(customized);
             }
 
             watch.Stop();
@@ -186,15 +189,19 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public void AllUnstarred()
+        public void MarkAsRemoved(MenuItemLink item)
         {
-            MenuItems.ForEach(itemLink =>
+            _wasRemoving = true;
+            item.IsRemoved = true;
+        }
+
+        public void CleanRemovedItems()
+        {
+            if (_wasRemoving)
             {
-                if (itemLink.Starred)
-                {
-                    ToggleStarred(itemLink);
-                }
-            });
+                _wasRemoving = false;
+                MenuItems = MenuItems.FindAll(i => !i.IsRemoved);
+            }
         }
 
         public void ToggleStarred(MenuItemLink item)
@@ -214,17 +221,16 @@ namespace SKTools.MenuItemsFinder
             //Unity.TextMeshPro.Editor
             var assemblyFilePath = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
             Debug.Log(assemblyFilePath);
-            
+
             try
             {
-                //
                 var assemblyCprojPath = Application.dataPath.Replace("Assets", assemblyFilePath + ".csproj");
                 if (!File.Exists(assemblyCprojPath))
                 {
                     error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
                     return;
                 }
-                
+
                 var lines = File.ReadAllLines(assemblyCprojPath);
                 var assemblyFiles = new List<string>();
                 var infoFound = false;
@@ -246,7 +252,8 @@ namespace SKTools.MenuItemsFinder
 
                 foreach (var assetPath in assemblyFiles)
                 {
-                    if (assetPath.Contains(itemDeclaringTypeName)) //suppose that type and file name equals about another cases need to think
+                    if (assetPath.Contains(itemDeclaringTypeName)
+                    ) //suppose that type and file name equals about another cases need to think
                     {
                         var fullPath = Path.Combine(Application.dataPath, assetPath.Substring(7));
                         OpenFile(fullPath);
@@ -255,9 +262,9 @@ namespace SKTools.MenuItemsFinder
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-               Debug.LogException(ex);
+                Debug.LogException(ex);
             }
 
             error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
@@ -266,14 +273,12 @@ namespace SKTools.MenuItemsFinder
 
         private void OpenFile(string filePath)
         {
-            
 #if !UNITY_EDITOR_WIN
             filePath = "file://" + filePath.Replace(@"\", "/");
 #else
             filePath = @"file:\\" + filePath.Replace("/", @"\");;
 #endif
             Application.OpenURL(filePath);
-            
         }
     }
 }

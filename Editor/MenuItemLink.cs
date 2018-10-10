@@ -9,26 +9,33 @@ namespace SKTools.MenuItemsFinder
     {
         public string CustomName;
         public bool Starred;
-        public string Key;
-       
-        [NonSerialized]
-        private readonly MenuItemData _menuItem;
-        [NonSerialized]
-        public readonly string Path;
-        [NonSerialized]
-        public readonly string HotKey;
-        [NonSerialized]
-        public readonly string HotKeyFormatted;
-        
-        [NonSerialized]
-        public string CustomNameEditable;
+        public string Path;
+      
+        [NonSerialized] private readonly MenuItemData _menuItem;
+        [NonSerialized] public string Key;
+        [NonSerialized] public string HotKey;
+        [NonSerialized] public string HotKeyFormatted;
+        [NonSerialized] public string CustomNameEditable;
+        [NonSerialized] public bool IsRemoved;
+        [NonSerialized] public bool IsFiltered;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
         public Type DeclaringType { get; private set; }
+
+        public bool IsMissed
+        {
+            get { return _menuItem == null; }
+        }
+
+        public bool IsCustomized
+        {
+            get { return Starred || !string.IsNullOrEmpty(CustomName) || IsMissed; }
+        }
+
         public bool HasValidate
         {
-            get { return _menuItem.TargetMethodValidate != null; }
+            get { return _menuItem != null && _menuItem.TargetMethodValidate != null; }
         }
 
         public MenuItemLink(MenuItemData menuItem)
@@ -37,7 +44,24 @@ namespace SKTools.MenuItemsFinder
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             AssemlyFilePath = DeclaringType.Assembly.Location;
-            
+
+            Update();
+        }
+
+        public void UpdateFrom(MenuItemLink item)
+        {
+            Starred = item.Starred;
+            CustomNameEditable = CustomName = item.CustomName;
+            if (string.IsNullOrEmpty(Path))
+            {
+                Path = item.Path;
+            }
+
+            Update();
+        }
+
+        public void Update()
+        {
             var hotkeyStartIndex = -1;
             FindHotKey(Path, out hotkeyStartIndex, out HotKey);
 
@@ -48,12 +72,12 @@ namespace SKTools.MenuItemsFinder
             }
 
             Key = Path.ToLower();
+            
             UpdateLabel();
         }
 
         public void UpdateLabel()
         {
-            CustomNameEditable = CustomName; 
             if (!string.IsNullOrEmpty(CustomName))
             {
                 Label = string.Concat(CustomName, " ", HotKeyFormatted);
@@ -63,7 +87,7 @@ namespace SKTools.MenuItemsFinder
                 Label = string.Concat(Path, " ", HotKeyFormatted);
             }
         }
-        
+
         public bool CanExecute()
         {
             if (HasValidate)
@@ -81,7 +105,7 @@ namespace SKTools.MenuItemsFinder
 
         public override string ToString()
         {
-            return string.Format("MenuItem={0}; Method={1}", Label, _menuItem.TargetMethod);
+            return string.Format("MenuItem={0}; Method={1}", Label, !IsMissed ? _menuItem.TargetMethod.ToString() : "[Missed]");
         }
 
         public override bool Equals(object obj)
@@ -105,14 +129,13 @@ namespace SKTools.MenuItemsFinder
 #else
                 hotkey.Replace("%", "ctrl+").
  #endif
-                       Replace("#", "shift+").
-                       Replace("&", "alt+");
-            
+                    Replace("#", "shift+").Replace("&", "alt+");
+
             formatted = string.Concat("<color=cyan>", formatted, "</color>");
             return formatted;
         }
 
-        
+
         /*
         * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
          * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
