@@ -204,7 +204,8 @@ namespace SKTools.MenuItemsFinder
 
         public void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
         {
-            Application.OpenURL("file://"+ new FileInfo(item.DeclaringType.Assembly.Location).Directory);
+            var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
+            OpenFile(directoryPath);
         }
 
         public void TryOpenFileThatContainsMenuItem(MenuItemLink item, out string error)
@@ -213,17 +214,18 @@ namespace SKTools.MenuItemsFinder
             //Unity.TextMeshPro.Editor
             var assemblyFilePath = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
             Debug.Log(assemblyFilePath);
+            
             try
             {
                 //
-                var cproj = Application.dataPath.Replace("Assets", assemblyFilePath + ".csproj");
-                if (!File.Exists(cproj))
+                var assemblyCprojPath = Application.dataPath.Replace("Assets", assemblyFilePath + ".csproj");
+                if (!File.Exists(assemblyCprojPath))
                 {
                     error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
                     return;
                 }
                 
-                var lines = File.ReadAllLines(cproj);
+                var lines = File.ReadAllLines(assemblyCprojPath);
                 var assemblyFiles = new List<string>();
                 var infoFound = false;
 
@@ -247,12 +249,7 @@ namespace SKTools.MenuItemsFinder
                     if (assetPath.Contains(itemDeclaringTypeName)) //suppose that type and file name equals about another cases need to think
                     {
                         var fullPath = Path.Combine(Application.dataPath, assetPath.Substring(7));
-#if !UNITY_EDITOR_WIN
-                        fullPath = "file://" + fullPath.Replace(@"\", @"/");
-#else
-                        fullPath = "file:\\" + fullPath;
-#endif
-                        Application.OpenURL(fullPath);
+                        OpenFile(fullPath);
                         EditorGUIUtility.systemCopyBuffer = item.Path;
                         return;
                     }
@@ -265,6 +262,18 @@ namespace SKTools.MenuItemsFinder
 
             error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
             ///Users/sergeykha/Library/Unity/cache/packages/packages.unity.com/com.unity.textmeshpro@1.2.4/Scripts/Editor
+        }
+
+        private void OpenFile(string filePath)
+        {
+            
+#if !UNITY_EDITOR_WIN
+            filePath = "file://" + filePath.Replace(@"\", "/");
+#else
+            filePath = @"file:\\" + filePath.Replace("/", @"\");;
+#endif
+            Application.OpenURL(filePath);
+            
         }
     }
 }
