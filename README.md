@@ -1,7 +1,7 @@
-# MenuItemsFinder\
+# MenuItemsFinder
 
 What problem solved:
-There are a lot of menuitems in a project. Sometimes their menupathes are changed. Or menuitempath has a very big construction and difficult to navigate
+There are a lot of menuitems in a project. Sometimes their menupathes are changed. And you are angry that you need to search. Or menuitempath has a very big construction and difficult to navigate
 
 Profit: You don't need to remember place of MenuItems like "Window/Analisis/Profiler" or "Tools/Category/SubCategory/SubSubCategory/WhatExactlyINeed" and it could be changed in a new version of Unity or a plugin.
 Unity: checked 2018.2.8f1, scripting runtime version net 3.5
