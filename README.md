@@ -26,4 +26,4 @@ You see this:
 
 Please enter some name of menuitem in searchtoolbar. You see all menuitems from the project that contains your input. After closing window it will ne saved to prefs. Prefs is a json local file and placed inside MenuItemsFinder Editor folder , and your prefs could be available on different machines. 
 
-
+Download unity package [here](https://github.com/FoxsterDev/SKTools/blob/master/UnityPackages/MenuItemsFinder_v0.1.4.unitypackage)
