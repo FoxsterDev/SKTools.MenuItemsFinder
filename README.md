@@ -9,8 +9,9 @@ Features:
 3) Starred your specific items and to have fast access at the top of a finder
 4) Set custom name for specific menuitem. Navigating will be by key + custom name
 5) Open a file that contains menuitem. It is usefull when you want edit a menuitem. if a menuitem places into Assembly-CShar-Editor(or firstpass) or Editor AssemblyDefinition and their scripts are placed into Assets folder. You can open file that contains the menuitem. Else you can open a location with assembbly that contains it
-6) Managing missed menuitems. When there happened changes with assembles
+6) Managing missed menuitems. When the project does not contain prefs menuitems
 7) Supporting recompiling, it does not need to close and reopen a finder window. After recompiling a state of finder wndow will be restored.
+7) All settings will be saved onto the prefs json file. You can reuse it 
 
 Profit: You don't need to remember place of MenuItems like "Window/Analisis/Profiler" or "Tools/Category/SubCategory/SubSubCategory/WhatExactlyINeed" and it could be changed in a new version of Unity or a plugin.
 Unity: checked 2018.2.8f1, scripting runtime version net 3.5
