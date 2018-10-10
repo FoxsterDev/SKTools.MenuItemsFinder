@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -86,7 +87,7 @@ namespace SKTools.MenuItemsFinder
                 var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width,
                     height);
                 GUI.DrawTexture(rect, _finder.LoadingImage);
-                //GUI.matrix = matrixBackup;
+                //GUI.matrix = matrixBackup; 
                 return true;
             }
 
@@ -224,26 +225,46 @@ namespace SKTools.MenuItemsFinder
             {
                 if (_finder.RolledOutMenuItem.Key.Equals(item.Key))
                 {
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Label("Custom name", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
-
-                    GUI.SetNextControlName("RolledOutMenuItemCustomName");
-                    
-                    _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
-                        _finder.RolledOutMenuItem.CustomNameEditable,
-                        GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
-
-                    if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
-                    {
-                        _finder.AddCustomizedNameToPrefs(item);
-                    }
-
-                    GUILayout.EndHorizontal();
+                    DrawSettings(item);
                 }
             }
         }
 
+        private void DrawSettings(MenuItemLink item)
+        {
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Try open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            {
+                var error = "";
+                _finder.TryOpenFileThatContainsMenuItem(item, out error);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem", 
+                        "There happens tgis="+error+"\n Do ypu want to open location of assembly?", "ok", "cancel");
+                    if (ok)
+                    {
+                        _finder.OpenAssemblyLocationThatContainsMenuItem(item);
+                    }
+                }
+            }
+            
+            GUILayout.Label("Custom name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
+
+            GUI.SetNextControlName("RolledOutMenuItemCustomName");
+                    
+            _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
+                _finder.RolledOutMenuItem.CustomNameEditable,
+                GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
+
+            if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
+            {
+                _finder.AddCustomizedNameToPrefs(item);
+            }
+
+            GUILayout.EndHorizontal();
+        }
+        
         private void CreateStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
