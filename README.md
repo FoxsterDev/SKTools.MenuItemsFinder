@@ -5,7 +5,7 @@ There are a lot of menuitems in a project. Sometimes their menupathes are change
 
 Features:
 1) Navigate by key input
-2) Execute some menuitem, just press the button with menuitem
+2) Execute some menuitem, just press the button with menuitem. If the menuitem has validating method. You will see an infor dialog and the button will have gray color
 3) Starred your specific items and to have fast access at the top of a finder
 4) Set custom name for specific menuitem. Navigating will be by key + custom name (Profit: You don't need to remember place of MenuItems like "Window/General/Profiler" or "Tools/Category/SubCategory/SubSubCategory/WhatExactlyINeed" and it could be changed in a new version of Unity or a plugin.)
 5) Open a file that contains menuitem. It is usefull when you want edit a menuitem. if a menuitem places into Assembly-CShar-Editor(or firstpass) or Editor AssemblyDefinition and their scripts are placed into Assets folder. You can open file that contains the menuitem. Else you can open a location with assembbly that contains it
