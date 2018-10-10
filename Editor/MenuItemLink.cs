@@ -35,7 +35,6 @@ namespace SKTools.MenuItemsFinder
         {
             _menuItem = menuItem;
             Path = menuItem.TargetAttribute.menuItem;
-            CustomNameEditable = CustomName;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             AssemlyFilePath = DeclaringType.Assembly.Location;
             
@@ -54,6 +53,7 @@ namespace SKTools.MenuItemsFinder
 
         public void UpdateLabel()
         {
+            CustomNameEditable = CustomName; 
             if (!string.IsNullOrEmpty(CustomName))
             {
                 Label = string.Concat(CustomName, " ", HotKeyFormatted);

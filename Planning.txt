@@ -1,8 +1,8 @@
 [*] add custom hotkey if is available
 [*] check prefs missed items
 [*] to provide and check context for menu item
-[*] to try opening file that contains a menuitem
-[*] to hide some items
+[Done] to try opening file that contains a menuitem
+[*] to hide some items?
 
 [Done] to add custom name for menuitem path
 [Done] to extract hotkey 

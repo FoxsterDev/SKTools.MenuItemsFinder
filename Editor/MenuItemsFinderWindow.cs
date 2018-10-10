@@ -44,7 +44,7 @@ namespace SKTools.MenuItemsFinder
             CheckMissedFinder();
 
             DrawSearchTextField();
-            DrawMenuOptions();
+            //DrawMenuOptions();
             DrawItems();
         }
 
@@ -144,13 +144,13 @@ namespace SKTools.MenuItemsFinder
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
-            _finder.MenuItems.FindAll(m => m.Starred).ForEach(Draw);
-            _finder.FilteredMenuItems.FindAll(m => !m.Starred).ForEach(Draw);
+            _finder.MenuItems.FindAll(m => m.Starred).ForEach(DrawItem);
+            _finder.FilteredMenuItems.FindAll(m => !m.Starred).ForEach(DrawItem);
 
             GUILayout.EndScrollView();
         }
 
-        private void Draw(MenuItemLink item)
+        private void DrawItem(MenuItemLink item)
         {
             if (_finder.Prefs.OnlyWithValidate && !item.HasValidate)
             {
@@ -177,7 +177,8 @@ namespace SKTools.MenuItemsFinder
 
             var previousColor = GUI.color;
             GUI.color = defaultColor;
-
+            //GUI.contentColor = defaultColor;
+            //_menuItemButtonStyle.normal.c
             if (GUILayout.Button(item.Label, _menuItemButtonStyle, GUILayout.MaxWidth(300)))
             {
                 Debug.Log("Try execute menuItem=" + item);
@@ -198,15 +199,16 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            GUI.color = previousColor;
+            GUI.contentColor =GUI.color = previousColor;
 
-            if (GUILayout.Button(string.Empty,
-                item.Starred ? _starredMenuItemButtonStyle : _unstarredMenuItemButtonStyle))
+            var texture = (item.Starred ? _finder.StarredImage : _finder.UnstarredImage);
+            if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 _finder.ToggleStarred(item);
+                return;
             }
 
-            if (GUILayout.Button(string.Empty, _settingsMenuItemButtonStyle))
+            if (GUILayout.Button(_finder.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 if (_finder.RolledOutMenuItem == null || _finder.RolledOutMenuItem.Key != item.Key)
                 {
@@ -272,13 +274,13 @@ namespace SKTools.MenuItemsFinder
             //_menuItemButtonStyle.fixedWidth = 200;
             _menuItemButtonStyle.alignment = TextAnchor.MiddleLeft;
             _menuItemButtonStyle.richText = true;
-
-            _unstarredMenuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
+           
+            _unstarredMenuItemButtonStyle = new GUIStyle();
             _unstarredMenuItemButtonStyle.fixedHeight = 32;
             _unstarredMenuItemButtonStyle.fixedWidth = 32;
-            _unstarredMenuItemButtonStyle.stretchHeight = false;
-            _unstarredMenuItemButtonStyle.stretchWidth = false;
-            _unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
+            _unstarredMenuItemButtonStyle.stretchHeight = true;
+            _unstarredMenuItemButtonStyle.stretchWidth = true;
+            //_unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
             _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 8, -6);
             _unstarredMenuItemButtonStyle.active.background =
                 _unstarredMenuItemButtonStyle.focused.background =
@@ -293,6 +295,7 @@ namespace SKTools.MenuItemsFinder
                         _starredMenuItemButtonStyle.normal.background = _finder.StarredImage;
 
             _settingsMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
+            _settingsMenuItemButtonStyle.overflow = new RectOffset();
             _settingsMenuItemButtonStyle.active.background =
                 _settingsMenuItemButtonStyle.focused.background =
                     _settingsMenuItemButtonStyle.hover.background =
