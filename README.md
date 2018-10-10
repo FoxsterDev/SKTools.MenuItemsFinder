@@ -7,7 +7,7 @@ Features:
 1) Navigate by key input
 2) Execute some menuitem, just press the button with menuitem
 3) Set custom name for specific menuitem. Navigating will be by key + custom name
-4) if a menuitem places into Assembly-CShar-Editor(or firstpass) or Editor AssemblyDefinition and their scripts are placed into Assets folder. You can open file that contains the menuitem
+4) Open a file that contains menuitem. It is usefull when you want edit a menuitem. if a menuitem places into Assembly-CShar-Editor(or firstpass) or Editor AssemblyDefinition and their scripts are placed into Assets folder. You can open file that contains the menuitem. Else you can open a location with assembbly that contains it
 5) Managing missed menuitems. When there happened changes with assembles
 6) Supporting recompiling, it does not need to close and reopen a finder window.
 
