@@ -12,6 +12,7 @@ Features:
 6) Managing missed menuitems. When the project does not contain prefs menuitems
 7) Supporting recompiling, it does not need to close and reopen a finder window. After recompiling a state of finder wndow will be restored.
 7) All settings will be saved onto the prefs json file. You can reuse it 
+* I tested on Mac and need recheck on Window. 
 
 Unity: 
 supported 5.6 and above
