@@ -3,6 +3,14 @@
 What problem solved:
 There are a lot of menuitems in a project. Sometimes their menupathes are changed. And you are angry that you need to search. Or menuitempath has a very big construction and difficult to navigate
 
+Features:
+1) Navigate by key input
+2) Execute some menuitem, just press the button with menuitem
+3) Set custom name for specific menuitem. Navigating will be by key + custom name
+4) if a menuitem places into Assembly-CShar-Editor(or firstpass) or Editor AssemblyDefinition and their scripts are placed into Assets folder. You can open file that contains the menuitem
+5) Managing missed menuitems. When there happened changes with assembles
+6) Supporting recompiling, it does not need to close and reopen a finder window.
+
 Profit: You don't need to remember place of MenuItems like "Window/Analisis/Profiler" or "Tools/Category/SubCategory/SubSubCategory/WhatExactlyINeed" and it could be changed in a new version of Unity or a plugin.
 Unity: checked 2018.2.8f1, scripting runtime version net 3.5
 
