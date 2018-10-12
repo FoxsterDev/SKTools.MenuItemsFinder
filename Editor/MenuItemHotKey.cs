@@ -3,35 +3,33 @@ using System.Collections.Generic;
 
 namespace SKTools.MenuItemsFinder
 {
-    //[]
+    [System.Serializable]
     public class MenuItemHotKey : IEquatable<MenuItemHotKey>
     {
-        public string Value;
-        public string Formatted;
-        public int StartIndex;
-        
         public string Key;
         public bool Shift;
         public bool Alt;
         public bool Cmd;
         public bool IsVerified;
-        
-        public MenuItemHotKey()
-        {
-            
-        }
-        
+
+        [NonSerialized] public string Formatted;
+        [NonSerialized] public int StartIndex;
+        [NonSerialized] public bool IsOriginal;
+        [NonSerialized] public string HotkeyString;
+
         public MenuItemHotKey(string menuItemPath)
         {
             Formatted = string.Empty;
-            Extract(menuItemPath, out StartIndex, out Value);
+            IsOriginal = true;
+            IsVerified = true;
+            Extract(menuItemPath, out StartIndex, out HotkeyString, out Key, out Shift, out Alt, out Cmd);
 
             if (StartIndex > -1)
             {
-                Formatted = ToFormat(Value);
+                Formatted = ToFormat(this);
             }
         }
-        
+
         public override string ToString()
         {
             return Formatted;
@@ -41,21 +39,47 @@ namespace SKTools.MenuItemsFinder
         {
             return k.ToString();
         }
-        
-        private static string ToFormat(string hotkey)
-        {
-            var formatted =
-#if UNITY_EDITOR_OSX
-                hotkey.Replace("%", "cmd+").
-#else
-                hotkey.Replace("%", "ctrl+").
- #endif
-                    Replace("#", "shift+").Replace("&", "alt+");
 
-            formatted = string.Concat("<color=cyan>", formatted, "</color>");
-            return formatted;
+        private static string ToFormat(MenuItemHotKey hotkey)
+        {
+            var str = string.Empty;
+            
+            if (hotkey.Cmd)
+            {
+#if UNITY_EDITOR_OSX
+                str = "cmd+";
+#else
+                str = "ctrl+";
+               
+#endif
+            }
+
+            if (hotkey.Alt)
+            {
+                str += "alt+";
+            }
+
+            if (hotkey.Shift)
+            {
+                str += "shift+";
+            }
+
+            str += hotkey.Key;
+            str = string.Concat("<color=cyan>", str, "</color>");
+            return str;
         }
-        
+
+        internal static string ToPack(MenuItemHotKey hotkey)
+        {
+            //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
+            var str = "";
+            if (hotkey.Cmd) str += "%";
+            if (hotkey.Shift) str += "#";
+            if (hotkey.Alt) str += "&";
+            str += hotkey.Key;
+            return str;
+        }
+
         /*
         * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
          * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
@@ -63,10 +87,14 @@ namespace SKTools.MenuItemsFinder
          The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
         */
-        internal static void Extract(string itemPath, out int index, out string hotkey)
+        internal static void Extract(string itemPath, out int index, out string hotkeyString, out string key,
+            out bool shift, out bool alt, out bool cmd)
         {
-            hotkey = string.Empty;
+            key = hotkeyString = string.Empty;
             index = -1;
+            shift = false;
+            alt = false;
+            cmd = false;
             if (string.IsNullOrEmpty(itemPath))
                 return;
 
@@ -74,8 +102,10 @@ namespace SKTools.MenuItemsFinder
             var underScoreIndex = -1;
             var slashIndex = -1;
             var whiteSpaceIndex = -1;
+            var keyChars = new Stack<char>();
             var hotkeyChars = new Stack<char>();
             var indecatorIndex = -1;
+            var modifiersIndex = -1;
 
             if (chars[chars.Length - 1] != ' ')
             {
@@ -106,33 +136,60 @@ namespace SKTools.MenuItemsFinder
                     }
 
                     hotkeyChars.Push(c);
-                    if (c == '%' || c == '#' || c == '&')
+
+                    var modifier = false;
+                    if (c == '#')
+                    {
+                        modifier = shift = true;
+                    }
+
+                    if (c == '%')
+                    {
+                        modifier = cmd = true;
+                    }
+
+                    if (c == '&')
+                    {
+                        modifier = alt = true;
+                    }
+
+                    if (modifier)
                     {
                         indecatorIndex = k;
+                        if (modifiersIndex < 0)
+                        {
+                            modifiersIndex = k;
+                        }
+                    }
+                    else
+                    {
+                        keyChars.Push(c);
                     }
                 }
             }
 
             if (whiteSpaceIndex > -1 && slashIndex > -1 && whiteSpaceIndex > slashIndex)
             {
+                key = new string(keyChars.ToArray());
+
                 if (underScoreIndex > -1)
                 {
                     index = underScoreIndex + 1;
-                    hotkey = new string(hotkeyChars.ToArray());
+                    hotkeyString = new string(hotkeyChars.ToArray());
                     return;
                 }
 
                 if (indecatorIndex > -1)
                 {
                     index = whiteSpaceIndex + 1;
-                    hotkey = new string(hotkeyChars.ToArray());
+                    hotkeyString = new string(hotkeyChars.ToArray());
                 }
             }
         }
 
         public bool Equals(MenuItemHotKey other)
         {
-            return string.Equals(Value, other.Value);
+            return other != null && string.Equals(HotkeyString, other.HotkeyString);
         }
 
         public override bool Equals(object obj)
@@ -143,7 +200,7 @@ namespace SKTools.MenuItemsFinder
 
         public override int GetHashCode()
         {
-            return (Value != null ? Value.GetHashCode() : 0);
+            return (HotkeyString != null ? HotkeyString.GetHashCode() : 0);
         }
     }
 }

@@ -168,7 +168,7 @@ namespace SKTools.MenuItemsFinder
                 dictWithKeyMenuItem.TryGetValue(customized.Path, out menuItemLink);
                 if (menuItemLink == null)
                 {
-                    customized.Update();
+                    customized.PostUpdate();
                     menuItems.Add(customized);
                     continue;
                 }
@@ -230,6 +230,7 @@ namespace SKTools.MenuItemsFinder
 
         private void HideSettings()
         {
+            RolledOutMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
             RolledOutMenuItem = null;
             CustomHotKeysEditable = null;
         }
@@ -243,7 +244,10 @@ namespace SKTools.MenuItemsFinder
          
         }
 
-        /* */
+        public void CheckAndAddHotkey(MenuItemHotKey hotkey, out string error)
+        {
+            throw new NotImplementedException();
+        }
 
         public void ToggleStarred(MenuItemLink item)
         {

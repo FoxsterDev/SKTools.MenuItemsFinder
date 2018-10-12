@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine;
 
 
 namespace SKTools.MenuItemsFinder
@@ -50,7 +47,7 @@ namespace SKTools.MenuItemsFinder
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
-            Update();
+            PostUpdate();
         }
 
         public void UpdateFrom(MenuItemLink item)
@@ -62,10 +59,10 @@ namespace SKTools.MenuItemsFinder
                 Path = item.Path;
             }
 
-            Update();
+            PostUpdate();
         }
 
-        public void Update()
+        public void PostUpdate()
         {
             HotKey = new MenuItemHotKey(Path);
             if (HotKey.StartIndex > 0)
@@ -120,7 +117,5 @@ namespace SKTools.MenuItemsFinder
         {
             return (_menuItem != null ? _menuItem.GetHashCode() : 0);
         }
-
-
     }
 }

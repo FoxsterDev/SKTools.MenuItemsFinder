@@ -21,7 +21,7 @@ namespace SKTools.MenuItemsFinder
         private MenuItemsFinder _finder;
        
 
-        [MenuItem("SKTools/MenuItems Finder %#m")]
+        [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void Init()
         {
             var finderWindow = (MenuItemsFinderWindow) GetWindow(typeof(MenuItemsFinderWindow), false,
@@ -260,16 +260,21 @@ namespace SKTools.MenuItemsFinder
                 if (_finder.ToggleSettings(item))
                 {
                     GUI.FocusControl("RolledOutMenuItemCustomName");
-                    
-                    _finder.CustomHotKeysEditable.drawHeaderCallback += DrawHotkeysHeader;
+
+                    _finder.CustomHotKeysEditable.drawHeaderCallback += (rect) =>
+                    {
+                        if (string.IsNullOrEmpty(item.HotKey))
+                        {
+                            GUI.Label(rect, "Hotkeys");
+                        }
+                        else
+                        {
+                            GUI.Label(rect, "Hotkeys. Original="+ item.HotKey);
+                        }
+                    };
                     _finder.CustomHotKeysEditable.drawElementCallback += DrawHotKey;
                 }
             }
-        }
-
-        private void DrawHotkeysHeader(Rect rect)
-        {
-            GUI.Label(rect, "Hotkeys");
         }
         
         private void DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
@@ -278,20 +283,29 @@ namespace SKTools.MenuItemsFinder
             var width = rect.width * 0.2f;
 
             rect.width = width;
-            if (GUI.Button(rect, "Check&Add"))
+            if (!hotkey.IsVerified)
             {
-            }
+                if (GUI.Button(rect, "Check&Add"))
+                {
+                    var error = "";
+                    _finder.CheckAndAddHotkey(hotkey, out error);
+                }
 
-            rect.x += width;
-            hotkey.Key = GUI.TextField(rect, hotkey.Key);
-            rect.x += width;
-            GUI.Label(rect, " Key");
-            rect.x += width;
-            hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
-            rect.x += width;
-            hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
-            rect.x += width;
-            hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
+                rect.x += width;
+                hotkey.Key = GUI.TextField(rect, hotkey.Key);
+                rect.x += width;
+                GUI.Label(rect, " Key");
+                rect.x += width;
+                hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
+                rect.x += width;
+                hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
+                rect.x += width;
+                hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
+            }
+            else
+            {
+                GUI.Label(rect, hotkey);
+            }
         }
 
         private void DrawSettings(MenuItemLink item)

@@ -2,15 +2,33 @@
 
 namespace SKTools.MenuItemsFinder
 {
+    //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
     internal class MenuItemsTests
     {
+        [Test]
+        public void PackHotKey()
+        {
+            var hotkey = new MenuItemHotKey("Window/Analysis/Profiler %&7");
+            var packed = MenuItemHotKey.ToPack(hotkey);
+                Assert.IsTrue("%&7" == packed);
+            Assert.IsTrue(hotkey.Cmd & hotkey.Alt);
+            Assert.IsTrue(hotkey.Key == "7");
+        }
+        
         [Test]
         public void ExtractHotKey()
         {
             var index = -1;
             var hotkey = "";
-            MenuItemHotKey.Extract("Window/Analysis/Profiler %&7", out index, out hotkey);
+            var key = "";
+            var shift = false;
+            var alt = false;
+            var cmd = false;
+            
+            MenuItemHotKey.Extract("Window/Analysis/Profiler %&7", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "%&7");
+            Assert.IsTrue(cmd & alt);
+            Assert.IsTrue(key == "7");
         }
 
         [Test]
@@ -18,8 +36,14 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemHotKey.Extract("Window/Analysis/Profiler _g", out index, out hotkey);
+            var key = "";
+            var shift = false;
+            var alt = false;
+            var cmd = false;
+
+            MenuItemHotKey.Extract("Window/Analysis/Profiler _g", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "g");
+            Assert.IsTrue(key == "g");
         }
 
         [Test]
@@ -27,8 +51,16 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemHotKey.Extract("Window/Analysis/Profiler_g", out index, out hotkey);
+            var key = "";
+            var shift = false;
+            var alt = false;
+            var cmd = false;
+
+            MenuItemHotKey.Extract("Window/Analysis/Profiler_g", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == string.Empty);
+            Assert.IsFalse(cmd);
+            Assert.IsFalse(shift);
+            Assert.IsFalse(alt);
         }
 
         [Test]
@@ -36,8 +68,16 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemHotKey.Extract("Window/Analysis/Profiler Some", out index, out hotkey);
+            var key = "";
+            var shift = false;
+            var alt = false;
+            var cmd = false;
+
+            MenuItemHotKey.Extract("Window/Analysis/Profiler Some", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == string.Empty);
+            Assert.IsFalse(cmd);
+            Assert.IsFalse(shift);
+            Assert.IsFalse(alt);
         }
 
         [Test]
@@ -45,8 +85,15 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemHotKey.Extract("Window/Analysis/Profiler #LEFT", out index, out hotkey);
+            var key = "";
+            var shift = false;
+            var alt = false;
+            var cmd = false;
+
+            MenuItemHotKey.Extract("Window/Analysis/Profiler #LEFT", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "#LEFT");
+            Assert.IsTrue(shift);
+            Assert.IsTrue(key == "LEFT");
         }
     }
 }
