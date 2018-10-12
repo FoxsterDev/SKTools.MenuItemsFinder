@@ -1,17 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SKTools.MenuItemsFinder
 {
-    public struct MenuItemHotKey
+    //[]
+    public class MenuItemHotKey : IEquatable<MenuItemHotKey>
     {
         public string Value;
         public string Formatted;
         public int StartIndex;
         
-        public MenuItemHotKey(string Path)
+        public string Key;
+        public bool Shift;
+        public bool Alt;
+        public bool Cmd;
+        public bool IsVerified;
+        
+        public MenuItemHotKey()
+        {
+            
+        }
+        
+        public MenuItemHotKey(string menuItemPath)
         {
             Formatted = string.Empty;
-            Extract(Path, out StartIndex, out Value);
+            Extract(menuItemPath, out StartIndex, out Value);
 
             if (StartIndex > -1)
             {
@@ -115,6 +128,22 @@ namespace SKTools.MenuItemsFinder
                     hotkey = new string(hotkeyChars.ToArray());
                 }
             }
+        }
+
+        public bool Equals(MenuItemHotKey other)
+        {
+            return string.Equals(Value, other.Value);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is MenuItemHotKey && Equals((MenuItemHotKey) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Value != null ? Value.GetHashCode() : 0);
         }
     }
 }

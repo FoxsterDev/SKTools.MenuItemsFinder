@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -18,6 +19,7 @@ namespace SKTools.MenuItemsFinder
             _settingsMenuItemButtonStyle;
 
         private MenuItemsFinder _finder;
+       
 
         [MenuItem("SKTools/MenuItems Finder %#m")]
         private static void Init()
@@ -59,6 +61,7 @@ namespace SKTools.MenuItemsFinder
         private void OnDestroy()
         {
             _finder.SavePrefs();
+            _finder.Dispose();
         }
 
         private void OnLostFocus()
@@ -164,14 +167,14 @@ namespace SKTools.MenuItemsFinder
 
             if (_finder.RolledOutMenuItem != null && _finder.RolledOutMenuItem.Key.Equals(item.Key))
             {
-                DrawItemSettings(item);
+                DrawSettings(item);
             }
         }
 
         private void DrawMissedState(MenuItemLink item)
         {
             if (GUILayout.Button(string.Concat("<color=red>", "[Missed]", "</color>") + item.Label,
-                _menuItemButtonStyle, GUILayout.MaxWidth(300)))
+                _menuItemButtonStyle))
             {
                 Debug.Log("Try execute menuItem=" + item);
                 try
@@ -224,7 +227,7 @@ namespace SKTools.MenuItemsFinder
             var previousColor = GUI.color;
             GUI.color = defaultColor;
 
-            if (GUILayout.Button(label, _menuItemButtonStyle, GUILayout.MaxWidth(300)))
+            if (GUILayout.Button(label, _menuItemButtonStyle))
             {
                 Debug.Log("Try execute menuItem=" + item);
                 try
@@ -254,19 +257,44 @@ namespace SKTools.MenuItemsFinder
 
             if (GUILayout.Button(_finder.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
-                if (_finder.RolledOutMenuItem == null || _finder.RolledOutMenuItem.Key != item.Key)
+                if (_finder.ToggleSettings(item))
                 {
                     GUI.FocusControl("RolledOutMenuItemCustomName");
-                    _finder.RolledOutMenuItem = item;
-                }
-                else
-                {
-                    _finder.RolledOutMenuItem = null;
+                    
+                    _finder.CustomHotKeysEditable.drawHeaderCallback += DrawHotkeysHeader;
+                    _finder.CustomHotKeysEditable.drawElementCallback += DrawHotKey;
                 }
             }
         }
 
-        private void DrawItemSettings(MenuItemLink item)
+        private void DrawHotkeysHeader(Rect rect)
+        {
+            GUI.Label(rect, "Hotkeys");
+        }
+        
+        private void DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
+        {
+            var hotkey = (MenuItemHotKey)  _finder.CustomHotKeysEditable.list[index];
+            var width = rect.width * 0.2f;
+
+            rect.width = width;
+            if (GUI.Button(rect, "Check&Add"))
+            {
+            }
+
+            rect.x += width;
+            hotkey.Key = GUI.TextField(rect, hotkey.Key);
+            rect.x += width;
+            GUI.Label(rect, " Key");
+            rect.x += width;
+            hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
+            rect.x += width;
+            hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
+            rect.x += width;
+            hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
+        }
+
+        private void DrawSettings(MenuItemLink item)
         {
             GUILayout.BeginHorizontal();
 
@@ -300,15 +328,16 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.EndHorizontal();
 
-            _finder.RolledOutMenuItem.ShowDescription =
-                EditorGUILayout.Foldout(_finder.RolledOutMenuItem.ShowDescription, "Add Description");
+            _finder.RolledOutMenuItem.ShowDescription = EditorGUILayout.Foldout(_finder.RolledOutMenuItem.ShowDescription, "Add Description");
             if (_finder.RolledOutMenuItem.ShowDescription)
             {
                 _finder.RolledOutMenuItem.Description = GUILayout.TextArea(_finder.RolledOutMenuItem.Description,
-                    GUILayout.MinHeight(60), GUILayout.MaxWidth(240));
+                    GUILayout.MinHeight(60));
             }
+            
+            _finder.CustomHotKeysEditable.DoLayoutList();
         }
-
+    
         private void CleanRemovedItems()
         {
             _finder.CleanRemovedItems();

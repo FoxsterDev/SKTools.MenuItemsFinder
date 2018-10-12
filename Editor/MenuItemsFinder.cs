@@ -5,21 +5,25 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal class MenuItemsFinder
+    internal class MenuItemsFinder : IDisposable
     {
         private string _prefsFilePath;
         private bool _wasRemoving = false;
 
         public MenuItemLink RolledOutMenuItem;
-        public List<MenuItemLink> MenuItems;//, FilteredMenuItems = new List<MenuItemLink>();
+        public ReorderableList CustomHotKeysEditable;
+
+        public List<MenuItemLink> MenuItems; //, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
+      
         public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
         {
             FilterString = "Please type menuitem name here.."
@@ -204,6 +208,43 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
+        public bool ToggleSettings(MenuItemLink item)
+        {
+            if (RolledOutMenuItem == null)
+            {
+                ShowSettings(item);
+                return true;
+            }
+
+            var newSettings = RolledOutMenuItem.Key != item.Key;
+            HideSettings();
+
+            if (newSettings)
+            {
+                ShowSettings(item);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void HideSettings()
+        {
+            RolledOutMenuItem = null;
+            CustomHotKeysEditable = null;
+        }
+
+        private void ShowSettings(MenuItemLink item)
+        {
+            RolledOutMenuItem = item;
+
+            CustomHotKeysEditable =
+                new ReorderableList(item.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
+         
+        }
+
+        /* */
+
         public void ToggleStarred(MenuItemLink item)
         {
             item.Starred = !item.Starred;
@@ -276,9 +317,18 @@ namespace SKTools.MenuItemsFinder
 #if !UNITY_EDITOR_WIN
             filePath = "file://" + filePath.Replace(@"\", "/");
 #else
-            filePath = @"file:\\" + filePath.Replace("/", @"\");;
+    filePath = @"file:\\" + filePath.Replace("/", @"\");;
 #endif
             Application.OpenURL(filePath);
         }
+          
+        public void Dispose()
+        {
+            Resources.UnloadAsset(StarredImage);
+            Resources.UnloadAsset(UnstarredImage);
+            Resources.UnloadAsset(LoadingImage);
+            Resources.UnloadAsset(SettingsImage);
+        }
+
     }
 }

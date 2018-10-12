@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
 
 
 namespace SKTools.MenuItemsFinder
@@ -10,6 +14,7 @@ namespace SKTools.MenuItemsFinder
         public bool Starred;
         public string Path;
         public string Description;
+        public List<MenuItemHotKey> CustomHotKeys;
 
         [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string Key;
@@ -18,7 +23,7 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool ShowDescription;
         [NonSerialized] public bool IsRemoved;
         [NonSerialized] public bool IsFiltered;
-
+       
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
         public Type DeclaringType { get; private set; }
@@ -41,10 +46,10 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink(MenuItemData menuItem)
         {
             _menuItem = menuItem;
+            CustomHotKeys = new List<MenuItemHotKey>();
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
-
             Update();
         }
 
