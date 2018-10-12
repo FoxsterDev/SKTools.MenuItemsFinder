@@ -9,7 +9,7 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemLink.FindHotKey("Window/Analysis/Profiler %&7", out index, out hotkey);
+            MenuItemHotKey.Extract("Window/Analysis/Profiler %&7", out index, out hotkey);
             Assert.IsTrue(hotkey == "%&7");
         }
 
@@ -18,7 +18,7 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemLink.FindHotKey("Window/Analysis/Profiler _g", out index, out hotkey);
+            MenuItemHotKey.Extract("Window/Analysis/Profiler _g", out index, out hotkey);
             Assert.IsTrue(hotkey == "g");
         }
 
@@ -27,7 +27,7 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemLink.FindHotKey("Window/Analysis/Profiler_g", out index, out hotkey);
+            MenuItemHotKey.Extract("Window/Analysis/Profiler_g", out index, out hotkey);
             Assert.IsTrue(hotkey == string.Empty);
         }
 
@@ -36,7 +36,7 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemLink.FindHotKey("Window/Analysis/Profiler Some", out index, out hotkey);
+            MenuItemHotKey.Extract("Window/Analysis/Profiler Some", out index, out hotkey);
             Assert.IsTrue(hotkey == string.Empty);
         }
 
@@ -45,7 +45,7 @@ namespace SKTools.MenuItemsFinder
         {
             var index = -1;
             var hotkey = "";
-            MenuItemLink.FindHotKey("Window/Analysis/Profiler #LEFT", out index, out hotkey);
+            MenuItemHotKey.Extract("Window/Analysis/Profiler #LEFT", out index, out hotkey);
             Assert.IsTrue(hotkey == "#LEFT");
         }
     }

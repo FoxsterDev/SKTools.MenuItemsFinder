@@ -44,9 +44,11 @@ namespace SKTools.MenuItemsFinder
 
             CheckMissedFinder();
 
-            DrawSearchTextField();
+            DrawSearchBar();
             DrawMenu();
             DrawItems();
+
+            CleanRemovedItems();
         }
 
         private void OnSelectionChange()
@@ -95,7 +97,7 @@ namespace SKTools.MenuItemsFinder
             return false;
         }
 
-        private void DrawSearchTextField()
+        private void DrawSearchBar()
         {
             _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString,
                 _finder.RolledOutMenuItem == null, GUILayout.MinWidth(200));
@@ -107,9 +109,10 @@ namespace SKTools.MenuItemsFinder
 
                 foreach (var item in _finder.MenuItems)
                 {
-                    item.IsFiltered = string.IsNullOrEmpty(key) || 
-                                      item.Key.Contains(key) || 
-                                      (!string.IsNullOrEmpty(item.CustomName) && item.CustomName.ToLower().Contains(key));
+                    item.IsFiltered = string.IsNullOrEmpty(key) ||
+                                      item.Key.Contains(key) ||
+                                      (!string.IsNullOrEmpty(item.CustomName) &&
+                                       item.CustomName.ToLower().Contains(key));
                 }
             }
         }
@@ -139,10 +142,8 @@ namespace SKTools.MenuItemsFinder
             {
                 _finder.MenuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
             }
-            
-            _finder.MenuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawItem);
-            _finder.CleanRemovedItems();
 
+            _finder.MenuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawItem);
             GUILayout.EndScrollView();
         }
 
@@ -163,9 +164,7 @@ namespace SKTools.MenuItemsFinder
 
             if (_finder.RolledOutMenuItem != null && _finder.RolledOutMenuItem.Key.Equals(item.Key))
             {
-                GUILayout.BeginHorizontal();
                 DrawItemSettings(item);
-                GUILayout.EndHorizontal();
             }
         }
 
@@ -269,7 +268,9 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawItemSettings(MenuItemLink item)
         {
-            if (GUILayout.Button("Try open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
             {
                 var error = "";
                 _finder.TryOpenFileThatContainsMenuItem(item, out error);
@@ -284,7 +285,7 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            GUILayout.Label("Custom name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
+            GUILayout.Label("Set name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
 
             GUI.SetNextControlName("RolledOutMenuItemCustomName");
 
@@ -296,6 +297,21 @@ namespace SKTools.MenuItemsFinder
             {
                 _finder.AddCustomizedNameToPrefs(item);
             }
+
+            GUILayout.EndHorizontal();
+
+            _finder.RolledOutMenuItem.ShowDescription =
+                EditorGUILayout.Foldout(_finder.RolledOutMenuItem.ShowDescription, "Add Description");
+            if (_finder.RolledOutMenuItem.ShowDescription)
+            {
+                _finder.RolledOutMenuItem.Description = GUILayout.TextArea(_finder.RolledOutMenuItem.Description,
+                    GUILayout.MinHeight(60), GUILayout.MaxWidth(240));
+            }
+        }
+
+        private void CleanRemovedItems()
+        {
+            _finder.CleanRemovedItems();
         }
 
         private void CreateStyles()
