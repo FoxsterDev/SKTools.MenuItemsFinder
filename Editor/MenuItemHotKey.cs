@@ -4,27 +4,38 @@ using System.Collections.Generic;
 namespace SKTools.MenuItemsFinder
 {
     [System.Serializable]
-    public class MenuItemHotKey : IEquatable<MenuItemHotKey>, IComparable<MenuItemHotKey>
+    internal class MenuItemHotKey : IEquatable<MenuItemHotKey>, IComparable<MenuItemHotKey>
     {
         public string Key;
         public bool Shift;
         public bool Alt;
         public bool Cmd;
         public bool IsVerified;
-
-        [NonSerialized] public bool IsOriginal;
+        
+        [NonSerialized]
+        public bool IsOriginal;
        
         public override string ToString()
         {
             return ToFormat(this);
         }
-
-        public static implicit operator string(MenuItemHotKey k)
+        
+        public bool Equals(MenuItemHotKey other)
         {
-            return k.ToString();
+            return other != null && Key == other.Key && Alt ==  other.Alt && Shift == other.Shift && Cmd == other.Cmd;//%#0
         }
 
-        private static string ToFormat(MenuItemHotKey hotkey)
+        public int CompareTo(MenuItemHotKey other)
+        {
+            return string.Compare(this, other);
+        }
+        
+        public static implicit operator string(MenuItemHotKey k)
+        {
+            return k != null ? k.ToString() : default(string);
+        }
+
+        public static string ToFormat(MenuItemHotKey hotkey)
         {
             var str = string.Empty;
             
@@ -52,7 +63,7 @@ namespace SKTools.MenuItemsFinder
             return str;
         }
 
-        internal static string ToPack(MenuItemHotKey hotkey)
+        public static string ToPack(MenuItemHotKey hotkey)
         {
             //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
             var str = "";
@@ -70,7 +81,7 @@ namespace SKTools.MenuItemsFinder
          The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
         */
-        internal static void Extract(string itemPath, out int index, out string hotkeyString, out string key,
+        public static void Extract(string itemPath, out int index, out string hotkeyString, out string key,
             out bool shift, out bool alt, out bool cmd)
         {
             key = hotkeyString = string.Empty;
@@ -153,12 +164,11 @@ namespace SKTools.MenuItemsFinder
 
             if (whiteSpaceIndex > -1 && slashIndex > -1 && whiteSpaceIndex > slashIndex)
             {
-                key = new string(keyChars.ToArray());
-
                 if (underScoreIndex > -1)
                 {
                     index = underScoreIndex + 1;
                     hotkeyString = new string(hotkeyChars.ToArray());
+                    key = new string(keyChars.ToArray());
                     return;
                 }
 
@@ -166,18 +176,9 @@ namespace SKTools.MenuItemsFinder
                 {
                     index = whiteSpaceIndex + 1;
                     hotkeyString = new string(hotkeyChars.ToArray());
+                    key = new string(keyChars.ToArray());
                 }
             }
-        }
-
-        public bool Equals(MenuItemHotKey other)
-        {
-            return other != null && Key == other.Key && Alt ==  other.Alt && Shift == other.Shift && Cmd == other.Cmd;//%#0
-        }
-
-        public int CompareTo(MenuItemHotKey other)
-        {
-            return string.Compare(this, other);
         }
     }
 }

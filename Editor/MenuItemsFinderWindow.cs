@@ -263,10 +263,7 @@ namespace SKTools.MenuItemsFinder
 
                     _finder.SelectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
                     {
-                        var width = rect.width * 0.2f;
-
-                        rect.width = width;
-                        GUI.Label(rect, "HotKeys");
+                        GUI.Label(rect, "HotKeys " + _finder.SelectedMenuItem.HotKey);
                     };
                     _finder.SelectedMenuItemCustomHotKeysEditable.drawElementCallback += DrawHotKey;
                 }

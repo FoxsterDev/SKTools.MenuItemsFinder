@@ -230,7 +230,7 @@ namespace SKTools.MenuItemsFinder
 
         private void HideSettings()
         {
-            SelectedMenuItem.HotKeys.RemoveAll(i => !i.IsVerified);
+            SelectedMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
             SelectedMenuItem = null;
             SelectedMenuItemCustomHotKeysEditable = null;
         }
@@ -240,7 +240,7 @@ namespace SKTools.MenuItemsFinder
             SelectedMenuItem = item;
 
             SelectedMenuItemCustomHotKeysEditable =
-                new ReorderableList(item.HotKeys, typeof(MenuItemHotKey), true, true, true, true);
+                new ReorderableList(item.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
          
         }
 
@@ -263,7 +263,7 @@ namespace SKTools.MenuItemsFinder
                 return false;
             }
             
-            var exist = MenuItems.Find(i => i.HotKeys.Contains(hotkey));
+            var exist = MenuItems.Find(i => (i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey));
             if (exist != null)
             {
                 error = exist.Path + " this menuitem already contains hotkey " + hotkey;
@@ -273,7 +273,7 @@ namespace SKTools.MenuItemsFinder
             hotkey.IsVerified = true;
             //hotkey.HotkeyString = MenuItemHotKey.ToPack(hotkey);
             //SelectedMenuItemCustomHotKeysEditable.list.Remove(hotkey);
-            //SelectedMenuItem.HotKeys.Add(hotkey);
+            //SelectedMenuItem.CustomHotKeys.Add(hotkey);
             SelectedMenuItem.UpdateLabel();
             return true;
         }
