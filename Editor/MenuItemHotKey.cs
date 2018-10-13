@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SKTools.MenuItemsFinder
 {
     [System.Serializable]
-    public class MenuItemHotKey : IEquatable<MenuItemHotKey>
+    public class MenuItemHotKey : IEquatable<MenuItemHotKey>, IComparable<MenuItemHotKey>
     {
         public string Key;
         public bool Shift;
@@ -12,27 +12,11 @@ namespace SKTools.MenuItemsFinder
         public bool Cmd;
         public bool IsVerified;
 
-        [NonSerialized] public string Formatted;
-        [NonSerialized] public int StartIndex;
         [NonSerialized] public bool IsOriginal;
-        [NonSerialized] public string HotkeyString;
-
-        public MenuItemHotKey(string menuItemPath)
-        {
-            Formatted = string.Empty;
-            IsOriginal = true;
-            IsVerified = true;
-            Extract(menuItemPath, out StartIndex, out HotkeyString, out Key, out Shift, out Alt, out Cmd);
-
-            if (StartIndex > -1)
-            {
-                Formatted = ToFormat(this);
-            }
-        }
-
+       
         public override string ToString()
         {
-            return Formatted;
+            return ToFormat(this);
         }
 
         public static implicit operator string(MenuItemHotKey k)
@@ -65,7 +49,6 @@ namespace SKTools.MenuItemsFinder
             }
 
             str += hotkey.Key;
-            str = string.Concat("<color=cyan>", str, "</color>");
             return str;
         }
 
@@ -189,18 +172,12 @@ namespace SKTools.MenuItemsFinder
 
         public bool Equals(MenuItemHotKey other)
         {
-            return other != null && string.Equals(HotkeyString, other.HotkeyString);
+            return other != null && Key == other.Key && Alt ==  other.Alt && Shift == other.Shift && Cmd == other.Cmd;//%#0
         }
 
-        public override bool Equals(object obj)
+        public int CompareTo(MenuItemHotKey other)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is MenuItemHotKey && Equals((MenuItemHotKey) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (HotkeyString != null ? HotkeyString.GetHashCode() : 0);
+            return string.Compare(this, other);
         }
     }
 }

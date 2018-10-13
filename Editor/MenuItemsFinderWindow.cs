@@ -103,7 +103,7 @@ namespace SKTools.MenuItemsFinder
         private void DrawSearchBar()
         {
             _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString,
-                _finder.RolledOutMenuItem == null, GUILayout.MinWidth(200));
+                _finder.SelectedMenuItem == null, GUILayout.MinWidth(200));
 
             if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
             {
@@ -165,7 +165,7 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.EndHorizontal();
 
-            if (_finder.RolledOutMenuItem != null && _finder.RolledOutMenuItem.Key.Equals(item.Key))
+            if (_finder.SelectedMenuItem != null && _finder.SelectedMenuItem.Key.Equals(item.Key))
             {
                 DrawSettings(item);
             }
@@ -261,45 +261,54 @@ namespace SKTools.MenuItemsFinder
                 {
                     GUI.FocusControl("RolledOutMenuItemCustomName");
 
-                    _finder.CustomHotKeysEditable.drawHeaderCallback += (rect) =>
+                    _finder.SelectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
                     {
-                        if (string.IsNullOrEmpty(item.HotKey))
-                        {
-                            GUI.Label(rect, "Hotkeys");
-                        }
-                        else
-                        {
-                            GUI.Label(rect, "Hotkeys. Original="+ item.HotKey);
-                        }
+                        var width = rect.width * 0.2f;
+
+                        rect.width = width;
+                        GUI.Label(rect, "HotKeys");
                     };
-                    _finder.CustomHotKeysEditable.drawElementCallback += DrawHotKey;
+                    _finder.SelectedMenuItemCustomHotKeysEditable.drawElementCallback += DrawHotKey;
                 }
             }
         }
-        
+
         private void DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
         {
-            var hotkey = (MenuItemHotKey)  _finder.CustomHotKeysEditable.list[index];
-            var width = rect.width * 0.2f;
-
-            rect.width = width;
-            if (!hotkey.IsVerified)
+            var hotkey = (MenuItemHotKey)  _finder.SelectedMenuItemCustomHotKeysEditable.list[index];
+            
+            if (!hotkey.IsVerified && !hotkey.IsOriginal)
             {
+                var allWidth = rect.width;
+                var width = allWidth * 0.2f;
+
+                rect.width = width;
                 if (GUI.Button(rect, "Check&Add"))
                 {
                     var error = "";
-                    _finder.CheckAndAddHotkey(hotkey, out error);
+                    if (!_finder.TryAddHotkeyToSelectedItem(hotkey, out error))
+                    {
+                        EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
+                    }
                 }
-
+                
                 rect.x += width;
+                
+                width = allWidth * 0.15f;
+                rect.width = width;
+                
                 hotkey.Key = GUI.TextField(rect, hotkey.Key);
                 rect.x += width;
+                
                 GUI.Label(rect, " Key");
                 rect.x += width;
+                
                 hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
                 rect.x += width;
+                
                 hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
                 rect.x += width;
+                
                 hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
             }
             else
@@ -331,8 +340,8 @@ namespace SKTools.MenuItemsFinder
 
             GUI.SetNextControlName("RolledOutMenuItemCustomName");
 
-            _finder.RolledOutMenuItem.CustomNameEditable = GUILayout.TextField(
-                _finder.RolledOutMenuItem.CustomNameEditable,
+            _finder.SelectedMenuItem.CustomNameEditable = GUILayout.TextField(
+                _finder.SelectedMenuItem.CustomNameEditable,
                 GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
             if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
@@ -342,14 +351,14 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.EndHorizontal();
 
-            _finder.RolledOutMenuItem.ShowDescription = EditorGUILayout.Foldout(_finder.RolledOutMenuItem.ShowDescription, "Add Description");
-            if (_finder.RolledOutMenuItem.ShowDescription)
+            _finder.SelectedMenuItem.ShowNotice = EditorGUILayout.Foldout(_finder.SelectedMenuItem.ShowNotice, "Add Notice");
+            if (_finder.SelectedMenuItem.ShowNotice)
             {
-                _finder.RolledOutMenuItem.Description = GUILayout.TextArea(_finder.RolledOutMenuItem.Description,
+                _finder.SelectedMenuItem.Notice = GUILayout.TextArea(_finder.SelectedMenuItem.Notice,
                     GUILayout.MinHeight(60));
             }
             
-            _finder.CustomHotKeysEditable.DoLayoutList();
+            _finder.SelectedMenuItemCustomHotKeysEditable.DoLayoutList();
         }
     
         private void CleanRemovedItems()

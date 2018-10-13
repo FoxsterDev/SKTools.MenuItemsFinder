@@ -17,8 +17,8 @@ namespace SKTools.MenuItemsFinder
         private string _prefsFilePath;
         private bool _wasRemoving = false;
 
-        public MenuItemLink RolledOutMenuItem;
-        public ReorderableList CustomHotKeysEditable;
+        public MenuItemLink SelectedMenuItem;
+        public ReorderableList SelectedMenuItemCustomHotKeysEditable;
 
         public List<MenuItemLink> MenuItems; //, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
@@ -47,7 +47,7 @@ namespace SKTools.MenuItemsFinder
                     }
                 }
 
-                File.WriteAllText(_prefsFilePath, EditorJsonUtility.ToJson(Prefs));
+                File.WriteAllText(_prefsFilePath, EditorJsonUtility.ToJson(Prefs, true));
             }
             catch
             {
@@ -168,7 +168,7 @@ namespace SKTools.MenuItemsFinder
                 dictWithKeyMenuItem.TryGetValue(customized.Path, out menuItemLink);
                 if (menuItemLink == null)
                 {
-                    customized.PostUpdate();
+                    customized.UpdateLabel();
                     menuItems.Add(customized);
                     continue;
                 }
@@ -186,9 +186,9 @@ namespace SKTools.MenuItemsFinder
 
         public void AddCustomizedNameToPrefs(MenuItemLink link)
         {
-            if (RolledOutMenuItem != null && !string.IsNullOrEmpty(RolledOutMenuItem.CustomNameEditable))
+            if (SelectedMenuItem != null && !string.IsNullOrEmpty(SelectedMenuItem.CustomNameEditable))
             {
-                link.CustomName = RolledOutMenuItem.CustomNameEditable;
+                link.CustomName = SelectedMenuItem.CustomNameEditable;
                 link.UpdateLabel();
             }
         }
@@ -210,13 +210,13 @@ namespace SKTools.MenuItemsFinder
 
         public bool ToggleSettings(MenuItemLink item)
         {
-            if (RolledOutMenuItem == null)
+            if (SelectedMenuItem == null)
             {
                 ShowSettings(item);
                 return true;
             }
 
-            var newSettings = RolledOutMenuItem.Key != item.Key;
+            var newSettings = SelectedMenuItem.Key != item.Key;
             HideSettings();
 
             if (newSettings)
@@ -230,23 +230,52 @@ namespace SKTools.MenuItemsFinder
 
         private void HideSettings()
         {
-            RolledOutMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
-            RolledOutMenuItem = null;
-            CustomHotKeysEditable = null;
+            SelectedMenuItem.HotKeys.RemoveAll(i => !i.IsVerified);
+            SelectedMenuItem = null;
+            SelectedMenuItemCustomHotKeysEditable = null;
         }
 
         private void ShowSettings(MenuItemLink item)
         {
-            RolledOutMenuItem = item;
+            SelectedMenuItem = item;
 
-            CustomHotKeysEditable =
-                new ReorderableList(item.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
+            SelectedMenuItemCustomHotKeysEditable =
+                new ReorderableList(item.HotKeys, typeof(MenuItemHotKey), true, true, true, true);
          
         }
 
-        public void CheckAndAddHotkey(MenuItemHotKey hotkey, out string error)
+        public bool TryAddHotkeyToSelectedItem(MenuItemHotKey hotkey, out string error)
         {
-            throw new NotImplementedException();
+            var item = default(MenuItemLink);
+            error = string.Empty;
+            var checkModifiers = hotkey.Alt | hotkey.Cmd | hotkey.Shift;
+            if (!checkModifiers)
+            {
+                error = " there needs to have at least one modifier alt or cmd or shift!";
+                return false;
+            }
+
+            var key = hotkey.Key.ToCharArray();
+            if (key.Length == 1 && ((key[0] - 42) >= 0 
+                                  && (key[0] - 42) <= 9) || (key[0] >= 'A' && key[0] <= 'Z') || (key[0] >= 'a' && key[0] <= 'z'))
+            {
+                error = "please use this interval of available symbols for the key A-Z, a-z, 0-9";
+                return false;
+            }
+            
+            var exist = MenuItems.Find(i => i.HotKeys.Contains(hotkey));
+            if (exist != null)
+            {
+                error = exist.Path + " this menuitem already contains hotkey " + hotkey;
+                return false;
+            }
+
+            hotkey.IsVerified = true;
+            //hotkey.HotkeyString = MenuItemHotKey.ToPack(hotkey);
+            //SelectedMenuItemCustomHotKeysEditable.list.Remove(hotkey);
+            //SelectedMenuItem.HotKeys.Add(hotkey);
+            SelectedMenuItem.UpdateLabel();
+            return true;
         }
 
         public void ToggleStarred(MenuItemLink item)
