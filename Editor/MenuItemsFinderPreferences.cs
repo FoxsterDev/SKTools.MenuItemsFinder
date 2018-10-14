@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
@@ -18,31 +19,61 @@ namespace SKTools.MenuItemsFinder
 
         [NonSerialized] public string PreviousFilterString = null;
 
-        private static string GetFilePath
+        private string GetFilePath
+        {
+            get
+            {
+               
+                return string.Concat(DirectoryPath, "Prefs.json");
+            }
+        }
+
+        private string DirectoryPath
         {
             get
             {
                 var stackTrace = new StackTrace(true);
-                var editorDirectory = stackTrace.GetFrames()[0].GetFileName()
+                return stackTrace.GetFrames()[0].GetFileName()
                     .Replace(typeof(MenuItemsFinderPreferences).Name + ".cs", string.Empty);
-
-                return string.Concat(editorDirectory, "Prefs.json");
             }
         }
-
+        
+        public string AssetsPath
+        {
+            get
+            {
+                return DirectoryPath.Replace("Editor", "Editor Resources").Substring(Application.dataPath.Length - "Assets".Length);
+            }
+        }
+        
         public static MenuItemsFinderPreferences Current
         {
             get
             {
                 if (_current != null)
                     return _current;
+                
                 _current = new MenuItemsFinderPreferences();
-                if (File.Exists(GetFilePath))
-                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(GetFilePath), _current);
+                
+                var filePath = _current.GetFilePath;
+                if (File.Exists(filePath))
+                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), _current);
                 else
-                    Debug.LogError("Can't load prefs.json by path=" + GetFilePath);
+                    Debug.LogError("Can't load prefs.json by path=" + filePath);
 
                 return _current;
+            }
+        }
+
+        public void Save()
+        {
+            try
+            {
+                _current = null;
+                File.WriteAllText(GetFilePath, EditorJsonUtility.ToJson(this, true));
+            }
+            catch
+            {
             }
         }
     }

@@ -14,42 +14,59 @@ namespace SKTools.MenuItemsFinder
 {
     internal class MenuItemsFinder : IDisposable
     {
-        private string _prefsFilePath;
+        private static Dictionary<string, string> _hotKeysMap;
+        
         private bool _wasRemoving = false;
-
         public MenuItemLink SelectedMenuItem;
+        public List<MenuItemLink> MenuItems;
         public ReorderableList SelectedMenuItemCustomHotKeysEditable;
 
-        public List<MenuItemLink> MenuItems; //, FilteredMenuItems = new List<MenuItemLink>();
+      
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
-
-        public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences();
-      
+        public MenuItemsFinderPreferences Prefs
+        {
+            get { return MenuItemsFinderPreferences.Current; }
+        }
 
         public MenuItemsFinder()
         {
             Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
         }
 
+        public static Dictionary<string, string> HotKeysMap
+        {
+            get
+            {
+                if (_hotKeysMap == null)
+                {
+                    _hotKeysMap = new Dictionary<string, string>();
+                    foreach (var item in MenuItemsFinderPreferences.Current.CustomizedMenuItems)
+                    {
+                        foreach (var hotKey in item.CustomHotKeys)
+                        {
+                            _hotKeysMap[hotKey] = item.Path;
+                            Debug.Log("Added hotkey: "+ hotKey +" : "+ item.Path);
+                        }
+                    }
+                }
+
+                return _hotKeysMap;
+            }
+        }
+   
         public void SavePrefs()
         {
             try
             {
-                Prefs.CustomizedMenuItems.Clear();
-                foreach (var item in MenuItems)
+                var customizedItems = MenuItems.FindAll(i => i.IsCustomized).ToList();
+                customizedItems.ForEach(item=> { if (item.CustomHotKeys.Count > 0)
                 {
-                    if (item.IsCustomized)
-                    {
-                        if (item.CustomHotKeys.Count > 0)
-                        {
-                            item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
-                        }
-                        Prefs.CustomizedMenuItems.Add(item);
-                    }
-                }
-
-                File.WriteAllText(_prefsFilePath, EditorJsonUtility.ToJson(Prefs, true));
+                    item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
+                }});
+                
+                Prefs.CustomizedMenuItems = new List<MenuItemLink>(customizedItems);
+                Prefs.Save();
             }
             catch
             {
@@ -60,29 +77,18 @@ namespace SKTools.MenuItemsFinder
         {
             try
             {
-                var stackTrace = new StackTrace(true);
-                var editorDirectory = stackTrace.GetFrames()[0].GetFileName().Replace(typeof(MenuItemsFinder).Name + ".cs", string.Empty);
+                var assetPath = Prefs.AssetsPath;
                 
-                _prefsFilePath = editorDirectory + "Prefs.json";
-                
-                if (File.Exists(_prefsFilePath))
-                {
-                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(_prefsFilePath), Prefs);
-                }
-
-                var assetsPath = editorDirectory.Replace("Editor", "Editor Resources")
-                    .Substring(Application.dataPath.Length - "Assets".Length);
-
-                UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "unstarred.png");
-                StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "starred.png");
-                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "loading.png");
-                SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "settings.png");
+                UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "unstarred.png");
+                StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "starred.png");
+                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "loading.png");
+                SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "settings.png");
                 
                 MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
                 MenuItems.Sort((left, right) => left.Path[0] - right.Path[0]);
 
-                Assert.IsNotNull(StarredImage, "Check path=" + assetsPath + "starred.png");
-                Assert.IsNotNull(UnstarredImage, "Check path=" + assetsPath + "unstarred.png");
+                Assert.IsNotNull(StarredImage, "Check path=" +assetPath + "starred.png");
+                Assert.IsNotNull(UnstarredImage, "Check path=" + assetPath + "unstarred.png");
             }
             catch (Exception ex)
             {
@@ -241,7 +247,7 @@ namespace SKTools.MenuItemsFinder
         private void ShowSettings(MenuItemLink item)
         {
             SelectedMenuItem = item;
-
+            SelectedMenuItem.CustomNameEditable = SelectedMenuItem.CustomName;
             SelectedMenuItemCustomHotKeysEditable =
                 new ReorderableList(item.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
          

@@ -1,5 +1,4 @@
 {
-    "FilterString": "ass",
     "CustomizedMenuItems": [
         {
             "CustomName": "",
@@ -44,5 +43,6 @@
             "Notice": "",
             "CustomHotKeys": []
         }
-    ]
+    ],
+    "FilterString": "ass"
 }

@@ -1,11 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -13,7 +8,6 @@ namespace SKTools.MenuItemsFinder
     internal class MenuItemsFinderKeyboardInput
     {
         private static FieldInfo eventInfo;
-        private static Dictionary<string, string> HotKeysMap;
         
         static MenuItemsFinderKeyboardInput()
         {
@@ -49,27 +43,13 @@ namespace SKTools.MenuItemsFinder
                     Key = ev.keyCode.ToString().ToLower()
                 };
 
-                if (HotKeysMap == null)
-                {
-                    HotKeysMap = new Dictionary<string, string>();
-                    foreach (var item in MenuItemsFinderPreferences.Current.CustomizedMenuItems)
-                    {
-                        foreach (var hotKey in item.CustomHotKeys)
-                        {
-                            HotKeysMap[hotKey] = item.Path;
-                            Debug.Log("Added hotkey: "+ hotKey +" : "+ item.Path);
-                        }
-                    }
-                }
-
                 string menuItemPath;
-                HotKeysMap.TryGetValue(inputHotkey, out menuItemPath);
+                MenuItemsFinder.HotKeysMap.TryGetValue(inputHotkey, out menuItemPath);
+                
                 if (!string.IsNullOrEmpty(menuItemPath))
                 {
                     return EditorApplication.ExecuteMenuItem(menuItemPath);
                 }
-
-                //Debug.Log("Can't find any menuitem with this hotkey="+ inputHotkey);
             }
             
             return false;
