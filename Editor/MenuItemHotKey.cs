@@ -17,7 +17,7 @@ namespace SKTools.MenuItemsFinder
        
         public override string ToString()
         {
-            return ToFormat(this);
+            return ToPack(this);
         }
         
         public bool Equals(MenuItemHotKey other)
@@ -35,7 +35,12 @@ namespace SKTools.MenuItemsFinder
             return k != null ? k.ToString() : default(string);
         }
 
-        public static string ToFormat(MenuItemHotKey hotkey)
+        public string Formatted
+        {
+            get { return ToFormat(this); }
+        }
+
+        private static string ToFormat(MenuItemHotKey hotkey)
         {
             var str = string.Empty;
             

@@ -94,9 +94,9 @@ namespace SKTools.MenuItemsFinder
             Label = !string.IsNullOrEmpty(CustomName) ? CustomName : Path;
 
             var hotkey = HotKey ?? (CustomHotKeys.Count > 0 ? CustomHotKeys[0] : null);
-            if (!string.IsNullOrEmpty(hotkey))
+            if (hotkey != null)
             {
-                Label = string.Concat(Label," <color=cyan>", hotkey, "</color>");;
+                Label = string.Concat(Label," <color=cyan>", hotkey.Formatted, "</color>");;
             }
         }
 

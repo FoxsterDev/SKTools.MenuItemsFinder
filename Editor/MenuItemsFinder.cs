@@ -23,11 +23,9 @@ namespace SKTools.MenuItemsFinder
         public List<MenuItemLink> MenuItems; //, FilteredMenuItems = new List<MenuItemLink>();
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
+
+        public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences();
       
-        public MenuItemsFinderPreferences Prefs = new MenuItemsFinderPreferences
-        {
-            FilterString = "Please type menuitem name here.."
-        };
 
         public MenuItemsFinder()
         {
@@ -43,6 +41,10 @@ namespace SKTools.MenuItemsFinder
                 {
                     if (item.IsCustomized)
                     {
+                        if (item.CustomHotKeys.Count > 0)
+                        {
+                            item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
+                        }
                         Prefs.CustomizedMenuItems.Add(item);
                     }
                 }
@@ -53,33 +55,34 @@ namespace SKTools.MenuItemsFinder
             {
             }
         }
-
+     
         public void Load()
         {
             try
             {
                 var stackTrace = new StackTrace(true);
-                var editorDirectory = stackTrace.GetFrames()[0].GetFileName()
-                    .Replace(typeof(MenuItemsFinder).Name + ".cs", string.Empty);
+                var editorDirectory = stackTrace.GetFrames()[0].GetFileName().Replace(typeof(MenuItemsFinder).Name + ".cs", string.Empty);
+                
                 _prefsFilePath = editorDirectory + "Prefs.json";
-                var starFilePath = editorDirectory.Replace("Editor", "Editor Resources")
-                    .Substring(Application.dataPath.Length - "Assets".Length);
-
-                UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "unstarred.png");
-                StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "starred.png");
-                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "loading.png");
-                SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(starFilePath + "settings.png");
-
+                
                 if (File.Exists(_prefsFilePath))
                 {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(_prefsFilePath), Prefs);
                 }
 
+                var assetsPath = editorDirectory.Replace("Editor", "Editor Resources")
+                    .Substring(Application.dataPath.Length - "Assets".Length);
+
+                UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "unstarred.png");
+                StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "starred.png");
+                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "loading.png");
+                SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetsPath + "settings.png");
+                
                 MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
                 MenuItems.Sort((left, right) => left.Path[0] - right.Path[0]);
 
-                Assert.IsNotNull(StarredImage, "Check path=" + starFilePath + "starred.png");
-                Assert.IsNotNull(UnstarredImage, "Check path=" + starFilePath + "unstarred.png");
+                Assert.IsNotNull(StarredImage, "Check path=" + assetsPath + "starred.png");
+                Assert.IsNotNull(UnstarredImage, "Check path=" + assetsPath + "unstarred.png");
             }
             catch (Exception ex)
             {
@@ -256,14 +259,16 @@ namespace SKTools.MenuItemsFinder
             }
 
             var key = hotkey.Key.ToCharArray();
-            if (key.Length == 1 && ((key[0] - 42) >= 0 
-                                  && (key[0] - 42) <= 9) || (key[0] >= 'A' && key[0] <= 'Z') || (key[0] >= 'a' && key[0] <= 'z'))
+            //Debug.LogError(key[0] +" , "+ key.Length);
+            //Debug.Log(key[0] >= 'a' && key[0] <= 'z');
+            
+            if (!(key.Length == 1 && ( ((key[0] - 42) >= 0 && (key[0] - 42) <= 9)) || (key[0] >= 'A' && key[0] <= 'Z') || (key[0] >= 'a' && key[0] <= 'z')))
             {
                 error = "please use this interval of available symbols for the key A-Z, a-z, 0-9";
                 return false;
             }
             
-            var exist = MenuItems.Find(i => (i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey));
+            var exist = MenuItems.Find(i => i.Key != SelectedMenuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
             if (exist != null)
             {
                 error = exist.Path + " this menuitem already contains hotkey " + hotkey;

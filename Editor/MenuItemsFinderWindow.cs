@@ -310,7 +310,7 @@ namespace SKTools.MenuItemsFinder
             }
             else
             {
-                GUI.Label(rect, hotkey);
+                GUI.Label(rect, hotkey.Formatted);
             }
         }
 
