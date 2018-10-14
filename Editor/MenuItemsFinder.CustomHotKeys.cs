@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
+        private static FieldInfo _eventInfo;
+        
         private static Dictionary<string, string> HotKeysMap
         {
             get
@@ -23,6 +26,29 @@ namespace SKTools.MenuItemsFinder
                 }
 
                 return _hotKeysMap;
+            }
+        }
+        
+        [InitializeOnLoadMethod]
+        private static void MenuItemsFinder_CustomHotkeys_Initializer()
+        {
+            _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+            
+            EditorApplication.update += Update;
+        }
+
+        private static void Update()
+        {
+            var ev = (Event) _eventInfo.GetValue(null);
+            var id = GUIUtility.GetControlID(FocusType.Passive);
+            var eventType = ev.GetTypeForControl(id);
+        
+            if (eventType == EventType.KeyUp)
+            {
+                if (TryExecuteHotKey(ev))
+                {
+                    ev.Use();
+                }
             }
         }
         
@@ -60,7 +86,7 @@ namespace SKTools.MenuItemsFinder
             return null;
         }
         
-        public bool TryAddHotkeyToSelectedItem(MenuItemHotKey hotkey, out string error)
+        public bool TryAddHotkeyToSelectedItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
         {
             var item = default(MenuItemLink);
             error = string.Empty;
@@ -80,7 +106,7 @@ namespace SKTools.MenuItemsFinder
                 return false;
             }
             
-            var exist = MenuItems.Find(i => i.Key != SelectedMenuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
+            var exist = MenuItems.Find(i => i.Key != menuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
             if (exist != null)
             {
                 error = exist.Path + " this menuitem already contains hotkey " + hotkey;
@@ -89,7 +115,7 @@ namespace SKTools.MenuItemsFinder
 
             hotkey.IsVerified = true;
             
-            SelectedMenuItem.UpdateLabel();
+            menuItem.UpdateLabel();
             return true;
         }
     }

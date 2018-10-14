@@ -269,7 +269,7 @@ namespace SKTools.MenuItemsFinder
                 if (GUI.Button(rect, "Check&Add"))
                 {
                     var error = "";
-                    if (!_finder.TryAddHotkeyToSelectedItem(hotkey, out error))
+                    if (!_finder.TryAddHotkeyToSelectedItem(_finder.SelectedMenuItem, hotkey, out error))
                     {
                         EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
                     }
@@ -323,8 +323,7 @@ namespace SKTools.MenuItemsFinder
 
             GUI.SetNextControlName("RolledOutMenuItemCustomName");
 
-            _finder.SelectedMenuItem.CustomNameEditable = GUILayout.TextField(
-                _finder.SelectedMenuItem.CustomNameEditable,
+            _finder.SelectedMenuItem.CustomNameEditable = GUILayout.TextField(_finder.SelectedMenuItem.CustomNameEditable,
                 GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
             if (GUILayout.Button("+", GUILayout.MinWidth(20), GUILayout.MaxWidth(20)))
