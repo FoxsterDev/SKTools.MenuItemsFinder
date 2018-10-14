@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -12,7 +10,7 @@ using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal class MenuItemsFinder : IDisposable
+    internal partial class MenuItemsFinder : IDisposable
     {
         private static Dictionary<string, string> _hotKeysMap;
         
@@ -20,41 +18,44 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink SelectedMenuItem;
         public List<MenuItemLink> MenuItems;
         public ReorderableList SelectedMenuItemCustomHotKeysEditable;
-
       
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
-
-        public MenuItemsFinderPreferences Prefs
-        {
-            get { return MenuItemsFinderPreferences.Current; }
-        }
 
         public MenuItemsFinder()
         {
             Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
         }
-
-        public static Dictionary<string, string> HotKeysMap
+        
+        public MenuItemsFinderPreferences Prefs
         {
-            get
+            get { return MenuItemsFinderPreferences.Current; }
+        }
+
+     
+   
+        public string FilterString
+        {
+            get { return Prefs.FilterString; }
+            set
             {
-                if (_hotKeysMap == null)
+                Prefs.FilterString = value;
+                
+                if (!Prefs.FilterString.Equals(Prefs.PreviousFilterString))
                 {
-                    _hotKeysMap = new Dictionary<string, string>();
-                    foreach (var item in MenuItemsFinderPreferences.Current.CustomizedMenuItems)
+                    var key = Prefs.FilterString.ToLower();
+                    Prefs.PreviousFilterString = Prefs.FilterString;
+
+                    foreach (var item in MenuItems)
                     {
-                        foreach (var hotKey in item.CustomHotKeys)
-                        {
-                            _hotKeysMap[hotKey] = item.Path;
-                            Debug.Log("Added hotkey: "+ hotKey +" : "+ item.Path);
-                        }
+                        item.IsFiltered = string.IsNullOrEmpty(key) ||
+                                          item.Key.Contains(key) ||
+                                          (!string.IsNullOrEmpty(item.CustomName) &&
+                                           item.CustomName.ToLower().Contains(key));
                     }
                 }
-
-                return _hotKeysMap;
             }
         }
-   
+        
         public void SavePrefs()
         {
             try
@@ -85,8 +86,7 @@ namespace SKTools.MenuItemsFinder
                 SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "settings.png");
                 
                 MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
-                MenuItems.Sort((left, right) => left.Path[0] - right.Path[0]);
-
+                
                 Assert.IsNotNull(StarredImage, "Check path=" +assetPath + "starred.png");
                 Assert.IsNotNull(UnstarredImage, "Check path=" + assetPath + "unstarred.png");
             }
@@ -94,103 +94,6 @@ namespace SKTools.MenuItemsFinder
             {
                 Debug.LogError("Cant load prefs=" + ex);
             }
-        }
-
-        private List<MenuItemLink> FindAllMenuItems(List<MenuItemLink> customizedItems)
-        {
-            var watch = new Stopwatch();
-            watch.Start();
-
-            var dict = new Dictionary<string, MenuItemData>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            var menuItems = new List<MenuItemLink>(200);
-            foreach (var assembly in assemblies)
-            {
-                var types = assembly.GetTypes();
-                foreach (var type in types)
-                {
-                    var methods =
-                        type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic |
-                                        BindingFlags.Public);
-
-                    foreach (var method in methods)
-                    {
-                        var items = method.GetCustomAttributes(typeof(MenuItem), false).Cast<MenuItem>().ToArray();
-                        if (items.Length != 1)
-                        {
-                            if (items.Length > 1)
-                            {
-                                Debug.LogError("11111=" + items.Length);
-                            }
-
-                            continue;
-                        }
-
-                        var key = items[0].menuItem;
-
-                        MenuItemData data;
-                        dict.TryGetValue(key, out data);
-                        if (data == null)
-                        {
-                            data = new MenuItemData();
-                            dict.Add(key, data);
-                        }
-
-                        if (items[0].validate)
-                        {
-                            data.TargetAttributeValidate = items[0];
-                            data.TargetMethodValidate = method;
-                        }
-                        else
-                        {
-                            data.TargetAttribute = items[0];
-                            data.TargetMethod = method;
-                        }
-                    }
-                }
-            }
-
-            var dictWithKeyMenuItem = new Dictionary<string, MenuItemLink>(dict.Count);
-
-            foreach (var entry in dict)
-            {
-                if (entry.Value.TargetMethodValidate != null && entry.Value.TargetMethod == null)
-                {
-                    Debug.LogWarning("There is a validate method without execution method=" +
-                                     entry.Value.TargetMethodValidate.Name + " menupath=" +
-                                     entry.Value.TargetAttributeValidate.menuItem);
-                    continue;
-                }
-
-                var link = new MenuItemLink(entry.Value);
-                menuItems.Add(link);
-                dictWithKeyMenuItem[link.Path] = link;
-            }
-
-            MenuItemLink menuItemLink;
-            foreach (var customized in customizedItems)
-            {
-                if (string.IsNullOrEmpty(customized.Path))
-                    continue;
-
-                dictWithKeyMenuItem.TryGetValue(customized.Path, out menuItemLink);
-                if (menuItemLink == null)
-                {
-                    customized.UpdateLabel();
-                    menuItems.Add(customized);
-                    continue;
-                }
-
-                menuItemLink.UpdateFrom(customized);
-            }
-
-            watch.Stop();
-            Debug.Log("Time to FindAllMenuItems takes=" + watch.ElapsedMilliseconds +
-                      "ms Count=" +
-                      menuItems.Count); //for mac book pro 2018 it takes about 170 ms, it is not critical affects every time to run it
-
-            return menuItems;
         }
 
         public void AddCustomizedNameToPrefs(MenuItemLink link)
@@ -253,41 +156,7 @@ namespace SKTools.MenuItemsFinder
          
         }
 
-        public bool TryAddHotkeyToSelectedItem(MenuItemHotKey hotkey, out string error)
-        {
-            var item = default(MenuItemLink);
-            error = string.Empty;
-            var checkModifiers = hotkey.Alt | hotkey.Cmd | hotkey.Shift;
-            if (!checkModifiers)
-            {
-                error = " there needs to have at least one modifier alt or cmd or shift!";
-                return false;
-            }
-
-            var key = hotkey.Key.ToCharArray();
-            //Debug.LogError(key[0] +" , "+ key.Length);
-            //Debug.Log(key[0] >= 'a' && key[0] <= 'z');
-            
-            if (!(key.Length == 1 && ( ((key[0] - 42) >= 0 && (key[0] - 42) <= 9)) || (key[0] >= 'A' && key[0] <= 'Z') || (key[0] >= 'a' && key[0] <= 'z')))
-            {
-                error = "please use this interval of available symbols for the key A-Z, a-z, 0-9";
-                return false;
-            }
-            
-            var exist = MenuItems.Find(i => i.Key != SelectedMenuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
-            if (exist != null)
-            {
-                error = exist.Path + " this menuitem already contains hotkey " + hotkey;
-                return false;
-            }
-
-            hotkey.IsVerified = true;
-            //hotkey.HotkeyString = MenuItemHotKey.ToPack(hotkey);
-            //SelectedMenuItemCustomHotKeysEditable.list.Remove(hotkey);
-            //SelectedMenuItem.CustomHotKeys.Add(hotkey);
-            SelectedMenuItem.UpdateLabel();
-            return true;
-        }
+       
 
         public void ToggleStarred(MenuItemLink item)
         {
@@ -361,7 +230,7 @@ namespace SKTools.MenuItemsFinder
 #if !UNITY_EDITOR_WIN
             filePath = "file://" + filePath.Replace(@"\", "/");
 #else
-    filePath = @"file:\\" + filePath.Replace("/", @"\");;
+            filePath = @"file:\\" + filePath.Replace("/", @"\");;
 #endif
             Application.OpenURL(filePath);
         }
@@ -373,6 +242,5 @@ namespace SKTools.MenuItemsFinder
             Resources.UnloadAsset(LoadingImage);
             Resources.UnloadAsset(SettingsImage);
         }
-
     }
 }

@@ -70,7 +70,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         /// <summary>
-        /// Need after recompiling
+        /// After recompiling _finder will be null
         /// </summary>
         private void CheckMissedFinder()
         {
@@ -102,22 +102,8 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSearchBar()
         {
-            _finder.Prefs.FilterString = GUILayoutCollection.SearchTextField(_finder.Prefs.FilterString,
-                _finder.SelectedMenuItem == null, GUILayout.MinWidth(200));
-
-            if (!_finder.Prefs.FilterString.Equals(_finder.Prefs.PreviousFilterString))
-            {
-                var key = _finder.Prefs.FilterString.ToLower();
-                _finder.Prefs.PreviousFilterString = _finder.Prefs.FilterString;
-
-                foreach (var item in _finder.MenuItems)
-                {
-                    item.IsFiltered = string.IsNullOrEmpty(key) ||
-                                      item.Key.Contains(key) ||
-                                      (!string.IsNullOrEmpty(item.CustomName) &&
-                                       item.CustomName.ToLower().Contains(key));
-                }
-            }
+             var focusControl = _finder.SelectedMenuItem == null;
+            _finder.FilterString = GUILayoutCollection.SearchTextField(_finder.FilterString, focusControl, GUILayout.MinWidth(200));
         }
 
         private void DrawMenu()
