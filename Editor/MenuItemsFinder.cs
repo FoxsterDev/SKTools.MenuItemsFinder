@@ -12,6 +12,7 @@ namespace SKTools.MenuItemsFinder
     public delegate void FinderDelegate();
     public delegate void FinderDelegate<T>(T obj);
 
+    //[Serializable]
     internal partial class MenuItemsFinder
     {
         private bool _wasRemoving;
@@ -25,7 +26,7 @@ namespace SKTools.MenuItemsFinder
         {
             return _instance ?? new MenuItemsFinder();
         }
-
+       
         private MenuItemsFinder()
         {
             _prefs = new MenuItemsFinderPreferences();
@@ -61,7 +62,6 @@ namespace SKTools.MenuItemsFinder
             {
                 _menuItems = FindAllMenuItems(_prefs.CustomizedMenuItems);
                 _isLoaded = true;
-                Debug.Log(typeof(MenuItemsFinder).Name + " was loaded, version=" + MenuItemsFinderVersion.Version);
             }
             catch (Exception ex)
             {

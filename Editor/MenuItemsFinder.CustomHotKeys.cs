@@ -10,9 +10,9 @@ namespace SKTools.MenuItemsFinder
     {
         private ReorderableList _selectedMenuItemCustomHotKeysEditable;
 
-        private  FieldInfo _eventInfo;
-        private  Dictionary<string, string> _hotKeysMap;
-       
+        private static FieldInfo _eventInfo;
+        private static Dictionary<string, string> _hotKeysMap;
+
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_CustomHotkeys_Initializer()
         {
@@ -22,25 +22,31 @@ namespace SKTools.MenuItemsFinder
         private void CustomHotKeysInitializer()
         {
             _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+
+            UpdateHotKeysMap(_prefs.CustomizedMenuItems);
+            EditorApplication.update += KeyboardInputUpdate;
+        }
+
+        private void UpdateHotKeysMap(List<MenuItemLink> menuItemLinks)
+        {
             _hotKeysMap = new Dictionary<string, string>(10);
-            
-            foreach (var item in _prefs.CustomizedMenuItems)
+
+            foreach (var item in menuItemLinks)
             {
                 foreach (var hotKey in item.CustomHotKeys)
                 {
+                    if (!hotKey.IsVerified) continue;
                     _hotKeysMap[hotKey] = item.Path;
                 }
             }
-            
-            EditorApplication.update += KeyboardInputUpdate;
         }
-        
-        private void KeyboardInputUpdate()
+
+        private static void KeyboardInputUpdate()
         {
             var ev = (Event) _eventInfo.GetValue(null);
             var id = GUIUtility.GetControlID(FocusType.Passive);
             var eventType = ev.GetTypeForControl(id);
-        
+
             if (eventType == EventType.KeyUp)
             {
                 if (TryExecuteHotKey(ev))
@@ -49,11 +55,11 @@ namespace SKTools.MenuItemsFinder
                 }
             }
         }
-        
-        private bool TryExecuteHotKey(Event ev)
+
+        private static bool TryExecuteHotKey(Event ev)
         {
             var inputHotkey = ConvertEventToHotKey(ev);
-            
+
             if (inputHotkey != null)
             {
                 string menuItemPath;
@@ -67,7 +73,7 @@ namespace SKTools.MenuItemsFinder
 
             return false;
         }
-        
+
         private static MenuItemHotKey ConvertEventToHotKey(Event ev)
         {
             if (ev.isKey && (ev.shift || ev.alt || ev.command || ev.control))
@@ -84,10 +90,10 @@ namespace SKTools.MenuItemsFinder
             return null;
         }
 
-        private bool TryAddHotkeyToSelectedItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
+        private bool IsValidHotKey(MenuItemHotKey hotkey, out string error)
         {
             error = string.Empty;
-            
+
             var checkModifiers = hotkey.Alt | hotkey.Cmd | hotkey.Shift;
             if (!checkModifiers)
             {
@@ -96,24 +102,54 @@ namespace SKTools.MenuItemsFinder
             }
 
             var key = hotkey.Key.ToCharArray();
-            
-            if (!(key.Length == 1 && ( ((key[0] - 42) >= 0 && (key[0] - 42) <= 9)) || (key[0] >= 'A' && key[0] <= 'Z') || (key[0] >= 'a' && key[0] <= 'z')))
+
+            if (!(key.Length == 1 && (((key[0] - 42) >= 0 && (key[0] - 42) <= 9)) ||
+                  (key[0] >= 'A' && key[0] <= 'Z') ||
+                  (key[0] >= 'a' && key[0] <= 'z')))
             {
                 error = "please use this interval of available symbols for the key A-Z, a-z, 0-9";
                 return false;
             }
-            
-            var exist = _menuItems.Find(i => i.Key != menuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
-            if (exist != null)
+
+            UpdateHotKeysMap(_menuItems);
+            string itemPath;
+            _hotKeysMap.TryGetValue(hotkey, out itemPath);
+
+            if (itemPath == null)
             {
-                error = exist.Path + " this menuitem already contains hotkey " + hotkey;
+                var item = _menuItems.Find(itemLink => hotkey.Equals(itemLink.HotKey));
+                if (item != null)
+                {
+                    itemPath = item.Path;
+                }
+            }
+
+            if (itemPath != null)
+            {
+                error = itemPath + " this menuitem already contains hotkey " + hotkey;
                 return false;
             }
 
-            hotkey.IsVerified = true;
-            
-            menuItem.UpdateLabel();
             return true;
+        }
+
+        private bool TryAddHotKeyToItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
+        {
+            if (!IsValidHotKey(hotkey, out error)) return false;
+
+            hotkey.IsVerified = true;
+            menuItem.UpdateLabel();
+            UpdateHotKeysMap(_menuItems);
+            return true;
+        }
+
+        private void CustomHotKeysEditable_OnRemoved(ReorderableList list)
+        {
+            list.list.RemoveAt(list.index);
+            if (list.index >= list.list.Count - 1)
+                list.index = list.list.Count - 1;
+            
+            UpdateHotKeysMap(_menuItems);
         }
     }
 }

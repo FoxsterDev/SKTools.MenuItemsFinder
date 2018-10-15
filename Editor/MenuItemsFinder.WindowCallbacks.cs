@@ -15,7 +15,7 @@ namespace SKTools.MenuItemsFinder
         private static void ShowWindow()
         {
             var window = GetWindow(true);
-            
+
             var finder = GetFinder();
             finder.Load();
             finder.SetWindow(window);

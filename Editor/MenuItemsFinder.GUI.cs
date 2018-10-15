@@ -1,11 +1,12 @@
 ﻿using System;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal partial class MenuItemsFinder : IDisposable
+    internal partial class MenuItemsFinder  : IDisposable
     {
         private Vector2 _scrollPosition;
 
@@ -246,7 +247,8 @@ namespace SKTools.MenuItemsFinder
                     {
                         GUI.Label(rect, "HotKeys " + _selectedMenuItem.HotKey);
                     };
-                    _selectedMenuItemCustomHotKeysEditable.drawElementCallback += DrawHotKey;
+                    _selectedMenuItemCustomHotKeysEditable.drawElementCallback += CustomHotKeysEditable_DrawHotKey;
+                    _selectedMenuItemCustomHotKeysEditable.onRemoveCallback += CustomHotKeysEditable_OnRemoved;
                 }
             }
             
@@ -258,7 +260,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private void DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
+        private void CustomHotKeysEditable_DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
         {
             var hotkey = (MenuItemHotKey)  _selectedMenuItemCustomHotKeysEditable.list[index];
             
@@ -271,7 +273,7 @@ namespace SKTools.MenuItemsFinder
                 if (GUI.Button(rect, "Check&Add"))
                 {
                     var error = "";
-                    if (!TryAddHotkeyToSelectedItem(_selectedMenuItem, hotkey, out error))
+                    if (!TryAddHotKeyToItem(_selectedMenuItem, hotkey, out error))
                     {
                         EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
                     }

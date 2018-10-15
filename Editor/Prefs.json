@@ -12,15 +12,7 @@
             "Starred": true,
             "Path": "Window/Analysis/Profiler",
             "Notice": "",
-            "CustomHotKeys": [
-                {
-                    "Key": "p",
-                    "Shift": false,
-                    "Alt": true,
-                    "Cmd": false,
-                    "IsVerified": true
-                }
-            ]
+            "CustomHotKeys": []
         },
         {
             "CustomName": "",

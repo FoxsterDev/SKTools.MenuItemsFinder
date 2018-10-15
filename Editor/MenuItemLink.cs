@@ -78,7 +78,7 @@ namespace SKTools.MenuItemsFinder
         {
             Starred = item.Starred;
             CustomNameEditable = CustomName = item.CustomName;
-            CustomHotKeys = item.CustomHotKeys;
+            CustomHotKeys = !IsMissed ? item.CustomHotKeys : new List<MenuItemHotKey>();
             
             if (string.IsNullOrEmpty(Path))
             {
