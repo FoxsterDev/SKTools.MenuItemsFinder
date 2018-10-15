@@ -5,8 +5,6 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private MenuItemsFinderWindow _window;
-
         private static bool IsWindowOpen
         {
             get { return EditorPrefs.GetBool(typeof(MenuItemsFinder).Name, false); }
@@ -18,6 +16,7 @@ namespace SKTools.MenuItemsFinder
         {
             var window = GetWindow(true);
             var finder = GetFinder();
+            finder.Load();
             finder.SetWindow(window);
 
             window.Show();
@@ -38,6 +37,7 @@ namespace SKTools.MenuItemsFinder
             }
 
             var finder = GetFinder();
+            finder.Load();
             finder.SetWindow(window);
             window.Focus();
         }
@@ -59,8 +59,8 @@ namespace SKTools.MenuItemsFinder
 
         private void SetWindow(MenuItemsFinderWindow window)
         {
-            _window = window;
             LoadAssets();
+            
             window.autoRepaintOnSceneChange = true;
             window.titleContent = new GUIContent(typeof(MenuItemsFinderWindow).Name);
             window.DrawGuiCallback = OnWindowGui;
@@ -68,22 +68,23 @@ namespace SKTools.MenuItemsFinder
             window.LostFocusCallback = OnWindowLostFocus;
         }
 
-        private void OnWindowLostFocus()
+        private void OnWindowLostFocus(MenuItemsFinderWindow window)
         {
             SavePrefs();
         }
 
-        private void OnWindowClosed()
+        private void OnWindowClosed(MenuItemsFinderWindow window)
         {
             IsWindowOpen = false;
             SavePrefs();
             Dispose();
         }
 
-        private void OnWindowGui()
+        private void OnWindowGui(MenuItemsFinderWindow window)
         {
-            if (IsCompiling())
+            if (EditorApplication.isCompiling)
             {
+                DrawUnvailableState(window);
                 return;
             }
 

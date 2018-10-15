@@ -10,31 +10,28 @@ using Debug = UnityEngine.Debug;
 namespace SKTools.MenuItemsFinder
 {
     public delegate void FinderDelegate();
-
+    public delegate void FinderDelegate<T>(T obj);
+    
     internal partial class MenuItemsFinder
     {
-        partial void LoadAssets();
-
         private bool _wasRemoving;
         public MenuItemLink SelectedMenuItem;
         public List<MenuItemLink> MenuItems;
         
         private bool _isCreatedStyles = false;
         private static MenuItemsFinder _instance;
+        private MenuItemsFinderPreferences Prefs;
         
         private static MenuItemsFinder GetFinder()
         {
-            return _instance ?? new MenuItemsFinder().Load();
+            return _instance ?? new MenuItemsFinder();
         }
 
         private MenuItemsFinder()
         {
             Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
-        }
-
-        private MenuItemsFinderPreferences Prefs
-        {
-            get { return MenuItemsFinderPreferences.Current; }
+            Prefs = new MenuItemsFinderPreferences();
+            Prefs.Load();
         }
 
         private string FilterString
@@ -92,7 +89,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public void AddCustomizedNameToPrefs(MenuItemLink link)
+        private void AddCustomizedNameToPrefs(MenuItemLink link)
         {
             if (SelectedMenuItem != null && !string.IsNullOrEmpty(SelectedMenuItem.CustomNameEditable))
             {
@@ -101,13 +98,13 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public void MarkAsRemoved(MenuItemLink item)
+        private void MarkAsRemoved(MenuItemLink item)
         {
             _wasRemoving = true;
             item.IsRemoved = true;
         }
 
-        public void CleanRemovedItems()
+        private void CleanRemovedItems()
         {
             if (_wasRemoving)
             {
@@ -116,7 +113,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public bool ToggleSettings(MenuItemLink item)
+        private bool ToggleSettings(MenuItemLink item)
         {
             if (SelectedMenuItem == null)
             {
@@ -140,14 +137,14 @@ namespace SKTools.MenuItemsFinder
         {
             SelectedMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
             SelectedMenuItem = null;
-            SelectedMenuItemCustomHotKeysEditable = null;
+            _selectedMenuItemCustomHotKeysEditable = null;
         }
 
         private void ShowSettings(MenuItemLink item)
         {
             SelectedMenuItem = item;
             SelectedMenuItem.CustomNameEditable = SelectedMenuItem.CustomName;
-            SelectedMenuItemCustomHotKeysEditable =
+            _selectedMenuItemCustomHotKeysEditable =
                 new ReorderableList(item.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
          
         }

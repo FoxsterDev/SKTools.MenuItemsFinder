@@ -8,40 +8,34 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        public ReorderableList SelectedMenuItemCustomHotKeysEditable;
+        private ReorderableList _selectedMenuItemCustomHotKeysEditable;
 
-        private static FieldInfo _eventInfo;
-        private static Dictionary<string, string> _hotKeysMap;
-
-        private static Dictionary<string, string> HotKeysMap
-        {
-            get
-            {
-                if (_hotKeysMap == null)
-                {
-                    _hotKeysMap = new Dictionary<string, string>();
-                    foreach (var item in MenuItemsFinderPreferences.Current.CustomizedMenuItems)
-                    {
-                        foreach (var hotKey in item.CustomHotKeys)
-                        {
-                            _hotKeysMap[hotKey] = item.Path;
-                        }
-                    }
-                }
-
-                return _hotKeysMap;
-            }
-        }
-        
+        private  FieldInfo _eventInfo;
+        private  Dictionary<string, string> _hotKeysMap;
+       
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_CustomHotkeys_Initializer()
         {
-            _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
-            
-            EditorApplication.update += Update;
+            GetFinder().CustomHotKeysInitializer();
         }
 
-        private static void Update()
+        private void CustomHotKeysInitializer()
+        {
+            _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+            _hotKeysMap = new Dictionary<string, string>(10);
+            
+            foreach (var item in Prefs.CustomizedMenuItems)
+            {
+                foreach (var hotKey in item.CustomHotKeys)
+                {
+                    _hotKeysMap[hotKey] = item.Path;
+                }
+            }
+            
+            EditorApplication.update += KeyboardInputUpdate;
+        }
+        
+        private void KeyboardInputUpdate()
         {
             var ev = (Event) _eventInfo.GetValue(null);
             var id = GUIUtility.GetControlID(FocusType.Passive);
@@ -56,14 +50,14 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        private static bool TryExecuteHotKey(Event ev)
+        private bool TryExecuteHotKey(Event ev)
         {
             var inputHotkey = ConvertEventToHotKey(ev);
             
             if (inputHotkey != null)
             {
                 string menuItemPath;
-                HotKeysMap.TryGetValue(inputHotkey, out menuItemPath);
+                _hotKeysMap.TryGetValue(inputHotkey, out menuItemPath);
 
                 if (!string.IsNullOrEmpty(menuItemPath))
                 {
@@ -89,10 +83,9 @@ namespace SKTools.MenuItemsFinder
 
             return null;
         }
-        
-        public bool TryAddHotkeyToSelectedItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
+
+        private bool TryAddHotkeyToSelectedItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
         {
-            var item = default(MenuItemLink);
             error = string.Empty;
             
             var checkModifiers = hotkey.Alt | hotkey.Cmd | hotkey.Shift;

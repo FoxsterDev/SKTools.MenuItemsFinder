@@ -16,7 +16,7 @@ namespace SKTools.MenuItemsFinder
         
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
-        partial void LoadAssets()
+        private void LoadAssets()
         {
             var assetsPath = Prefs.GetDirectoryAssetsPath;
                 
@@ -34,22 +34,16 @@ namespace SKTools.MenuItemsFinder
             Resources.UnloadAsset(SettingsImage);
         }
         
-        private bool IsCompiling()
+        private void DrawUnvailableState(MenuItemsFinderWindow window)
         {
-            if (EditorApplication.isCompiling)
-            {
-                //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
-                //var matrixBackup = GUI.matrix;
-                //GUIUtility.RotateAroundPivot(angle%360, pivot);
-                var width = LoadingImage.width;
-                var height = LoadingImage.height;
-                var rect = new Rect(_window.position.width * 0.5f - width * 0.5f, _window.position.height * 0.5f - height * 0.5f, width, height);
-                GUI.DrawTexture(rect, LoadingImage);
-                //GUI.matrix = matrixBackup; 
-                return true;
-            }
-
-            return false;
+            //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
+            //var matrixBackup = GUI.matrix;
+            //GUIUtility.RotateAroundPivot(angle%360, pivot);
+            var width = LoadingImage.width;
+            var height = LoadingImage.height;
+            var rect = new Rect(window.position.width * 0.5f - width * 0.5f, window.position.height * 0.5f - height * 0.5f, width, height);
+            GUI.DrawTexture(rect, LoadingImage);
+            //GUI.matrix = matrixBackup; 
         }
         
         private void CreateStyles()
@@ -220,11 +214,11 @@ namespace SKTools.MenuItemsFinder
                 {
                     GUI.FocusControl("RolledOutMenuItemCustomName");
 
-                    SelectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
+                    _selectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
                     {
                         GUI.Label(rect, "HotKeys " + SelectedMenuItem.HotKey);
                     };
-                    SelectedMenuItemCustomHotKeysEditable.drawElementCallback += DrawHotKey;
+                    _selectedMenuItemCustomHotKeysEditable.drawElementCallback += DrawHotKey;
                 }
             }
             
@@ -238,7 +232,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
         {
-            var hotkey = (MenuItemHotKey)  SelectedMenuItemCustomHotKeysEditable.list[index];
+            var hotkey = (MenuItemHotKey)  _selectedMenuItemCustomHotKeysEditable.list[index];
             
             if (!hotkey.IsVerified && !hotkey.IsOriginal)
             {
@@ -320,7 +314,7 @@ namespace SKTools.MenuItemsFinder
                     GUILayout.MinHeight(60));
             }
             
-            SelectedMenuItemCustomHotKeysEditable.DoLayoutList();
+            _selectedMenuItemCustomHotKeysEditable.DoLayoutList();
         }
     }
 }

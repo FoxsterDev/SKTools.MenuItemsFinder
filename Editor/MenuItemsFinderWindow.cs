@@ -1,16 +1,17 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 
 namespace SKTools.MenuItemsFinder
 {
     internal class MenuItemsFinderWindow : EditorWindow
     {
-        public  FinderDelegate DrawGuiCallback;
-        public  FinderDelegate LostFocusCallback;
-        public  FinderDelegate CloseCallback;
+        public  FinderDelegate<MenuItemsFinderWindow> DrawGuiCallback;
+        public  FinderDelegate<MenuItemsFinderWindow> LostFocusCallback;
+        public  FinderDelegate<MenuItemsFinderWindow> CloseCallback;
 
         private void OnGUI()
         {
-            if (DrawGuiCallback != null) DrawGuiCallback();
+            if (DrawGuiCallback != null) DrawGuiCallback(this);
         }
 
         private void OnSelectionChange()
@@ -20,12 +21,12 @@ namespace SKTools.MenuItemsFinder
 
         private void OnLostFocus()
         {
-            if (LostFocusCallback != null) LostFocusCallback();
+            if (LostFocusCallback != null) LostFocusCallback(this);
         }
     
         private void OnDestroy()
         {
-            if (CloseCallback != null)  CloseCallback();
+            if (CloseCallback != null)  CloseCallback(this);
             
             DrawGuiCallback = null;
             LostFocusCallback = null;

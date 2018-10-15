@@ -4,6 +4,8 @@ namespace SKTools.MenuItemsFinder
 {
     internal class MenuItemsFinderVersion
     {
+        //0.1.6 refactoring and bug fixing
+
         //0.1.5 added new feature user custom hotkeys
 
         //0.1.4 added new feature managing missed items

@@ -11,19 +11,17 @@ namespace SKTools.MenuItemsFinder
     [Serializable]
     internal class MenuItemsFinderPreferences
     {
-        private static MenuItemsFinderPreferences _current;
         public List<MenuItemLink> CustomizedMenuItems = new List<MenuItemLink>();
 
         public string FilterString = string.Empty;
+        
         [NonSerialized] public bool HideAllMissed;
-
         [NonSerialized] public string PreviousFilterString = null;
 
         private string GetFilePath
         {
             get
             {
-               
                 return string.Concat(DirectoryPath, "Prefs.json");
             }
         }
@@ -46,33 +44,29 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        public static MenuItemsFinderPreferences Current
+        public void Load()
         {
-            get
+            try
             {
-                if (_current != null)
-                    return _current;
-                
-                _current = new MenuItemsFinderPreferences();
-                
-                var filePath = _current.GetFilePath;
+                var filePath = GetFilePath;
                 if (File.Exists(filePath))
-                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), _current);
+                    EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
                 else
                     Debug.LogError("Can't load prefs.json by path=" + filePath);
-
-                return _current;
+            }
+            catch(Exception e)
+            {
+                
             }
         }
-
+        
         public void Save()
         {
             try
             {
-                _current = null;
                 File.WriteAllText(GetFilePath, EditorJsonUtility.ToJson(this, true));
             }
-            catch
+            catch(Exception e)
             {
             }
         }
