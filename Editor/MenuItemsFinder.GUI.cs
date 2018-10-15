@@ -16,7 +16,7 @@ namespace SKTools.MenuItemsFinder
         
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
 
-        private void LoadAssets()
+        private void LoadGUIAssets()
         {
             var assetsPath = Prefs.GetDirectoryAssetsPath;
                 
@@ -33,19 +33,9 @@ namespace SKTools.MenuItemsFinder
             Resources.UnloadAsset(LoadingImage);
             Resources.UnloadAsset(SettingsImage);
         }
-        
-        private void DrawUnvailableState(MenuItemsFinderWindow window)
-        {
-            //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
-            //var matrixBackup = GUI.matrix;
-            //GUIUtility.RotateAroundPivot(angle%360, pivot);
-            var width = LoadingImage.width;
-            var height = LoadingImage.height;
-            var rect = new Rect(window.position.width * 0.5f - width * 0.5f, window.position.height * 0.5f - height * 0.5f, width, height);
-            GUI.DrawTexture(rect, LoadingImage);
-            //GUI.matrix = matrixBackup; 
-        }
-        
+     
+        private bool _isCreatedStyles = false;
+
         private void CreateStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
@@ -80,8 +70,45 @@ namespace SKTools.MenuItemsFinder
                     _settingsMenuItemButtonStyle.hover.background =
                         _settingsMenuItemButtonStyle.normal.background = SettingsImage;
         }
-        
-  
+
+        private void DrawSupportBar()
+        {
+            GUILayout.Space (10);
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("v" + MenuItemsFinderVersion.Version, EditorStyles.miniLabel))
+            {
+                Application.OpenURL(MenuItemsFinderVersion.ReadmeUrl);
+            }
+
+            GUILayout.FlexibleSpace ();
+            if (GUILayout.Button("Readme", EditorStyles.miniLabel))
+            {
+                Application.OpenURL(MenuItemsFinderVersion.ReadmeUrl);
+            }
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Ask a Question", EditorStyles.miniLabel))
+            {
+                Application.OpenURL(MenuItemsFinderVersion.ReadmeUrl);
+            }
+
+            GUILayout.EndHorizontal();
+        }
+        private void DrawUnvailableState(MenuItemsFinderWindow window)
+        {
+            //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
+            //var matrixBackup = GUI.matrix;
+            //GUIUtility.RotateAroundPivot(angle%360, pivot);
+            var width = LoadingImage.width;
+            var height = LoadingImage.height;
+            var rect = new Rect(window.position.width * 0.5f - width * 0.5f, window.position.height * 0.5f - height * 0.5f, width, height);
+            GUI.DrawTexture(rect, LoadingImage);
+            //GUI.matrix = matrixBackup; 
+        }
+
         private void DrawSearchBar()
         {
              var focusControl = SelectedMenuItem == null;

@@ -4,6 +4,8 @@ namespace SKTools.MenuItemsFinder
 {
     internal class MenuItemsFinderVersion
     {
+        //0.1.7 added support url
+        
         //0.1.6 refactoring and bug fixing
 
         //0.1.5 added new feature user custom hotkeys
@@ -14,5 +16,7 @@ namespace SKTools.MenuItemsFinder
 
         //0.1.2 added new feature to set custom id for menuitems and searching by custom id
         public static readonly Version Version = new Version(0, 1, 5);
+
+        public static readonly string ReadmeUrl = @"https://github.com/FoxsterDev/SKTools.MenuItemsFinder/blob/master/README.md";
     }
 }

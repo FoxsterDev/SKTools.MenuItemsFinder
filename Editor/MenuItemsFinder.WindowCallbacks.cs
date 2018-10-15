@@ -15,6 +15,7 @@ namespace SKTools.MenuItemsFinder
         private static void ShowWindow()
         {
             var window = GetWindow(true);
+            
             var finder = GetFinder();
             finder.Load();
             finder.SetWindow(window);
@@ -25,7 +26,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         [InitializeOnLoadMethod]
-        private static void MenuItemsFinderWindow_Reload()
+        private static void MenuItemsFinderWindow_CheckReload()
         {
             if (!IsWindowOpen) return;
             
@@ -39,6 +40,7 @@ namespace SKTools.MenuItemsFinder
             var finder = GetFinder();
             finder.Load();
             finder.SetWindow(window);
+            
             window.Focus();
         }
 
@@ -59,10 +61,10 @@ namespace SKTools.MenuItemsFinder
 
         private void SetWindow(MenuItemsFinderWindow window)
         {
-            LoadAssets();
+            LoadGUIAssets();
             
             window.autoRepaintOnSceneChange = true;
-            window.titleContent = new GUIContent(typeof(MenuItemsFinderWindow).Name);
+            window.titleContent = new GUIContent("MenuItems");
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
@@ -82,6 +84,12 @@ namespace SKTools.MenuItemsFinder
 
         private void OnWindowGui(MenuItemsFinderWindow window)
         {
+            if (!_isLoaded)
+            {
+                DrawUnvailableState(window);
+                return;
+            }
+            
             if (EditorApplication.isCompiling)
             {
                 DrawUnvailableState(window);
@@ -99,6 +107,8 @@ namespace SKTools.MenuItemsFinder
             DrawItems();
 
             CleanRemovedItems();
+            
+            DrawSupportBar();
         }
     }
 }

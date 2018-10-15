@@ -51,8 +51,6 @@ namespace SKTools.MenuItemsFinder
                 var filePath = GetFilePath;
                 if (File.Exists(filePath))
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
-                else
-                    Debug.LogError("Can't load prefs.json by path=" + filePath);
             }
             catch(Exception e)
             {

@@ -11,7 +11,7 @@ namespace SKTools.MenuItemsFinder
         public bool Starred;
         public string Path;
         public string Notice;
-        public List<MenuItemHotKey> CustomHotKeys;// = new List<MenuItemHotKey>(1);
+        public List<MenuItemHotKey> CustomHotKeys;
 
         [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string Key;

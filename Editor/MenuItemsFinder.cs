@@ -15,10 +15,10 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
         private bool _wasRemoving;
-        public MenuItemLink SelectedMenuItem;
-        public List<MenuItemLink> MenuItems;
+        private bool _isLoaded;
+        private MenuItemLink SelectedMenuItem;
+        private List<MenuItemLink> MenuItems;
         
-        private bool _isCreatedStyles = false;
         private static MenuItemsFinder _instance;
         private MenuItemsFinderPreferences Prefs;
         
@@ -29,7 +29,6 @@ namespace SKTools.MenuItemsFinder
 
         private MenuItemsFinder()
         {
-            Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
             Prefs = new MenuItemsFinderPreferences();
             Prefs.Load();
         }
@@ -57,18 +56,18 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        private MenuItemsFinder Load()
+        private void Load()
         {
             try
             {
                 MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
+                _isLoaded = true;
+                Debug.Log(typeof(MenuItemsFinder).Name + " was loaded, version=" + MenuItemsFinderVersion.Version);
             }
             catch (Exception ex)
             {
-                Debug.LogError("Cant load prefs=" + ex);
+                Debug.LogError("[MenuItemsFinder] could not be loaded!");
             }
-
-            return this;
         }
 
         private void SavePrefs()

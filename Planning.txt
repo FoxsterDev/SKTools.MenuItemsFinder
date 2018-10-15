@@ -1,3 +1,4 @@
+[*] add toolbar with links
 [*] filter by unity / project menuitems (to hide some items)
 [*] add auto updater
 [*] add module for review/feedback and subscription
