@@ -38,7 +38,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        public string AssetsPath
+        public string GetDirectoryAssetsPath
         {
             get
             {

@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
+        public ReorderableList SelectedMenuItemCustomHotKeysEditable;
+
         private static FieldInfo _eventInfo;
-        
+        private static Dictionary<string, string> _hotKeysMap;
+
         private static Dictionary<string, string> HotKeysMap
         {
             get

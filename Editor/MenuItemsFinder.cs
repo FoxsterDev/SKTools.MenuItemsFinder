@@ -5,35 +5,39 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal partial class MenuItemsFinder : IDisposable
+    public delegate void FinderDelegate();
+
+    internal partial class MenuItemsFinder
     {
-        private static Dictionary<string, string> _hotKeysMap;
-        
-        private bool _wasRemoving = false;
+        partial void LoadAssets();
+
+        private bool _wasRemoving;
         public MenuItemLink SelectedMenuItem;
         public List<MenuItemLink> MenuItems;
-        public ReorderableList SelectedMenuItemCustomHotKeysEditable;
-      
-        public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
+        
+        private bool _isCreatedStyles = false;
+        private static MenuItemsFinder _instance;
+        
+        private static MenuItemsFinder GetFinder()
+        {
+            return _instance ?? new MenuItemsFinder().Load();
+        }
 
-        public MenuItemsFinder()
+        private MenuItemsFinder()
         {
             Debug.Log(typeof(MenuItemsFinder).Name + ", version=" + MenuItemsFinderVersion.Version);
         }
-        
-        public MenuItemsFinderPreferences Prefs
+
+        private MenuItemsFinderPreferences Prefs
         {
             get { return MenuItemsFinderPreferences.Current; }
         }
 
-     
-   
-        public string FilterString
+        private string FilterString
         {
             get { return Prefs.FilterString; }
             set
@@ -56,7 +60,21 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        public void SavePrefs()
+        private MenuItemsFinder Load()
+        {
+            try
+            {
+                MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Cant load prefs=" + ex);
+            }
+
+            return this;
+        }
+
+        private void SavePrefs()
         {
             try
             {
@@ -71,28 +89,6 @@ namespace SKTools.MenuItemsFinder
             }
             catch
             {
-            }
-        }
-     
-        public void Load()
-        {
-            try
-            {
-                var assetPath = Prefs.AssetsPath;
-                
-                UnstarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "unstarred.png");
-                StarredImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "starred.png");
-                LoadingImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "loading.png");
-                SettingsImage = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath + "settings.png");
-                
-                MenuItems = FindAllMenuItems(Prefs.CustomizedMenuItems);
-                
-                Assert.IsNotNull(StarredImage, "Check path=" +assetPath + "starred.png");
-                Assert.IsNotNull(UnstarredImage, "Check path=" + assetPath + "unstarred.png");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Cant load prefs=" + ex);
             }
         }
 
@@ -156,8 +152,6 @@ namespace SKTools.MenuItemsFinder
          
         }
 
-       
-
         public void ToggleStarred(MenuItemLink item)
         {
             item.Starred = !item.Starred;
@@ -207,7 +201,7 @@ namespace SKTools.MenuItemsFinder
                 foreach (var assetPath in assemblyFiles)
                 {
                     if (assetPath.Contains(itemDeclaringTypeName)
-                    ) //suppose that type and file name equals about another cases need to think
+                    ) //suppose that type and file name equals about another cases need to implement
                     {
                         var fullPath = Path.Combine(Application.dataPath, assetPath.Substring(7));
                         OpenFile(fullPath);
@@ -223,24 +217,6 @@ namespace SKTools.MenuItemsFinder
 
             error = "cant detect file from " + assemblyFilePath + ".dll in assets folder\n";
             ///Users/sergeykha/Library/Unity/cache/packages/packages.unity.com/com.unity.textmeshpro@1.2.4/Scripts/Editor
-        }
-
-        private void OpenFile(string filePath)
-        {
-#if !UNITY_EDITOR_WIN
-            filePath = "file://" + filePath.Replace(@"\", "/");
-#else
-            filePath = @"file:\\" + filePath.Replace("/", @"\");;
-#endif
-            Application.OpenURL(filePath);
-        }
-          
-        public void Dispose()
-        {
-            Resources.UnloadAsset(StarredImage);
-            Resources.UnloadAsset(UnstarredImage);
-            Resources.UnloadAsset(LoadingImage);
-            Resources.UnloadAsset(SettingsImage);
         }
     }
 }

@@ -38,6 +38,7 @@ namespace SKTools.MenuItemsFinder
                     continue;
 
                 menuItemLinksDict.TryGetValue(customized.Path, out menuItemLink);
+                
                 if (menuItemLink == null)
                 {
                     customized.UpdateLabel();
