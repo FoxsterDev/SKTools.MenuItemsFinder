@@ -46,8 +46,6 @@ namespace SKTools.MenuItemsFinder
 
         private static MenuItemsFinderWindow GetWindow(bool createIfNotExist)
         {
-            Debug.Log("MenuItemsFinderWindow GetWindow");
-
             var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(MenuItemsFinderWindow));
             if (objectsOfTypeAll.Length < 1)
             {

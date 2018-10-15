@@ -24,7 +24,7 @@ namespace SKTools.MenuItemsFinder
             _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
             _hotKeysMap = new Dictionary<string, string>(10);
             
-            foreach (var item in Prefs.CustomizedMenuItems)
+            foreach (var item in _prefs.CustomizedMenuItems)
             {
                 foreach (var hotKey in item.CustomHotKeys)
                 {
@@ -103,7 +103,7 @@ namespace SKTools.MenuItemsFinder
                 return false;
             }
             
-            var exist = MenuItems.Find(i => i.Key != menuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
+            var exist = _menuItems.Find(i => i.Key != menuItem.Key && ((i.HotKey !=null && i.HotKey.Equals(hotkey)) || i.CustomHotKeys.Contains(hotkey)));
             if (exist != null)
             {
                 error = exist.Path + " this menuitem already contains hotkey " + hotkey;
