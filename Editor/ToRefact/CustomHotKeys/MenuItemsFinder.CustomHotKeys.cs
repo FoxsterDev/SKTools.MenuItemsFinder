@@ -96,7 +96,13 @@ namespace SKTools.MenuItemsFinder
 
             return null;
         }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hotkey"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
         private bool IsValidHotKey(MenuItemHotKey hotkey, out string error)
         {
             error = string.Empty;

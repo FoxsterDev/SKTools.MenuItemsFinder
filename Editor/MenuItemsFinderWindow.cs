@@ -20,7 +20,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         /// <summary>
-        /// Some menuitems requeres validating  method, and it need to update visual state of items
+        /// Some menuitems requeres a validating  method, and it need to update visual state of items
         /// </summary>
         private void OnSelectionChange()
         {

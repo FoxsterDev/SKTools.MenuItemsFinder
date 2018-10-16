@@ -1,39 +1,47 @@
 {
     "CustomizedMenuItems": [
         {
+            "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
             "Path": "Assets/Create/Testing/C# Test Script",
-            "Notice": "",
-            "CustomHotKeys": []
+            "Notice": ""
         },
         {
+            "CustomHotKeys": [
+                {
+                    "Alt": true,
+                    "Shift": false,
+                    "Cmd": false,
+                    "Key": "p",
+                    "IsVerified": true
+                }
+            ],
             "CustomName": "OpenProfiler",
             "Starred": true,
             "Path": "Window/Analysis/Profiler",
-            "Notice": "",
-            "CustomHotKeys": []
+            "Notice": ""
         },
         {
+            "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
             "Path": "Window/TextMeshPro/Font Asset Creator",
-            "Notice": "",
-            "CustomHotKeys": []
+            "Notice": ""
         },
         {
+            "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
             "Path": "internal:Window/Internal/Screenshot/Snap View Extended Right",
-            "Notice": "",
-            "CustomHotKeys": []
+            "Notice": ""
         },
         {
+            "CustomHotKeys": [],
             "CustomName": "SnapView",
             "Starred": false,
             "Path": "internal:Window/Internal/Screenshot/Snap View",
-            "Notice": "",
-            "CustomHotKeys": []
+            "Notice": ""
         }
     ],
     "FilterString": "ass"

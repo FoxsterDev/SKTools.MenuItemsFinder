@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 
 
 namespace SKTools.MenuItemsFinder
 {
     [Serializable]
-    internal class MenuItemLink
+    internal partial class MenuItemLink
     {
+        partial void UpdateHotKeys(MenuItemLink item = null);
+        partial void HasCustomHotKeys(ref bool has);
+      
         public string CustomName;
         public bool Starred;
         public string Path;
         public string Notice;
-        public List<MenuItemHotKey> CustomHotKeys;
-
+        
         [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string Key;
-        [NonSerialized] public MenuItemHotKey HotKey;
         [NonSerialized] public string CustomNameEditable;
         [NonSerialized] public bool ShowNotice;
         [NonSerialized] public bool IsRemoved;
@@ -32,7 +32,12 @@ namespace SKTools.MenuItemsFinder
 
         public bool IsCustomized
         {
-            get { return Starred || !string.IsNullOrEmpty(CustomName) || IsMissed || CustomHotKeys.Count > 0; }
+            get
+            {
+                var hasCustomHotKeys = false;
+                HasCustomHotKeys(ref hasCustomHotKeys);
+                return Starred || !string.IsNullOrEmpty(CustomName) || IsMissed || hasCustomHotKeys;
+            }
         }
 
         public bool HasValidate
@@ -43,61 +48,36 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink(MenuItemData menuItem)
         {
             _menuItem = menuItem;
-            CustomHotKeys = new List<MenuItemHotKey>(1);
+           
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
-
-            ExtractHotKeyFromPath();
+ 
+            UpdateLabel();
+            UpdateHotKeys();
             
             Key = Path.ToLower();
-            
-            UpdateLabel();
-        }
-
-        private void ExtractHotKeyFromPath()
-        {
-            HotKey = new MenuItemHotKey();
-            var startIndex = -1;
-            var hotkeyString = "";
-            MenuItemHotKey.Extract(Path, out startIndex, out hotkeyString, out HotKey.Key, out HotKey.Shift, out HotKey.Alt, out HotKey.Cmd);
-           
-            if (startIndex > -1)
-            {
-                HotKey.IsOriginal = true;
-                HotKey.IsVerified = true;
-                Path = Path.Substring(0, startIndex - 1);
-            }
-            else
-            {
-                HotKey = null;
-            }
         }
         
         public void UpdateFrom(MenuItemLink item)
         {
             Starred = item.Starred;
             CustomNameEditable = CustomName = item.CustomName;
-            CustomHotKeys = !IsMissed ? item.CustomHotKeys : new List<MenuItemHotKey>();
             
             if (string.IsNullOrEmpty(Path))
             {
                 Path = item.Path;
-                Key = Path.ToLower();
             }
-
+            
             UpdateLabel();
+            UpdateHotKeys(item);
+            
+            Key = Path.ToLower();
         }
-
+       
         public void UpdateLabel()
         {
             Label = !string.IsNullOrEmpty(CustomName) ? CustomName : Path;
-
-            var hotkey = HotKey ?? (CustomHotKeys.Count > 0 ? CustomHotKeys[0] : null);
-            if (hotkey != null)
-            {
-                Label = string.Concat(Label," <color=cyan>", hotkey.Formatted, "</color>");;
-            }
         }
 
         public bool CanExecute()
@@ -118,19 +98,6 @@ namespace SKTools.MenuItemsFinder
         public override string ToString()
         {
             return string.Format("MenuItem={0}; Method={1}", Label, !IsMissed ? _menuItem.TargetMethod.ToString() : "[Missed]");
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((MenuItemLink) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (_menuItem != null ? _menuItem.GetHashCode() : 0);
         }
     }
 }
