@@ -3,47 +3,43 @@ using System.Collections.Generic;
 
 namespace SKTools.MenuItemsFinder
 {
-    [System.Serializable]
-    internal class MenuItemHotKey : IEquatable<MenuItemHotKey>, IComparable<MenuItemHotKey>
+    [Serializable]
+    internal class MenuItemHotKey : IEquatable<MenuItemHotKey>
     {
-        public string Key;
-        public bool Shift;
         public bool Alt;
+        public bool Shift;
         public bool Cmd;
+        public string Key;
         public bool IsVerified;
         
-        [NonSerialized]
-        public bool IsOriginal;
-       
-        public override string ToString()
-        {
-            return ToPack(this);
-        }
-        
-        public bool Equals(MenuItemHotKey other)
-        {
-            return other != null && Key == other.Key && Alt ==  other.Alt && Shift == other.Shift && Cmd == other.Cmd;//%#0
-        }
-
-        public int CompareTo(MenuItemHotKey other)
-        {
-            return string.Compare(this, other);
-        }
-        
-        public static implicit operator string(MenuItemHotKey k)
-        {
-            return k != null ? k.ToString() : default(string);
-        }
+        [NonSerialized] public bool IsOriginal;
 
         public string Formatted
         {
             get { return ToFormat(this); }
         }
 
+        public bool Equals(MenuItemHotKey other)
+        {
+            return other != null && Key == other.Key && Alt == other.Alt && Shift == other.Shift &&
+                   Cmd == other.Cmd; //%#0
+        }
+
+        public override string ToString()
+        {
+            return ToPack(this);
+        }
+
+        public static implicit operator string(MenuItemHotKey k)
+        {
+            return k != null ? k.ToString() : default(string);
+        }
+
+
         private static string ToFormat(MenuItemHotKey hotkey)
         {
             var str = string.Empty;
-            
+
             if (hotkey.Cmd)
             {
 #if UNITY_EDITOR_OSX
@@ -54,21 +50,15 @@ namespace SKTools.MenuItemsFinder
 #endif
             }
 
-            if (hotkey.Alt)
-            {
-                str += "alt+";
-            }
+            if (hotkey.Alt) str += "alt+";
 
-            if (hotkey.Shift)
-            {
-                str += "shift+";
-            }
+            if (hotkey.Shift) str += "shift+";
 
             str += hotkey.Key;
             return str;
         }
 
-        public static string ToPack(MenuItemHotKey hotkey)
+        private static string ToPack(MenuItemHotKey hotkey)
         {
             //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
             var str = "";
@@ -107,8 +97,7 @@ namespace SKTools.MenuItemsFinder
             var modifiersIndex = -1;
 
             if (chars[chars.Length - 1] != ' ')
-            {
-                for (int k = chars.Length - 1; k > -1; k--)
+                for (var k = chars.Length - 1; k > -1; k--)
                 {
                     var c = chars[k];
                     if (c == '/')
@@ -117,10 +106,7 @@ namespace SKTools.MenuItemsFinder
                         break;
                     }
 
-                    if (whiteSpaceIndex > -1)
-                    {
-                        continue;
-                    }
+                    if (whiteSpaceIndex > -1) continue;
 
                     if (c == ' ')
                     {
@@ -137,35 +123,22 @@ namespace SKTools.MenuItemsFinder
                     hotkeyChars.Push(c);
 
                     var modifier = false;
-                    if (c == '#')
-                    {
-                        modifier = shift = true;
-                    }
+                    if (c == '#') modifier = shift = true;
 
-                    if (c == '%')
-                    {
-                        modifier = cmd = true;
-                    }
+                    if (c == '%') modifier = cmd = true;
 
-                    if (c == '&')
-                    {
-                        modifier = alt = true;
-                    }
+                    if (c == '&') modifier = alt = true;
 
                     if (modifier)
                     {
                         indecatorIndex = k;
-                        if (modifiersIndex < 0)
-                        {
-                            modifiersIndex = k;
-                        }
+                        if (modifiersIndex < 0) modifiersIndex = k;
                     }
                     else
                     {
                         keyChars.Push(c);
                     }
                 }
-            }
 
             if (whiteSpaceIndex > -1 && slashIndex > -1 && whiteSpaceIndex > slashIndex)
             {

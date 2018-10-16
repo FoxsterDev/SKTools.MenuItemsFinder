@@ -72,32 +72,6 @@ namespace SKTools.MenuItemsFinder
                         _settingsMenuItemButtonStyle.normal.background = SettingsImage;
         }
 
-        private void DrawSupportBar()
-        {
-            GUILayout.Space (10);
-
-            GUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("v" + MenuItemsFinderVersion.Version, EditorStyles.miniLabel))
-            {
-                Application.OpenURL(MenuItemsFinderVersion.ReadmeUrl);
-            }
-
-            GUILayout.FlexibleSpace ();
-            if (GUILayout.Button("Readme", EditorStyles.miniLabel))
-            {
-                Application.OpenURL(MenuItemsFinderVersion.ReadmeUrl);
-            }
-
-            GUILayout.Space(10);
-
-            if (GUILayout.Button("Ask a Question in Skype", EditorStyles.miniLabel))
-            {
-                Application.OpenURL(MenuItemsFinderVersion.AskQuestionUrlInSkype);
-            }
-
-            GUILayout.EndHorizontal();
-        }
         
         private void DrawUnvailableState(MenuItemsFinderWindow window)
         {

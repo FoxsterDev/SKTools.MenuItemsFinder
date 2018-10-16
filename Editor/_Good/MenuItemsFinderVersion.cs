@@ -4,7 +4,7 @@ namespace SKTools.MenuItemsFinder
 {
     internal class MenuItemsFinderVersion
     {
-        //0.1.7 added support url
+        //0.1.7 added support bar
         
         //0.1.6 refactoring and bug fixing
 

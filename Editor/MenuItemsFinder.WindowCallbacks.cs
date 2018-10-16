@@ -106,7 +106,8 @@ namespace SKTools.MenuItemsFinder
 
             CleanRemovedItems();
             
-            DrawSupportBar();
+            GUILayoutCollection.SupportFooterBar(MenuItemsFinderVersion.Version.ToString(), MenuItemsFinderVersion.ReadmeUrl, MenuItemsFinderVersion.ReadmeUrl, 
+                MenuItemsFinderVersion.AskQuestionUrlInSkype);
         }
     }
 }

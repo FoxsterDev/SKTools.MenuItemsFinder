@@ -46,5 +46,32 @@ namespace SKTools.MenuItemsFinder
             GUILayout.EndHorizontal();
             return text;
         }
+        
+        public static  void SupportFooterBar(string version, string releaseNotesUrl, string readmeUrl, string askQuestionUrlInSkype)
+        {
+            GUILayout.Space (10);
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("v" + version, EditorStyles.miniLabel))
+            {
+                Application.OpenURL(releaseNotesUrl);
+            }
+
+            GUILayout.FlexibleSpace ();
+            if (GUILayout.Button("Readme", EditorStyles.miniLabel))
+            {
+                Application.OpenURL(readmeUrl);
+            }
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Ask a Question in Skype", EditorStyles.miniLabel))
+            {
+                Application.OpenURL(askQuestionUrlInSkype);
+            }
+
+            GUILayout.EndHorizontal();
+        }
     }
 }

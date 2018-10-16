@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -14,16 +13,13 @@ namespace SKTools.MenuItemsFinder
         public List<MenuItemLink> CustomizedMenuItems = new List<MenuItemLink>();
 
         public string FilterString = string.Empty;
-        
+
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public string PreviousFilterString = null;
 
         private string GetFilePath
         {
-            get
-            {
-                return string.Concat(DirectoryPath, "Prefs.json");
-            }
+            get { return string.Concat(DirectoryPath, "Prefs.json"); }
         }
 
         private string DirectoryPath
@@ -35,15 +31,16 @@ namespace SKTools.MenuItemsFinder
                     .Replace(typeof(MenuItemsFinderPreferences).Name + ".cs", string.Empty);
             }
         }
-        
+
         public string GetDirectoryAssetsPath
         {
             get
             {
-                return DirectoryPath.Replace("Editor", "Editor Resources").Substring(Application.dataPath.Length - "Assets".Length);
+                return DirectoryPath.Replace("Editor", "Editor Resources")
+                    .Substring(Application.dataPath.Length - "Assets".Length);
             }
         }
-        
+
         public void Load()
         {
             try
@@ -52,19 +49,18 @@ namespace SKTools.MenuItemsFinder
                 if (File.Exists(filePath))
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
             }
         }
-        
+
         public void Save()
         {
             try
             {
                 File.WriteAllText(GetFilePath, EditorJsonUtility.ToJson(this, true));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
             }
         }

@@ -9,8 +9,15 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
         private ReorderableList _selectedMenuItemCustomHotKeysEditable;
-
-        private static FieldInfo _eventInfo;
+        private FieldInfo _eventInfo;
+        
+        /// <summary>
+        /// To prevent several hotKeysMap.
+        /// In unity editor are possible to drop instance of variables state.
+        /// For example not only clear recompiling, but and just open some instance editorwindow
+        /// We could be create instance ScriptableObject,
+        /// but it helps with only serializable type
+        /// </summary>
         private static Dictionary<string, string> _hotKeysMap;
 
         [InitializeOnLoadMethod]
@@ -41,7 +48,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private static void KeyboardInputUpdate()
+        private void KeyboardInputUpdate()
         {
             var ev = (Event) _eventInfo.GetValue(null);
             var id = GUIUtility.GetControlID(FocusType.Passive);
@@ -56,7 +63,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private static bool TryExecuteHotKey(Event ev)
+        private bool TryExecuteHotKey(Event ev)
         {
             var inputHotkey = ConvertEventToHotKey(ev);
 

@@ -10,7 +10,7 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder 
     {
-        private List<MenuItemLink> FindAllMenuItems(List<MenuItemLink> customizedItems)
+        private List<MenuItemLink> GetAllMenuItems(List<MenuItemLink> customizedItems)
         {
             var watch = new Stopwatch();
             watch.Start();
