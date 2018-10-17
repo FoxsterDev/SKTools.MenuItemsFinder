@@ -8,7 +8,7 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
         /// <summary>
-        /// Default event.current has this signature   if (GUIUtility.guiDepth > 0) return Event.s_Current; else return (Event) null;
+        /// Default event.current has this signature:  if (GUIUtility.guiDepth > 0) return Event.s_Current; else return (Event) null;
         // and we cant get existing event without gui handler
         /// </summary>
         private static FieldInfo _eventInfo;
@@ -43,9 +43,13 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
+        /// <summary>
+        ///  ev.keyCode only filled when happens KeyUp, another cases with character obuse to match keyboard simbols , if the char is not A-z
+        /// </summary>
         private static void KeyboardInputUpdate()
         {
             var ev = (Event) _eventInfo.GetValue(null);
+            if (ev == null) return;
             var id = GUIUtility.GetControlID(FocusType.Passive);
             var eventType = ev.GetTypeForControl(id);
 
@@ -58,6 +62,11 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
+        /// <summary>
+        /// Now it uses EditorApplication.ExecuteMenuItem , but may be there needs to load a finder and check validation
+        /// </summary>
+        /// <param name="ev"></param>
+        /// <returns></returns>
         private static bool TryExecuteHotKey(Event ev)
         {
             var inputHotkey = ConvertEventToHotKey(ev);

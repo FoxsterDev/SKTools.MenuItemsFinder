@@ -1,4 +1,6 @@
-﻿using UnityEditorInternal;
+﻿using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -6,7 +8,22 @@ namespace SKTools.MenuItemsFinder
     {
         private ReorderableList _selectedMenuItemCustomHotKeysEditable;
 
+        partial void DrawMenuItemHotKeys()
+        {
+            _selectedMenuItemCustomHotKeysEditable.DoLayoutList();
+        }
         
+        partial void CustomHotKeysEditable()
+        {
+            _selectedMenuItemCustomHotKeysEditable = new ReorderableList(_selectedMenuItem.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
+            _selectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
+            {
+                GUI.Label(rect, "HotKeys " + _selectedMenuItem.HotKey);
+            };
+            _selectedMenuItemCustomHotKeysEditable.drawElementCallback += CustomHotKeysEditable_DrawHotKey;
+            _selectedMenuItemCustomHotKeysEditable.onRemoveCallback += CustomHotKeysEditable_OnRemoved;
+        }
+
         private bool TryAddHotKeyToItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
         {
             if (!IsValidHotKey(hotkey, out error)) return false;
@@ -73,6 +90,51 @@ namespace SKTools.MenuItemsFinder
             }
 
             return true;
+        }
+        
+        
+        private void CustomHotKeysEditable_DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
+        {
+            var hotkey = (MenuItemHotKey)  _selectedMenuItemCustomHotKeysEditable.list[index];
+            
+            if (!hotkey.IsVerified && !hotkey.IsOriginal)
+            {
+                var allWidth = rect.width;
+                var width = allWidth * 0.2f;
+
+                rect.width = width;
+                if (GUI.Button(rect, "Check&Add"))
+                {
+                    var error = "";
+                    if (!TryAddHotKeyToItem(_selectedMenuItem, hotkey, out error))
+                    {
+                        EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
+                    }
+                }
+                
+                rect.x += width;
+                
+                width = allWidth * 0.15f;
+                rect.width = width;
+                
+                hotkey.Key = GUI.TextField(rect, hotkey.Key);
+                rect.x += width;
+                
+                GUI.Label(rect, " Key");
+                rect.x += width;
+                
+                hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
+                rect.x += width;
+                
+                hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
+                rect.x += width;
+                
+                hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
+            }
+            else
+            {
+                GUI.Label(rect, hotkey.Formatted);
+            }
         }
     }
 }

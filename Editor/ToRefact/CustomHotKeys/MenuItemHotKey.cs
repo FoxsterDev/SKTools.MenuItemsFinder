@@ -35,7 +35,6 @@ namespace SKTools.MenuItemsFinder
             return k != null ? k.ToString() : default(string);
         }
 
-
         private static string ToFormat(MenuItemHotKey hotkey)
         {
             var str = string.Empty;
