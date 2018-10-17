@@ -3,7 +3,7 @@
 namespace SKTools.MenuItemsFinder
 {
     /// <summary>
-    /// This window will show with editable menuitems
+    /// This window will show editable menuitems
     /// </summary>
     internal class MenuItemsFinderWindow : EditorWindow
     {

@@ -3,7 +3,7 @@
 namespace SKTools.MenuItemsFinder
 {
     //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
-    internal class MenuItemsTests
+    internal class MenuItemHotKeyTests
     {
         [Test]
         public void PackHotKey()

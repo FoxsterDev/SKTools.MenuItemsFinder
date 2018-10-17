@@ -1,0 +1,95 @@
+﻿using System.Collections.Generic;
+using System.Reflection;
+using UnityEditor;
+using UnityEngine;
+
+namespace SKTools.MenuItemsFinder
+{
+    internal partial class MenuItemsFinder
+    {
+        /// <summary>
+        /// Default event.current has this signature   if (GUIUtility.guiDepth > 0) return Event.s_Current; else return (Event) null;
+        // and we cant get existing event without gui handler
+        /// </summary>
+        private static FieldInfo _eventInfo;
+
+        /// <summary>
+        /// To prevent several hotKeysMap.
+        /// In unity editor are possible to drop instance of variables state.
+        /// For example not only clearly recompiling, but and just open some instance editorwindow
+        /// We could be create an instance ScriptableObject,  but it helps with only serializable type, not dictionary
+        /// </summary>
+        private static Dictionary<string, string> _hotKeysMap;
+
+        [InitializeOnLoadMethod]
+        private static void MenuItemsFinder_HotKeysExecutor_Initializer()
+        {
+            _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+            UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);
+            EditorApplication.update += KeyboardInputUpdate;
+        }
+
+        private static void UpdateHotKeysMap(List<MenuItemLink> menuItemLinks)
+        {
+            _hotKeysMap = new Dictionary<string, string>(menuItemLinks.Count);
+
+            foreach (var item in menuItemLinks)
+            {
+                foreach (var hotKey in item.CustomHotKeys)
+                {
+                    if (!hotKey.IsVerified) continue;
+                    _hotKeysMap[hotKey] = item.Path;
+                }
+            }
+        }
+
+        private static void KeyboardInputUpdate()
+        {
+            var ev = (Event) _eventInfo.GetValue(null);
+            var id = GUIUtility.GetControlID(FocusType.Passive);
+            var eventType = ev.GetTypeForControl(id);
+
+            if (eventType == EventType.KeyUp)
+            {
+                if (TryExecuteHotKey(ev))
+                {
+                    ev.Use();
+                }
+            }
+        }
+
+        private static bool TryExecuteHotKey(Event ev)
+        {
+            var inputHotkey = ConvertEventToHotKey(ev);
+
+            if (inputHotkey != null)
+            {
+                string menuItemPath;
+                _hotKeysMap.TryGetValue(inputHotkey, out menuItemPath);
+
+                if (!string.IsNullOrEmpty(menuItemPath))
+                {
+                    return EditorApplication.ExecuteMenuItem(menuItemPath);
+                }
+            }
+
+            return false;
+        }
+
+        private static MenuItemHotKey ConvertEventToHotKey(Event ev)
+        {
+            if (ev.isKey && (ev.shift || ev.alt || ev.command || ev.control))
+            {
+                return new MenuItemHotKey
+                {
+                    Alt = ev.alt,
+                    Shift = ev.shift,
+                    Cmd = ev.command || ev.control,
+                    Key = ev.keyCode.ToString().ToLower()
+                };
+            }
+
+            return null;
+        }
+    }
+}
