@@ -5,11 +5,11 @@ namespace SKTools.MenuItemsFinder
     /// <summary>
     /// This window will show editable menuitems
     /// </summary>
-    internal class MenuItemsFinderWindow : EditorWindow
+    internal class MenuItemsFinderEditorWindow : EditorWindow
     {
-        public  FinderDelegate<MenuItemsFinderWindow> DrawGuiCallback;
-        public  FinderDelegate<MenuItemsFinderWindow> LostFocusCallback;
-        public  FinderDelegate<MenuItemsFinderWindow> CloseCallback;
+        public FinderDelegate<MenuItemsFinderEditorWindow> DrawGuiCallback;
+        public FinderDelegate<MenuItemsFinderEditorWindow> LostFocusCallback;
+        public FinderDelegate<MenuItemsFinderEditorWindow> CloseCallback;
 
         /// <summary>
         /// we can easily switch gui content of this window

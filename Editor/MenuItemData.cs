@@ -4,7 +4,7 @@ using UnityEditor;
 namespace SKTools.MenuItemsFinder
 {
     /// <summary>
-    /// This data will be produced as result of reflection all project assemblies
+    /// This data will be produced as result of reflection all project assemblies that contains menuitem attribute
     /// </summary>
     internal class MenuItemData
     {

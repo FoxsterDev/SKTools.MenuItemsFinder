@@ -44,43 +44,44 @@ namespace SKTools.MenuItemsFinder
             window.Focus();
         }
 
-        private static MenuItemsFinderWindow GetWindow(bool createIfNotExist)
+        private static MenuItemsFinderEditorWindow GetWindow(bool createIfNotExist)
         {
-            var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(MenuItemsFinderWindow));
+            var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(MenuItemsFinderEditorWindow));
             if (objectsOfTypeAll.Length < 1)
             {
                 if (!createIfNotExist) return null;
-                return ScriptableObject.CreateInstance<MenuItemsFinderWindow>();
+                return ScriptableObject.CreateInstance<MenuItemsFinderEditorWindow>();
             }
 
-            var window = (MenuItemsFinderWindow) objectsOfTypeAll[0];
+            var window = (MenuItemsFinderEditorWindow) objectsOfTypeAll[0];
             return window;
         }
 
-        private void SetWindow(MenuItemsFinderWindow window)
+        private void SetWindow(MenuItemsFinderEditorWindow window)
         {
             LoadGUIAssets();
             
             window.autoRepaintOnSceneChange = true;
             window.titleContent = new GUIContent("MenuItems");
+            window.minSize = new Vector2(300, 450);
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
         }
 
-        private void OnWindowLostFocus(MenuItemsFinderWindow window)
+        private void OnWindowLostFocus(MenuItemsFinderEditorWindow window)
         {
             SavePrefs();
         }
 
-        private void OnWindowClosed(MenuItemsFinderWindow window)
+        private void OnWindowClosed(MenuItemsFinderEditorWindow window)
         {
             IsWindowOpen = false;
             SavePrefs();
             Dispose();
         }
 
-        private void OnWindowGui(MenuItemsFinderWindow window)
+        private void OnWindowGui(MenuItemsFinderEditorWindow window)
         {
             if (!_isLoaded)
             {

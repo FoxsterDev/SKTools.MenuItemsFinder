@@ -16,13 +16,7 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
         partial void CustomHotKeysEditable();
-        
-        private void SelectItem(MenuItemLink item)
-        {
-            _selectedMenuItem = item;
-            _selectedMenuItem.CustomNameEditable = _selectedMenuItem.CustomName;
-            CustomHotKeysEditable();
-        }
+    
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
 
@@ -114,7 +108,14 @@ namespace SKTools.MenuItemsFinder
                 _menuItems = _menuItems.FindAll(i => !i.IsRemoved);
             }
         }
-        
+            
+        private void SelectItem(MenuItemLink item)
+        {
+            _selectedMenuItem = item;
+            _selectedMenuItem.CustomNameEditable = _selectedMenuItem.CustomName;
+            CustomHotKeysEditable();
+        }
+
         private void UnSelectItem()
         {
             _selectedMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
@@ -127,10 +128,10 @@ namespace SKTools.MenuItemsFinder
         {
             var assetsPath = _prefs.GetDirectoryAssetsPath;
                 
-            UnstarredImage = LoadAssetAtPath<Texture2D>(assetsPath, "unstarred.png");
-            StarredImage =   LoadAssetAtPath<Texture2D>(assetsPath, "starred.png");
-            LoadingImage =   LoadAssetAtPath<Texture2D>(assetsPath,"loading.png");
-            SettingsImage =  LoadAssetAtPath<Texture2D>(assetsPath,"settings.png");
+            UnstarredImage = LoadAsset<Texture2D>(assetsPath, "unstarred.png");
+            StarredImage =   LoadAsset<Texture2D>(assetsPath, "starred.png");
+            LoadingImage =   LoadAsset<Texture2D>(assetsPath,"loading.png");
+            SettingsImage =  LoadAsset<Texture2D>(assetsPath,"settings.png");
         }
                
         partial void DrawMenuItemHotKeys();
@@ -181,7 +182,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         
-        private void DrawUnvailableState(MenuItemsFinderWindow window)
+        private void DrawUnvailableState(MenuItemsFinderEditorWindow window)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
             //var matrixBackup = GUI.matrix;
@@ -430,13 +431,9 @@ namespace SKTools.MenuItemsFinder
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }
-        private void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
-        {
-            var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
-            OpenFile(directoryPath);
-        }
+      
 
-        private T LoadAssetAtPath<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
+        private T LoadAsset<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
         {
             var assetPath = string.Concat(assetDirectory, assetName);
             var asset = (T) AssetDatabase.LoadAssetAtPath(assetPath, typeof (T));

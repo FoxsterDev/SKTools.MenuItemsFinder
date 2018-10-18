@@ -8,6 +8,20 @@
             "Notice": ""
         },
         {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Edit/Project Settings/TextMeshPro Settings",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Window/Package Manager",
+            "Notice": ""
+        },
+        {
             "CustomHotKeys": [
                 {
                     "Alt": true,
@@ -44,5 +58,5 @@
             "Notice": ""
         }
     ],
-    "FilterString": "ass"
+    "FilterString": "Packa"
 }
