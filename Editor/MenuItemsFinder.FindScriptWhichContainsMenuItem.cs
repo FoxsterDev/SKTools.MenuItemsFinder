@@ -23,7 +23,7 @@ namespace SKTools.MenuItemsFinder
         [System.Serializable]
         public partial class Manifest : ISerializationCallbackReceiver
         {
-            UnityEditor.PackageManager.PackageCollection;
+//            UnityEditor.PackageManager.PackageCollection;
             //[JsonProperty("dependencies")]
             public Dictionary<string, string> dependencies;// { get; set; }
             public void OnBeforeSerialize()
