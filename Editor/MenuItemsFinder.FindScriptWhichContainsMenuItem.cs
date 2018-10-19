@@ -17,29 +17,9 @@ using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
-
     internal partial class MenuItemsFinder
     {
-        [System.Serializable]
-        public partial class Manifest : ISerializationCallbackReceiver
-        {
-//            UnityEditor.PackageManager.PackageCollection;
-            //[JsonProperty("dependencies")]
-            public Dictionary<string, string> dependencies;// { get; set; }
-            public void OnBeforeSerialize()
-            {
-                var dict = "".Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(part => part.Split('='))
-                    .ToDictionary(split => split[0], split => split[1]);
-                throw new NotImplementedException();
-            }
-
-            public void OnAfterDeserialize()
-            {
-                throw new NotImplementedException();
-            }
-        }
-        
+  
         private void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
         {
             var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;

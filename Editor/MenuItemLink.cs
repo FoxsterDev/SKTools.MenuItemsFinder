@@ -8,13 +8,14 @@ namespace SKTools.MenuItemsFinder
     {
         partial void UpdateHotKeys(MenuItemLink item = null);
         partial void HasCustomHotKeys(ref bool has);
-      
+        
+        [NonSerialized] private readonly MenuItemData _menuItem;
+
         public string CustomName;
         public bool Starred;
         public string Path;
         public string Notice;
         
-        [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string Key;
         [NonSerialized] public string CustomNameEditable;
         [NonSerialized] public bool ShowNotice;

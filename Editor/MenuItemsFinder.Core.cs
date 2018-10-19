@@ -125,19 +125,6 @@ namespace SKTools.MenuItemsFinder
                 data.TargetMethod = method;
             }
         }
-        
-        /// <summary>
-        /// it is worst by time (about 30 ms) than the current variant with 3-foreaches
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerable<MethodInfo> GetAllStaticMethods()
-        {
-            var methods =(from  assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in assembly.GetTypes()
-                from method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-                select method).Distinct();
-
-            return methods;
-        }
+      
     }
 }

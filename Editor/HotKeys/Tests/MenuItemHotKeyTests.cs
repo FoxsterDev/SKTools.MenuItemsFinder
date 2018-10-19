@@ -123,7 +123,7 @@ namespace SKTools.MenuItemsFinder
             var alt = false;
             var cmd = false;
             
-            MenuItemHotKey.Extract("Window/Analysis/Profiler %&7", out index, out hotkey, out key, out shift, out alt, out cmd);
+            MenuItemHotKey.ExtractFrom("Window/Analysis/Profiler %&7", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "%&7");
             Assert.IsTrue(cmd & alt);
             Assert.IsTrue(key == "7");
@@ -139,7 +139,7 @@ namespace SKTools.MenuItemsFinder
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Extract("Window/Analysis/Profiler _g", out index, out hotkey, out key, out shift, out alt, out cmd);
+            MenuItemHotKey.ExtractFrom("Window/Analysis/Profiler _g", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "g");
             Assert.IsTrue(key == "g");
         }
@@ -154,7 +154,7 @@ namespace SKTools.MenuItemsFinder
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Extract("Window/Analysis/Profiler_g", out index, out hotkey, out key, out shift, out alt, out cmd);
+            MenuItemHotKey.ExtractFrom("Window/Analysis/Profiler_g", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == string.Empty);
             Assert.IsFalse(cmd);
             Assert.IsFalse(shift);
@@ -171,7 +171,7 @@ namespace SKTools.MenuItemsFinder
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Extract("Window/Analysis/Profiler Some Some", out index, out hotkey, out key, out shift, out alt, out cmd);
+            MenuItemHotKey.ExtractFrom("Window/Analysis/Profiler Some Some", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == string.Empty);
             Assert.IsFalse(cmd);
             Assert.IsFalse(shift);
@@ -188,7 +188,7 @@ namespace SKTools.MenuItemsFinder
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Extract("Window/Analysis/Profiler #LEFT", out index, out hotkey, out key, out shift, out alt, out cmd);
+            MenuItemHotKey.ExtractFrom("Window/Analysis/Profiler #LEFT", out index, out hotkey, out key, out shift, out alt, out cmd);
             Assert.IsTrue(hotkey == "#LEFT");
             Assert.IsTrue(shift);
             Assert.IsTrue(key == "LEFT");
