@@ -14,11 +14,11 @@ namespace SKTools.MenuItemsFinder
         [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void ShowWindow()
         {
-            var window = GetWindow(true);
+            var window = GetWindow<MenuItemsFinderEditorWindow>(true);
 
             var finder = GetFinder();
             finder.Load();
-            finder.SetWindow(window);
+            finder.SetUpWindow(window);
 
             window.Show();
             window.Focus();
@@ -30,7 +30,7 @@ namespace SKTools.MenuItemsFinder
         {
             if (!IsWindowOpen) return;
             
-            var window = GetWindow(false);
+            var window = GetWindow<MenuItemsFinderEditorWindow>(false);
             if (window == null)
             {
                 IsWindowOpen = false;
@@ -39,31 +39,18 @@ namespace SKTools.MenuItemsFinder
 
             var finder = GetFinder();
             finder.Load();
-            finder.SetWindow(window);
+            finder.SetUpWindow(window);
             
             window.Focus();
         }
 
-        private static MenuItemsFinderEditorWindow GetWindow(bool createIfNotExist)
-        {
-            var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(MenuItemsFinderEditorWindow));
-            if (objectsOfTypeAll.Length < 1)
-            {
-                if (!createIfNotExist) return null;
-                return ScriptableObject.CreateInstance<MenuItemsFinderEditorWindow>();
-            }
-
-            var window = (MenuItemsFinderEditorWindow) objectsOfTypeAll[0];
-            return window;
-        }
-
-        private void SetWindow(MenuItemsFinderEditorWindow window)
+        private void SetUpWindow(MenuItemsFinderEditorWindow window)
         {
             LoadGUIAssets();
             
             window.autoRepaintOnSceneChange = true;
             window.titleContent = new GUIContent("MenuItems");
-            window.minSize = new Vector2(300, 450);
+            window.minSize = new Vector2(350, 450);
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
@@ -78,7 +65,6 @@ namespace SKTools.MenuItemsFinder
         {
             IsWindowOpen = false;
             SavePrefs();
-            Dispose();
         }
 
         private void OnWindowGui(MenuItemsFinderEditorWindow window)
@@ -105,9 +91,10 @@ namespace SKTools.MenuItemsFinder
             DrawMenuBar();
             DrawItems();
 
-            CleanRemovedItems();
-            
-            GUILayoutCollection.SupportFooterBar(MenuItemsFinderVersion.Version.ToString(), MenuItemsFinderVersion.ReadmeUrl, MenuItemsFinderVersion.ReadmeUrl, 
+            GUILayoutCollection.SupportFooterBar(
+                MenuItemsFinderVersion.Version.ToString(),
+                MenuItemsFinderVersion.ReadmeUrl, 
+                MenuItemsFinderVersion.ReadmeUrl, 
                 MenuItemsFinderVersion.AskQuestionUrlInSkype);
         }
     }

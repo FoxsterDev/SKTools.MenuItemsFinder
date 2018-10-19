@@ -75,7 +75,7 @@ namespace SKTools.MenuItemsFinder
          The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
         */
-        public static void Extract(string itemPath, out int index, out string hotkeyString, out string key,
+        public static void ExtractFrom(string itemPath, out int index, out string hotkeyString, out string key,
             out bool shift, out bool alt, out bool cmd)
         {
             key = hotkeyString = string.Empty;

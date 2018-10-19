@@ -18,7 +18,7 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Window/Package Manager",
+            "Path": "Window/TextMeshPro/Font Asset Creator",
             "Notice": ""
         },
         {
@@ -40,14 +40,7 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Window/TextMeshPro/Font Asset Creator",
-            "Notice": ""
-        },
-        {
-            "CustomHotKeys": [],
-            "CustomName": "",
-            "Starred": true,
-            "Path": "internal:Window/Internal/Screenshot/Snap View Extended Right",
+            "Path": "Window/Package Manager",
             "Notice": ""
         },
         {
@@ -55,6 +48,13 @@
             "CustomName": "SnapView",
             "Starred": false,
             "Path": "internal:Window/Internal/Screenshot/Snap View",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "internal:Window/Internal/Screenshot/Snap View Extended Right",
             "Notice": ""
         }
     ],

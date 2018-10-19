@@ -26,11 +26,12 @@ namespace SKTools.MenuItemsFinder
             _settingsMenuItemButtonStyle;
         
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
-
+        private bool _isCreatedStyles = false;
 
         private bool _wasRemoving;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
+        partial void DrawMenuItemHotKeys();
 
         private static MenuItemsFinder _instance;
         private readonly MenuItemsFinderPreferences _prefs;
@@ -133,19 +134,7 @@ namespace SKTools.MenuItemsFinder
             LoadingImage =   LoadAsset<Texture2D>(assetsPath,"loading.png");
             SettingsImage =  LoadAsset<Texture2D>(assetsPath,"settings.png");
         }
-               
-        partial void DrawMenuItemHotKeys();
-
-        public void Dispose()
-        {
-            Resources.UnloadAsset(StarredImage);
-            Resources.UnloadAsset(UnstarredImage);
-            Resources.UnloadAsset(LoadingImage);
-            Resources.UnloadAsset(SettingsImage);
-        }
-     
-        private bool _isCreatedStyles = false;
-
+      
         private void CreateStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
@@ -229,6 +218,8 @@ namespace SKTools.MenuItemsFinder
             _menuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawNormalState);
             
             GUILayout.EndScrollView();
+            
+            CleanRemovedItems();
         }
 
         private void DrawMissedState(MenuItemLink item)
@@ -431,24 +422,6 @@ namespace SKTools.MenuItemsFinder
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }
-      
-
-        private T LoadAsset<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
-        {
-            var assetPath = string.Concat(assetDirectory, assetName);
-            var asset = (T) AssetDatabase.LoadAssetAtPath(assetPath, typeof (T));
-            Assert.IsNotNull(asset, "Cant load asset, please check path=" +assetPath);
-            return asset;
-        }
-        
-        private void OpenFile(string filePath)
-        {
-#if !UNITY_EDITOR_WIN
-            filePath = "file://" + filePath.Replace(@"\", "/");
-#else
-            filePath = @"file:\\" + filePath.Replace("/", @"\");;
-#endif
-            Application.OpenURL(filePath);
-        }
+     
     }
 }

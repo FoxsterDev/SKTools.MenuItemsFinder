@@ -22,6 +22,9 @@ namespace SKTools.MenuItemsFinder
             get { return string.Concat(DirectoryPath, "Prefs.json"); }
         }
 
+        /// <summary>
+        /// It uses stacjtrace detect a place of the code in Assets
+        /// </summary>
         private string DirectoryPath
         {
             get

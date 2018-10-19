@@ -22,7 +22,7 @@ namespace SKTools.MenuItemsFinder
                 HotKey = new MenuItemHotKey();
                 var startIndex = -1;
                 var hotkeyString = "";
-                MenuItemHotKey.Extract(Path, out startIndex, out hotkeyString, out HotKey.Key, out HotKey.Shift,
+                MenuItemHotKey.ExtractFrom(Path, out startIndex, out hotkeyString, out HotKey.Key, out HotKey.Shift,
                     out HotKey.Alt, out HotKey.Cmd);
 
                 if (startIndex > -1)
