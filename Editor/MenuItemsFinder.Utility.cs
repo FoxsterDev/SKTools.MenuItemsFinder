@@ -15,7 +15,7 @@ namespace SKTools.MenuItemsFinder
         /// </summary>
         /// <param name="createIfNotExist">In some cases I need to check of exisiting already opened window</param>
         /// <typeparam name="T">Some type of editor window</typeparam>
-        /// <returns></returns>
+        /// <returns>Return a window of type T</returns>
         private static T GetWindow<T>(bool createIfNotExist) where T : EditorWindow
         {
             var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(T));

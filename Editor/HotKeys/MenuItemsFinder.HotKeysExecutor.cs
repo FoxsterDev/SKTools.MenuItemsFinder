@@ -14,7 +14,7 @@ namespace SKTools.MenuItemsFinder
         private static FieldInfo _eventInfo;
 
         /// <summary>
-        /// To prevent several hotKeysMap.
+        /// Static because to prevent several hotKeysMap.
         /// In unity editor are possible to drop instance of variables state.
         /// For example not only clearly recompiling, but and just open some instance editorwindow
         /// We could be create an instance ScriptableObject,  but it helps with only serializable type, not dictionary

@@ -8,14 +8,13 @@ namespace SKTools.MenuItemsFinder
         public List<MenuItemHotKey> CustomHotKeys;
         [NonSerialized] public MenuItemHotKey HotKey;
    
-        partial void HasCustomHotKeys(ref bool hasHotKeys)
+        public void UpdateHotKeys(MenuItemLink item)
         {
-            hasHotKeys = CustomHotKeys != null && CustomHotKeys.Count > 0;
-        }
-       
-        partial void UpdateHotKeys(MenuItemLink item)
-        {
-            if (CustomHotKeys == null)
+            if (item != null)
+            {
+                CustomHotKeys = item.CustomHotKeys;
+            }
+            else if (CustomHotKeys == null)
             {
                 CustomHotKeys = new List<MenuItemHotKey>(1);
                 
@@ -35,11 +34,6 @@ namespace SKTools.MenuItemsFinder
                 {
                     HotKey = null;
                 }
-            }
-
-            if (item != null)
-            {
-                CustomHotKeys = item.CustomHotKeys;
             }
 
             var hasHotKey = HotKey ?? (CustomHotKeys.Count > 0 ? CustomHotKeys[0] : null);

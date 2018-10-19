@@ -16,12 +16,9 @@ namespace SKTools.MenuItemsFinder
         {
             var window = GetWindow<MenuItemsFinderEditorWindow>(true);
 
-            var finder = GetFinder();
-            finder.Load();
-            finder.SetUpWindow(window);
-
+            GetFinder().SetUpWindow(window);
+            
             window.Show();
-            window.Focus();
             IsWindowOpen = true;
         }
 
@@ -37,15 +34,12 @@ namespace SKTools.MenuItemsFinder
                 return;
             }
 
-            var finder = GetFinder();
-            finder.Load();
-            finder.SetUpWindow(window);
-            
-            window.Focus();
+            GetFinder().SetUpWindow(window);
         }
 
         private void SetUpWindow(MenuItemsFinderEditorWindow window)
         {
+            Load();
             LoadGUIAssets();
             
             window.autoRepaintOnSceneChange = true;
@@ -54,6 +48,7 @@ namespace SKTools.MenuItemsFinder
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
+            window.Focus();
         }
 
         private void OnWindowLostFocus(MenuItemsFinderEditorWindow window)

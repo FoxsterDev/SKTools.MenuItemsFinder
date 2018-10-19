@@ -6,9 +6,6 @@ namespace SKTools.MenuItemsFinder
     [Serializable]
     internal partial class MenuItemLink
     {
-        partial void UpdateHotKeys(MenuItemLink item = null);
-        partial void HasCustomHotKeys(ref bool has);
-        
         [NonSerialized] private readonly MenuItemData _menuItem;
 
         public string CustomName;
@@ -31,16 +28,6 @@ namespace SKTools.MenuItemsFinder
             get { return _menuItem == null; }
         }
 
-        public bool IsCustomized
-        {
-            get
-            {
-                var hasCustomHotKeys = false;
-                HasCustomHotKeys(ref hasCustomHotKeys);
-                return Starred || !string.IsNullOrEmpty(CustomName) || IsMissed || hasCustomHotKeys;
-            }
-        }
-
         public bool HasValidate
         {
             get { return _menuItem != null && _menuItem.TargetMethodValidate != null; }
@@ -55,7 +42,6 @@ namespace SKTools.MenuItemsFinder
             if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
  
             UpdateLabel();
-            UpdateHotKeys();
             
             Key = Path.ToLower();
         }
@@ -71,7 +57,6 @@ namespace SKTools.MenuItemsFinder
             }
             
             UpdateLabel();
-            UpdateHotKeys(item);
             
             Key = Path.ToLower();
         }

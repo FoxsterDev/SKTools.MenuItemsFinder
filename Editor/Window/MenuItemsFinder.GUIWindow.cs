@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    public delegate void FinderDelegate();
-    public delegate void FinderDelegate<T>(T obj);
-
     internal partial class MenuItemsFinder
     {
         partial void CustomHotKeysEditable();
-    
+        partial void DrawMenuItemHotKeys();
+        
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
 
@@ -29,23 +22,7 @@ namespace SKTools.MenuItemsFinder
         private bool _isCreatedStyles = false;
 
         private bool _wasRemoving;
-        private bool _isLoaded;
-        private List<MenuItemLink> _menuItems;
-        partial void DrawMenuItemHotKeys();
-
-        private static MenuItemsFinder _instance;
-        private readonly MenuItemsFinderPreferences _prefs;
         
-        private static MenuItemsFinder GetFinder()
-        {
-            return _instance ?? new MenuItemsFinder();
-        }
-       
-        private MenuItemsFinder()
-        {
-            _prefs = new MenuItemsFinderPreferences();
-            _prefs.Load();
-        }
 
         private string FilterMenuItems
         {
@@ -67,37 +44,6 @@ namespace SKTools.MenuItemsFinder
                                            item.CustomName.ToLower().Contains(key));
                     }
                 }
-            }
-        }
-        
-        private void Load()
-        {
-            try
-            {
-                _menuItems = GetAllMenuItems(_prefs.CustomizedMenuItems);
-                _isLoaded = true;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("[MenuItemsFinder] could not be loaded!");
-            }
-        }
-
-        private void SavePrefs()
-        {
-            try
-            {
-                var customizedItems = _menuItems.FindAll(i => i.IsCustomized).ToList();
-                customizedItems.ForEach(item=> { if (item.CustomHotKeys.Count > 0)
-                {
-                    item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
-                }});
-                
-                _prefs.CustomizedMenuItems = new List<MenuItemLink>(customizedItems);
-                _prefs.Save();
-            }
-            catch
-            {
             }
         }
         
@@ -185,7 +131,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSearchBar()
         {
-             var focusControl = _selectedMenuItem == null;
+            var focusControl = _selectedMenuItem == null;
             FilterMenuItems = GUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
         }
 
@@ -308,7 +254,7 @@ namespace SKTools.MenuItemsFinder
             var texture = (item.Starred ? StarredImage : UnstarredImage);
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
-               ClickButton_ToggleStarred(item);
+                ClickButton_ToggleStarred(item);
             }
 
             if (GUILayout.Button(SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))

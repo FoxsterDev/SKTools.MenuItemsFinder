@@ -8,8 +8,61 @@ using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
+    public delegate void FinderDelegate<T>(T obj);
+
     internal partial class MenuItemsFinder 
     {
+        private static MenuItemsFinder _instance;
+        private readonly MenuItemsFinderPreferences _prefs;
+        private bool _isLoaded;
+        private List<MenuItemLink> _menuItems;
+
+        private MenuItemsFinder()
+        {
+            _prefs = new MenuItemsFinderPreferences();
+            _prefs.Load();
+        }
+
+        private static MenuItemsFinder GetFinder()
+        {
+            return _instance ?? new MenuItemsFinder();
+        }
+        
+        private bool IsCustomized(MenuItemLink item)
+        {
+            return item.Starred || !string.IsNullOrEmpty(item.CustomName) || item.IsMissed || item.CustomHotKeys.Count > 0;
+        }
+
+        private void Load()
+        {
+            try
+            {
+                _menuItems = GetAllMenuItems(_prefs.CustomizedMenuItems);
+                _isLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("[MenuItemsFinder] could not be loaded!");
+            }
+        }
+
+        private void SavePrefs()
+        {
+            try
+            {
+                _prefs.CustomizedMenuItems = _menuItems.FindAll(IsCustomized).ToList();
+                _prefs.CustomizedMenuItems.ForEach(item =>
+                {
+                    if (item.CustomHotKeys.Count > 0) item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
+                });
+
+                _prefs.Save();
+            }
+            catch
+            {
+            }
+        }
+        
         private List<MenuItemLink> GetAllMenuItems(List<MenuItemLink> customizedItems)
         {
             var watch = new Stopwatch();
@@ -18,6 +71,7 @@ namespace SKTools.MenuItemsFinder
             var menuItemData = LoadMenuItemData();
 
             var menuItemsLinksDict = new Dictionary<string, MenuItemLink>(menuItemData.Count);
+            
             var menuItemLinks = CreateMenuItemLinks(menuItemData, menuItemsLinksDict);
             CustomizeMenuItemLinks(menuItemLinks, customizedItems, menuItemsLinksDict);
          
@@ -47,6 +101,7 @@ namespace SKTools.MenuItemsFinder
                 }
 
                 menuItemLink.UpdateFrom(customized);
+                menuItemLink.UpdateHotKeys(customized);
             }
         }
 
@@ -65,6 +120,7 @@ namespace SKTools.MenuItemsFinder
                 }
 
                 var link = new MenuItemLink(entry.Value);
+                link.UpdateHotKeys(null);
                 menuItems.Add(link);
                 menuItemLinksDict[link.Path] = link;
             }
@@ -125,6 +181,5 @@ namespace SKTools.MenuItemsFinder
                 data.TargetMethod = method;
             }
         }
-      
     }
 }

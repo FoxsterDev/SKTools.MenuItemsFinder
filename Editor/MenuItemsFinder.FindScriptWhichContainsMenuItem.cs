@@ -50,8 +50,8 @@ namespace SKTools.MenuItemsFinder
 
             //var k = File.ReadAllText("sers/sergeykha/Projects/Foxster/SKToolsUnity/Packages/manifest.json");
             
-            var l = EditorJsonUtility.ToJson(new Manifest{dependencies = new Dictionary<string, string> {{"lsall", "lsllas"}}});// .FromJsonOverwrite(k,);
-            Debug.Log(l);
+//            var l = EditorJsonUtility.ToJson(new Manifest{dependencies = new Dictionary<string, string> {{"lsall", "lsllas"}}});// .FromJsonOverwrite(k,);
+  //          Debug.Log(l);
             //Unity.TextMeshPro.Editor
             var assemblyFilePath = Path.GetFileNameWithoutExtension(item.AssemlyFilePath);
             Debug.Log(assemblyFilePath);
