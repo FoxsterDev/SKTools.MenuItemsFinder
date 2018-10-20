@@ -6,6 +6,9 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemLink
     {
         public List<MenuItemHotKey> CustomHotKeys;
+        /// <summary>
+        /// Original hotkey from menuitem path
+        /// </summary>
         [NonSerialized] public MenuItemHotKey HotKey;
    
         public void UpdateHotKeys(MenuItemLink item)

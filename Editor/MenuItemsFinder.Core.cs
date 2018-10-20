@@ -33,11 +33,11 @@ namespace SKTools.MenuItemsFinder
             return item.Starred || !string.IsNullOrEmpty(item.CustomName) || item.IsMissed || item.CustomHotKeys.Count > 0;
         }
 
-        private void Load()
+        private void LoadMenuItems()
         {
             try
             {
-                _menuItems = GetAllMenuItems(_prefs.CustomizedMenuItems);
+                _menuItems = GetMenuItems(_prefs.CustomizedMenuItems);
                 _isLoaded = true;
             }
             catch (Exception ex)
@@ -63,7 +63,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        private List<MenuItemLink> GetAllMenuItems(List<MenuItemLink> customizedItems)
+        private List<MenuItemLink> GetMenuItems(List<MenuItemLink> customizedItems)
         {
             var watch = new Stopwatch();
             watch.Start();
@@ -73,7 +73,7 @@ namespace SKTools.MenuItemsFinder
             var menuItemsLinksDict = new Dictionary<string, MenuItemLink>(menuItemData.Count);
             
             var menuItemLinks = CreateMenuItemLinks(menuItemData, menuItemsLinksDict);
-            CustomizeMenuItemLinks(menuItemLinks, customizedItems, menuItemsLinksDict);
+            CustomizeMenuItems(menuItemLinks, customizedItems, menuItemsLinksDict);
          
             watch.Stop();
             
@@ -83,7 +83,7 @@ namespace SKTools.MenuItemsFinder
             return menuItemLinks;
         }
 
-        private void CustomizeMenuItemLinks(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,  Dictionary<string, MenuItemLink> menuItemLinksDict)
+        private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,  Dictionary<string, MenuItemLink> menuItemLinksDict)
         {
             MenuItemLink menuItemLink;
             foreach (var customized in customizedItems)

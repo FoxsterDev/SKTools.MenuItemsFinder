@@ -39,15 +39,17 @@ namespace SKTools.MenuItemsFinder
 
         private void SetUpWindow(MenuItemsFinderEditorWindow window)
         {
-            Load();
-            LoadGUIAssets();
+            LoadMenuItems();
+            LoadGuiAssets();
             
             window.autoRepaintOnSceneChange = true;
             window.titleContent = new GUIContent("MenuItems");
             window.minSize = new Vector2(350, 450);
+            
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
+            
             window.Focus();
         }
 
@@ -64,33 +66,23 @@ namespace SKTools.MenuItemsFinder
 
         private void OnWindowGui(MenuItemsFinderEditorWindow window)
         {
-            if (!_isLoaded)
+            if (!_isLoaded || EditorApplication.isCompiling)
             {
                 DrawUnvailableState(window);
                 return;
             }
-            
-            if (EditorApplication.isCompiling)
+          
+            if (!_isLoadedWindowStyles)
             {
-                DrawUnvailableState(window);
-                return;
-            }
-
-            if (!_isCreatedStyles)
-            {
-                _isCreatedStyles = true;
-                CreateStyles();
+                _isLoadedWindowStyles = true;
+                LoadWindowStyles();
             }
             
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();
 
-            GUILayoutCollection.SupportFooterBar(
-                MenuItemsFinderVersion.Version.ToString(),
-                MenuItemsFinderVersion.ReadmeUrl, 
-                MenuItemsFinderVersion.ReadmeUrl, 
-                MenuItemsFinderVersion.AskQuestionUrlInSkype);
+            DrawSupportBar();
         }
     }
 }

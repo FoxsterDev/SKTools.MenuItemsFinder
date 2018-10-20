@@ -19,7 +19,7 @@ namespace SKTools.MenuItemsFinder
             _settingsMenuItemButtonStyle;
         
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
-        private bool _isCreatedStyles = false;
+        private bool _isLoadedWindowStyles = false;
 
         private bool _wasRemoving;
         
@@ -69,9 +69,8 @@ namespace SKTools.MenuItemsFinder
             _selectedMenuItem = null;
             _selectedMenuItemCustomHotKeysEditable = null;
         }
-
     
-        private void LoadGUIAssets()
+        private void LoadGuiAssets()
         {
             var assetsPath = _prefs.GetDirectoryAssetsPath;
                 
@@ -81,7 +80,7 @@ namespace SKTools.MenuItemsFinder
             SettingsImage =  LoadAsset<Texture2D>(assetsPath,"settings.png");
         }
       
-        private void CreateStyles()
+        private void LoadWindowStyles()
         {
             _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
             _menuItemButtonStyle.fixedHeight = 20;
@@ -317,8 +316,6 @@ namespace SKTools.MenuItemsFinder
             DrawMenuItemHotKeys();
         }
 
-        
-
         private void ClickButton_SetCustomName(MenuItemLink link)
         {
             if (_selectedMenuItem != null && !string.IsNullOrEmpty(_selectedMenuItem.CustomNameEditable))
@@ -368,6 +365,14 @@ namespace SKTools.MenuItemsFinder
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }
-     
+
+        private void DrawSupportBar()
+        {
+            GUILayoutCollection.SupportFooterBar(
+                MenuItemsFinderVersion.Version.ToString(),
+                MenuItemsFinderVersion.ReadmeUrl, 
+                MenuItemsFinderVersion.ReadmeUrl, 
+                MenuItemsFinderVersion.AskQuestionUrlInSkype);
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace SKTools.MenuItemsFinder
             get { return string.Concat(DirectoryPath, "Prefs.json"); }
         }
 
+        public string Error { get; private set; }
         /// <summary>
         /// It uses stacjtrace detect a place of the code in Assets
         /// </summary>
@@ -54,6 +55,7 @@ namespace SKTools.MenuItemsFinder
             }
             catch (Exception e)
             {
+                Error = e.Message;
             }
         }
 
@@ -65,6 +67,7 @@ namespace SKTools.MenuItemsFinder
             }
             catch (Exception e)
             {
+                Error = e.Message;
             }
         }
     }
