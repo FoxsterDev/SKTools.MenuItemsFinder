@@ -6,7 +6,7 @@ namespace SKTools.Module.Base
     public delegate void GUIDelegate<T>(T obj);
 
 
-    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow, GUIContainerInterface
+    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow, IGUIContainer
     {
         public GUIDelegate<Rect> DrawGuiCallback { get; set; }
         public GUIDelegate<Rect> LostFocusCallback { get; set; }

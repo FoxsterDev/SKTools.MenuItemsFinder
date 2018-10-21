@@ -2,7 +2,7 @@
 
 namespace SKTools.Module.Base
 {
-    internal interface GUIContainerInterface
+    internal interface IGUIContainer
     {
         GUIDelegate<Rect> DrawGuiCallback { get; set; }
         GUIDelegate<Rect> LostFocusCallback{ get; set; }

@@ -10,19 +10,15 @@ namespace SKTools.MenuItemsFinder
     {
         partial void CustomHotKeysEditable();
         partial void DrawMenuItemHotKeys();
+          
         
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
 
-        private GUIStyle _menuItemButtonStyle,
-                        _unstarredMenuItemButtonStyle,
-                        _starredMenuItemButtonStyle,
-                        _settingsMenuItemButtonStyle;
         
-        public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
-        private bool _isLoadedWindowStyles = false;
+//        private bool _isLoadedWindowStyles = false;
 
-        private bool _wasRemoving;
+        private bool _wasItemsRemoving;
         
 
         private string FilterMenuItems
@@ -66,11 +62,11 @@ namespace SKTools.MenuItemsFinder
                 return;
             }
 
-            if (!_isLoadedWindowStyles)
+            /*if (!_isLoadedWindowStyles)
             {
                 _isLoadedWindowStyles = true;
                 LoadWindowStyles();
-            }
+            }*/
 
             DrawSearchBar();
             DrawMenuBar();
@@ -80,9 +76,9 @@ namespace SKTools.MenuItemsFinder
         
         private void CleanRemovedItems()
         {
-            if (_wasRemoving)
+            if (_wasItemsRemoving)
             {
-                _wasRemoving = false;
+                _wasItemsRemoving = false;
                 _menuItems = _menuItems.FindAll(i => !i.IsRemoved);
             }
         }
@@ -101,60 +97,17 @@ namespace SKTools.MenuItemsFinder
             _selectedMenuItemCustomHotKeysEditable = null;
         }
     
-        private void LoadGuiAssets()
-        {
-            var assetsPath = _prefs.GetDirectoryAssetsPath;
-                
-            UnstarredImage = LoadAsset<Texture2D>(assetsPath, "unstarred.png");
-            StarredImage =   LoadAsset<Texture2D>(assetsPath, "starred.png");
-            LoadingImage =   LoadAsset<Texture2D>(assetsPath,"loading.png");
-            SettingsImage =  LoadAsset<Texture2D>(assetsPath,"settings.png");
-        }
-      
-        private void LoadWindowStyles()
-        {
-            _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton);
-            _menuItemButtonStyle.fixedHeight = 20;
-            //_menuItemButtonStyle.fixedWidth = 200;
-            _menuItemButtonStyle.alignment = TextAnchor.MiddleLeft;
-            _menuItemButtonStyle.richText = true;
-
-            _unstarredMenuItemButtonStyle = new GUIStyle();
-            _unstarredMenuItemButtonStyle.fixedHeight = 32;
-            _unstarredMenuItemButtonStyle.fixedWidth = 32;
-            _unstarredMenuItemButtonStyle.stretchHeight = true;
-            _unstarredMenuItemButtonStyle.stretchWidth = true;
-            //_unstarredMenuItemButtonStyle.imagePosition = ImagePosition.ImageOnly;
-            _unstarredMenuItemButtonStyle.overflow = new RectOffset(0, 0, 8, -6);
-            _unstarredMenuItemButtonStyle.active.background =
-                _unstarredMenuItemButtonStyle.focused.background =
-                    _unstarredMenuItemButtonStyle.hover.background =
-                        _unstarredMenuItemButtonStyle.normal.background = UnstarredImage;
-
-            _starredMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
-
-            _starredMenuItemButtonStyle.active.background =
-                _starredMenuItemButtonStyle.focused.background =
-                    _starredMenuItemButtonStyle.hover.background =
-                        _starredMenuItemButtonStyle.normal.background = StarredImage;
-
-            _settingsMenuItemButtonStyle = new GUIStyle(_unstarredMenuItemButtonStyle);
-            _settingsMenuItemButtonStyle.overflow = new RectOffset();
-            _settingsMenuItemButtonStyle.active.background =
-                _settingsMenuItemButtonStyle.focused.background =
-                    _settingsMenuItemButtonStyle.hover.background =
-                        _settingsMenuItemButtonStyle.normal.background = SettingsImage;
-        }
+       
 
         private void DrawUnvailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
             //var matrixBackup = GUI.matrix;
             //GUIUtility.RotateAroundPivot(angle%360, pivot);
-            var width = LoadingImage.width;
-            var height = LoadingImage.height;
+            var width = _targetGui.Assets.LoadingImage.width;
+            var height = _targetGui.Assets.LoadingImage.height;
             var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width, height);
-            GUI.DrawTexture(rect, LoadingImage);
+            GUI.DrawTexture(rect, _targetGui.Assets.LoadingImage);
             //GUI.matrix = matrixBackup; 
         }
 
@@ -203,7 +156,7 @@ namespace SKTools.MenuItemsFinder
             
             GUILayout.BeginHorizontal();
             
-            if (GUILayout.Button(string.Concat("<color=red>", "[Missed]", "</color>") + item.Label, _menuItemButtonStyle))
+            if (GUILayout.Button(string.Concat("<color=red>", "[Missed]", "</color>") + item.Label, _targetGui.Assets.MenuItemButtonStyle))
             {
                 try
                 {
@@ -258,7 +211,7 @@ namespace SKTools.MenuItemsFinder
             var previousColor = GUI.color;
             GUI.color = defaultColor;
 
-            if (GUILayout.Button(label, _menuItemButtonStyle))
+            if (GUILayout.Button(label, _targetGui.Assets.MenuItemButtonStyle))
             {
                 Debug.Log("Try execute menuItem=" + item);
                 try
@@ -280,13 +233,13 @@ namespace SKTools.MenuItemsFinder
 
             GUI.color = previousColor;
 
-            var texture = (item.Starred ? StarredImage : UnstarredImage);
+            var texture = (item.Starred ? _targetGui.Assets.StarredImage : _targetGui.Assets.UnstarredImage);
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 ClickButton_ToggleStarred(item);
             }
 
-            if (GUILayout.Button(SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+            if (GUILayout.Button(_targetGui.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 if (ClickButton_ToggleSettings(item))
                 {
@@ -357,7 +310,7 @@ namespace SKTools.MenuItemsFinder
 
         private void ClickButton_Remove(MenuItemLink item)
         {
-            _wasRemoving = true;
+            _wasItemsRemoving = true;
             item.IsRemoved = true;
         }
         

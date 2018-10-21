@@ -31,13 +31,13 @@ namespace SKTools.MenuItemsFinder
             return methods;
         }
         
-        private T LoadAsset<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
+        /*private T LoadAsset<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
         {
             var assetPath = string.Concat(assetDirectory, assetName);
             var asset = (T) AssetDatabase.LoadAssetAtPath(assetPath, typeof (T));
             Assert.IsNotNull(asset, "Cant load asset, please check path=" +assetPath);
             return asset;
-        }
+        }*/
         
         private void OpenFile(string filePath)
         {

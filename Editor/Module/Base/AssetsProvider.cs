@@ -17,10 +17,10 @@ namespace SKTools.Module.Base
         
         public Object this[string nameAsset]
         {
-            get { return GetAsset<Object>(nameAsset); }
+            get { return Get<Object>(nameAsset); }
         }
         
-        public T GetAsset<T>(string name) where T : Object
+        public T Get<T>(string name) where T : Object
         {
             if (!AssetsDict.ContainsKey(name))
             {

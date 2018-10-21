@@ -7,7 +7,7 @@ namespace SKTools.MenuItemsFinder
     /// <summary>
     /// This window will show editable menuitems
     /// </summary>
-    internal class MenuItemsFinderEditorWindow : SKEditorWindow<MenuItemsFinderEditorWindow>, GUIContainerInterface
+    internal class MenuItemsFinderEditorWindow : SKEditorWindow<MenuItemsFinderEditorWindow>, IGUIContainer
     {
         protected override GUIContent GetTitleContent
         {
