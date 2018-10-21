@@ -48,6 +48,36 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
+        private void OnWindowLostFocus(Rect position)
+        {
+            SavePrefs();
+        }
+
+        private void OnWindowClosed(Rect position)
+        {
+            SavePrefs();
+        }
+
+        private void OnWindowGui(Rect position)
+        {
+            if (!_isLoaded || EditorApplication.isCompiling)
+            {
+                DrawUnvailableState(position);
+                return;
+            }
+
+            if (!_isLoadedWindowStyles)
+            {
+                _isLoadedWindowStyles = true;
+                LoadWindowStyles();
+            }
+
+            DrawSearchBar();
+            DrawMenuBar();
+            DrawItems();
+            DrawSupportBar();
+        }
+        
         private void CleanRemovedItems()
         {
             if (_wasRemoving)

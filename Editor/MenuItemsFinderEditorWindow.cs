@@ -14,11 +14,6 @@ namespace SKTools.MenuItemsFinder
             get { return new GUIContent("MenuItems"); }
         }
 
-        /*protected override StackTrace GetStackTrace()
-        {
-            return new StackTrace(true);
-        }*/
-
         protected override Vector2? GetMinSize
         {
             get { return new Vector2(350, 450); }

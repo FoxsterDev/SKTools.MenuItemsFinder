@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -10,8 +12,11 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-      
-      
+        private string GetDirectory(Type type)
+        {
+            return new FileInfo(new StackTrace(true).GetFrames()[0].GetFileName()).DirectoryName; 
+        }
+        
         /// <summary>
         /// it is worst by time (about 30 ms) than the current variant with 3-foreaches
         /// </summary>
