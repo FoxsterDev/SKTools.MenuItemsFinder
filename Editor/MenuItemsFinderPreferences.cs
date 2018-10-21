@@ -23,6 +23,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         public string Error { get; private set; }
+        
         /// <summary>
         /// It uses stacjtrace detect a place of the code in Assets
         /// </summary>

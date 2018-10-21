@@ -5,7 +5,7 @@ namespace SKTools.MenuItemsFinder
 {
     public delegate void GUIDelegate<T>(T obj);
 
-    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow
+    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow, SKGUIContainerInterface
     {
         public GUIDelegate<Rect> DrawGuiCallback;
         public GUIDelegate<Rect> LostFocusCallback;
@@ -27,6 +27,7 @@ namespace SKTools.MenuItemsFinder
         {
             if (!createIfNotExist && !IsCreated) return null;
 
+            T window;
             var objectsOfTypeAll = Resources.FindObjectsOfTypeAll(typeof(T));
             if (objectsOfTypeAll.Length < 1)
             {
@@ -35,13 +36,43 @@ namespace SKTools.MenuItemsFinder
                     IsCreated = false;
                     return null;
                 }
-                return ScriptableObject.CreateInstance<T>();
+                window = ScriptableObject.CreateInstance<T>();
             }
-
-            var window = (T) objectsOfTypeAll[0];
+            else
+            {
+                window = (T) objectsOfTypeAll[0];
+            }
+            
+            window.Configurate();
             return window;
         }
 
+        public void Configurate()
+        {
+            titleContent = TitleContent;
+            if (MinSize.HasValue)
+            {
+                minSize = MinSize.Value;
+            }
+
+            autoRepaintOnSceneChange = AutoRepaintOnSceneChange;
+        }
+        
+        protected virtual Vector2? MinSize
+        {
+            get { return null; }
+        }
+        
+        protected virtual GUIContent TitleContent
+        {
+            get { return null; }
+        }
+        
+        protected virtual bool AutoRepaintOnSceneChange
+        {
+            get { return false; }
+        }
+        
         private void Awake()
         {
             IsCreated = true;

@@ -115,7 +115,6 @@ namespace SKTools.MenuItemsFinder
                         _settingsMenuItemButtonStyle.normal.background = SettingsImage;
         }
 
-        
         private void DrawUnvailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
@@ -131,7 +130,7 @@ namespace SKTools.MenuItemsFinder
         private void DrawSearchBar()
         {
             var focusControl = _selectedMenuItem == null;
-            FilterMenuItems = GUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
+            FilterMenuItems = SKGUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
         }
 
         private void DrawMenuBar()
@@ -368,7 +367,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSupportBar()
         {
-            GUILayoutCollection.SupportFooterBar(
+            SKGUILayoutCollection.SupportFooterBar(
                 MenuItemsFinderVersion.Version.ToString(),
                 MenuItemsFinderVersion.ReadmeUrl, 
                 MenuItemsFinderVersion.ReadmeUrl, 

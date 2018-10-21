@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal partial class GUILayoutCollection
+    internal partial class SKGUILayoutCollection
     {
         private static GUIStyle _toolbarSearchFieldStyle, _toolbarSearchFieldCancelButtonStyle;
 

@@ -21,7 +21,6 @@ namespace SKTools.MenuItemsFinder
             {
                 return;
             }
-
             GetFinder().SetUpWindow(window);
         }
 
@@ -30,15 +29,9 @@ namespace SKTools.MenuItemsFinder
             LoadMenuItems();
             LoadGuiAssets();
             
-            window.autoRepaintOnSceneChange = true;
-            window.titleContent = new GUIContent("MenuItems");
-            window.minSize = new Vector2(350, 450);
-            
             window.DrawGuiCallback = OnWindowGui;
             window.CloseCallback = OnWindowClosed;
             window.LostFocusCallback = OnWindowLostFocus;
-            
-            window.Focus();
         }
 
         private void OnWindowLostFocus(Rect position)
@@ -68,7 +61,6 @@ namespace SKTools.MenuItemsFinder
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();
-
             DrawSupportBar();
         }
     }
