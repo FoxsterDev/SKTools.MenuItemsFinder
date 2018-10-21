@@ -116,14 +116,14 @@ namespace SKTools.MenuItemsFinder
         }
 
         
-        private void DrawUnvailableState(MenuItemsFinderEditorWindow window)
+        private void DrawUnvailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
             //var matrixBackup = GUI.matrix;
             //GUIUtility.RotateAroundPivot(angle%360, pivot);
             var width = LoadingImage.width;
             var height = LoadingImage.height;
-            var rect = new Rect(window.position.width * 0.5f - width * 0.5f, window.position.height * 0.5f - height * 0.5f, width, height);
+            var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width, height);
             GUI.DrawTexture(rect, LoadingImage);
             //GUI.matrix = matrixBackup; 
         }

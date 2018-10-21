@@ -8,8 +8,6 @@ using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    public delegate void FinderDelegate<T>(T obj);
-
     internal partial class MenuItemsFinder 
     {
         private static MenuItemsFinder _instance;
