@@ -1,22 +1,23 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace SKTools.MenuItemsFinder
+namespace SKTools.Module.Base
 {
     public delegate void GUIDelegate<T>(T obj);
 
-    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow, SKGUIContainerInterface
-    {
-        public GUIDelegate<Rect> DrawGuiCallback;
-        public GUIDelegate<Rect> LostFocusCallback;
-        public GUIDelegate<Rect> CloseCallback;
 
+    internal abstract class SKEditorWindow<T> : EditorWindow where T : EditorWindow, GUIContainerInterface
+    {
+        public GUIDelegate<Rect> DrawGuiCallback { get; set; }
+        public GUIDelegate<Rect> LostFocusCallback { get; set; }
+        public GUIDelegate<Rect> CloseCallback { get; set; }
+        
         private static bool IsCreated
         {
             get { return EditorPrefs.GetBool(typeof(T).Name, false); }
             set { EditorPrefs.SetBool(typeof(T).Name, value); }
         }
-        
+
         /// <summary>
         /// I added this method because the standart GetWindow immediately create and show window, and I cant configure it before opening
         /// </summary>
@@ -36,47 +37,64 @@ namespace SKTools.MenuItemsFinder
                     IsCreated = false;
                     return null;
                 }
+
                 window = ScriptableObject.CreateInstance<T>();
             }
             else
             {
                 window = (T) objectsOfTypeAll[0];
             }
-            
+
             window.Configurate();
             return window;
         }
 
-        public void Configurate()
+        public virtual void Configurate()
         {
-            titleContent = TitleContent;
-            if (MinSize.HasValue)
+            titleContent = GetTitleContent;
+            if (GetMinSize.HasValue)
             {
-                minSize = MinSize.Value;
+                minSize = GetMinSize.Value;
             }
 
-            autoRepaintOnSceneChange = AutoRepaintOnSceneChange;
+            if (GetMaxSize.HasValue)
+            {
+                maxSize = GetMaxSize.Value;
+            }
+
+            autoRepaintOnSceneChange = GetAutoRepaintOnSceneChange;
         }
-        
-        protected virtual Vector2? MinSize
+
+        protected virtual Vector2? GetMinSize
         {
             get { return null; }
         }
-        
-        protected virtual GUIContent TitleContent
+
+        protected virtual Vector2? GetMaxSize
         {
             get { return null; }
         }
-        
-        protected virtual bool AutoRepaintOnSceneChange
+
+        protected virtual GUIContent GetTitleContent
+        {
+            get { return null; }
+        }
+
+        protected virtual bool GetAutoRepaintOnSceneChange
         {
             get { return false; }
         }
         
+        protected virtual bool GetAutoRepaintOnSelectionChange
+        {
+            get { return false; }
+        }
+
         private void Awake()
         {
             IsCreated = true;
         }
+
         /// <summary>
         /// we can easily switch gui content of this window
         /// </summary>
@@ -90,9 +108,12 @@ namespace SKTools.MenuItemsFinder
         /// </summary>
         private void OnSelectionChange()
         {
-            Repaint();
+            if (GetAutoRepaintOnSelectionChange)
+            {
+                Repaint();
+            }
         }
-        
+
         /// <summary>
         /// This callbacks are used for saving state
         /// </summary>
@@ -100,13 +121,13 @@ namespace SKTools.MenuItemsFinder
         {
             if (LostFocusCallback != null) LostFocusCallback(position);
         }
-    
+
         private void OnDestroy()
         {
             IsCreated = false;
-            
-            if (CloseCallback != null)  CloseCallback(position);
-            
+
+            if (CloseCallback != null) CloseCallback(position);
+
             DrawGuiCallback = null;
             LostFocusCallback = null;
             CloseCallback = null;

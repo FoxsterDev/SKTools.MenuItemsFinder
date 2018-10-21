@@ -1,37 +1,36 @@
-﻿using UnityEditor;
+﻿using SKTools.Module.Base;
+using UnityEditor;
 using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
+        private Surrogate<MenuItemsFinderEditorWindow, AssetsProvider> _window;
+
         [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void ShowWindow()
         {
-            var window = MenuItemsFinderEditorWindow.GetWindow(true);
-            GetFinder().SetUpWindow(window);
-            window.Show();
+            GetFinder().SetUpWindow(true);
         }
 
         [InitializeOnLoadMethod]
         private static void MenuItemsFinderWindow_CheckReload()
         {
-            var window = MenuItemsFinderEditorWindow.GetWindow();
-            if (window == null)
+            GetFinder().SetUpWindow(false);
+        }
+
+        private void SetUpWindow(bool createIfNotExist)
+        {
+            _window = new Surrogate<MenuItemsFinderEditorWindow, AssetsProvider>(createIfNotExist);
+            if (_window == null)
             {
                 return;
             }
-            GetFinder().SetUpWindow(window);
-        }
 
-        private void SetUpWindow(MenuItemsFinderEditorWindow window)
-        {
-            LoadMenuItems();
-            LoadGuiAssets();
-            
-            window.DrawGuiCallback = OnWindowGui;
-            window.CloseCallback = OnWindowClosed;
-            window.LostFocusCallback = OnWindowLostFocus;
+            _window.Container.DrawGuiCallback = OnWindowGui;
+            _window.Container.CloseCallback = OnWindowClosed;
+            _window.Container.LostFocusCallback = OnWindowLostFocus;
         }
 
         private void OnWindowLostFocus(Rect position)
@@ -51,13 +50,13 @@ namespace SKTools.MenuItemsFinder
                 DrawUnvailableState(position);
                 return;
             }
-          
+
             if (!_isLoadedWindowStyles)
             {
                 _isLoadedWindowStyles = true;
                 LoadWindowStyles();
             }
-            
+
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();

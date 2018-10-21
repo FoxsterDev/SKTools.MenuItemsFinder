@@ -23,7 +23,13 @@ namespace SKTools.MenuItemsFinder
 
         private static MenuItemsFinder GetFinder()
         {
-            return _instance ?? new MenuItemsFinder();
+            if (_instance == null)
+            {
+                _instance = new MenuItemsFinder();
+                _instance.LoadMenuItems();
+                return _instance;
+            }
+            return _instance;
         }
         
         private bool IsCustomized(MenuItemLink item)

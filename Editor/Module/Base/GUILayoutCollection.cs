@@ -2,9 +2,9 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace SKTools.MenuItemsFinder
+namespace SKTools.Module.Base
 {
-    internal partial class SKGUILayoutCollection
+    internal partial class GUILayoutCollection
     {
         private static GUIStyle _toolbarSearchFieldStyle, _toolbarSearchFieldCancelButtonStyle;
 

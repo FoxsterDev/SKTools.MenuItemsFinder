@@ -1,4 +1,5 @@
 ﻿using System;
+using SKTools.Module.Base;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,9 +15,9 @@ namespace SKTools.MenuItemsFinder
         private Vector2 _scrollPosition;
 
         private GUIStyle _menuItemButtonStyle,
-            _unstarredMenuItemButtonStyle,
-            _starredMenuItemButtonStyle,
-            _settingsMenuItemButtonStyle;
+                        _unstarredMenuItemButtonStyle,
+                        _starredMenuItemButtonStyle,
+                        _settingsMenuItemButtonStyle;
         
         public Texture2D StarredImage, UnstarredImage, LoadingImage, SettingsImage;
         private bool _isLoadedWindowStyles = false;
@@ -130,7 +131,7 @@ namespace SKTools.MenuItemsFinder
         private void DrawSearchBar()
         {
             var focusControl = _selectedMenuItem == null;
-            FilterMenuItems = SKGUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
+            FilterMenuItems = GUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
         }
 
         private void DrawMenuBar()
@@ -367,7 +368,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSupportBar()
         {
-            SKGUILayoutCollection.SupportFooterBar(
+            GUILayoutCollection.SupportFooterBar(
                 MenuItemsFinderVersion.Version.ToString(),
                 MenuItemsFinderVersion.ReadmeUrl, 
                 MenuItemsFinderVersion.ReadmeUrl, 
