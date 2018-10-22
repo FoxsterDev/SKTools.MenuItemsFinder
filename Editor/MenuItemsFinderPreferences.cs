@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
     [Serializable]
-    internal class MenuItemsFinderPreferences
+    internal class Preferences
     {
         public List<MenuItemLink> CustomizedMenuItems = new List<MenuItemLink>();
 
@@ -17,40 +16,13 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public string PreviousFilterString = null;
 
-        private string GetFilePath
-        {
-            get { return string.Concat(DirectoryPath, "Prefs.json"); }
-        }
-
         public string Error { get; private set; }
         
-        /// <summary>
-        /// It uses stacjtrace detect a place of the code in Assets
-        /// </summary>
-        private string DirectoryPath
-        {
-            get
-            {
-                var stackTrace = new StackTrace(true);
-                return stackTrace.GetFrames()[0].GetFileName()
-                    .Replace(typeof(MenuItemsFinderPreferences).Name + ".cs", string.Empty);
-            }
-        }
-
-        public string GetDirectoryAssetsPath
-        {
-            get
-            {
-                return DirectoryPath.Replace("Editor", "Editor Resources")
-                    .Substring(Application.dataPath.Length - "Assets".Length);
-            }
-        }
-
         public void Load()
         {
             try
             {
-                var filePath = GetFilePath;
+                var filePath = Utility.GetPath("Prefs.json");
                 if (File.Exists(filePath))
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
             }
@@ -64,7 +36,7 @@ namespace SKTools.MenuItemsFinder
         {
             try
             {
-                File.WriteAllText(GetFilePath, EditorJsonUtility.ToJson(this, true));
+                File.WriteAllText(Utility.GetPath("Prefs.json"), EditorJsonUtility.ToJson(this, true));
             }
             catch (Exception e)
             {

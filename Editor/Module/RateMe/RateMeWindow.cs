@@ -13,9 +13,9 @@ namespace SKTools.RateMeWindow
     //good example https://github.com/Tayx94/graphy
     internal class RateMeWindow : EditorWindow
     {
-        private string name = "it";
+        private string _name = "it";
         private string githubUrl = "";
-        private string assetStoreUrl;
+        private string _assetStoreUrl;
         private string email = "s.khalandachev@gmail.com";
         private string subject = "[Support] SKTools.MenuItemsFinder FEEDBACK/SUGGESTION";
         private string additional = "\n\n\n\n________\n\nPlease Do Not Modify This\n\n{0}\n\n________\n";
@@ -145,7 +145,7 @@ namespace SKTools.RateMeWindow
                     }
                     else
                     {
-                        Application.OpenURL(assetStoreUrl);
+                        Application.OpenURL(_assetStoreUrl);
                     }
                 }
             }

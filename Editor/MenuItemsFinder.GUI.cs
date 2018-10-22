@@ -10,7 +10,6 @@ namespace SKTools.MenuItemsFinder
     {
         partial void CustomHotKeysEditable();
         partial void DrawMenuItemHotKeys();
-          
         
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
@@ -340,7 +339,7 @@ namespace SKTools.MenuItemsFinder
             var fullPath = FindScriptWhichContainsMenuItem(item, out error);
             if (!string.IsNullOrEmpty(fullPath))
             {
-                OpenFile(fullPath);
+                Utility.OpenFile(fullPath);
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }
@@ -348,10 +347,10 @@ namespace SKTools.MenuItemsFinder
         private void DrawSupportBar()
         {
             GUILayoutCollection.SupportFooterBar(
-                MenuItemsFinderVersion.Version.ToString(),
-                MenuItemsFinderVersion.ReadmeUrl, 
-                MenuItemsFinderVersion.ReadmeUrl, 
-                MenuItemsFinderVersion.AskQuestionUrlInSkype);
+                Version.Current.ToString(),
+                Version.ReadmeUrl, 
+                Version.ReadmeUrl, 
+                Version.AskQuestionUrlInSkype);
         }
     }
 }

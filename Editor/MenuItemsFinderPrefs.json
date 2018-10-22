@@ -1,0 +1,40 @@
+{
+    "CustomizedMenuItems": [
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Create/C# Script From Buffer",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Create/TextMeshPro/Color Gradient",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Create/TextMeshPro/Sprite Asset",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Tools/Copy Full Path",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Tools/Copy Path In Assets",
+            "Notice": ""
+        }
+    ],
+    "FilterString": ""
+}

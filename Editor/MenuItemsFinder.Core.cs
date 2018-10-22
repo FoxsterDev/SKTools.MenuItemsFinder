@@ -13,13 +13,13 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder 
     {
         private static MenuItemsFinder _instance;
-        private readonly MenuItemsFinderPreferences _prefs;
+        private readonly Preferences _prefs;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
 
         private MenuItemsFinder()
         {
-            _prefs = new MenuItemsFinderPreferences();
+            _prefs = new Preferences();
             _prefs.Load();
         }
 
@@ -182,7 +182,7 @@ namespace SKTools.MenuItemsFinder
         private void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
         {
             var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
-            OpenFile(directoryPath);
+            Utility.OpenFile(directoryPath);
         }
         ///Users/sergeykha/Library/Unity/cache/packages/packages.unity.com/com.unity.textmeshpro@1.2.4/Scripts/Editor
         ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Packages/manifest.json

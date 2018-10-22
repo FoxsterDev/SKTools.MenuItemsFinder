@@ -106,5 +106,9 @@ namespace SKTools.MenuItemsFinder
                 return _settingsMenuItemButtonStyle;
             }
         }
+
+        public MenuItemsFinderAssetsContainer(string assetsDirectory) : base(assetsDirectory)
+        {
+        }
     }
 }
