@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -16,8 +16,6 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public string PreviousFilterString = null;
 
-        public string Error { get; private set; }
-        
         public void Load()
         {
             try
@@ -26,9 +24,9 @@ namespace SKTools.MenuItemsFinder
                 if (File.Exists(filePath))
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Error = e.Message;
+                Debug.LogException(ex);
             }
         }
 
@@ -38,9 +36,9 @@ namespace SKTools.MenuItemsFinder
             {
                 File.WriteAllText(Utility.GetPath("Prefs.json"), EditorJsonUtility.ToJson(this, true));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Error = e.Message;
+                Debug.LogException(ex);
             }
         }
     }

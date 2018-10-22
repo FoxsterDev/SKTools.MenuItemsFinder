@@ -57,12 +57,6 @@ namespace SKTools.MenuItemsFinder
                 return;
             }
 
-            /*if (!_isLoadedWindowStyles)
-            {
-                _isLoadedWindowStyles = true;
-                LoadWindowStyles();
-            }*/
-
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();
@@ -92,8 +86,6 @@ namespace SKTools.MenuItemsFinder
             _selectedMenuItemCustomHotKeysEditable = null;
         }
     
-       
-
         private void DrawUnvailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);

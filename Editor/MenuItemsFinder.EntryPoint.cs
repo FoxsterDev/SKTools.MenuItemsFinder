@@ -1,5 +1,4 @@
-﻿using System.IO;
-using UnityEditor;
+﻿using UnityEditor;
 using SKTools.Base.Editor;
 
 namespace SKTools.MenuItemsFinder
