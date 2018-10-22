@@ -1,10 +1,10 @@
-﻿using SKTools.Module.Base;
+﻿using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal class MenuItemsFinderAssetsProvider : AssetsProvider
+    internal class MenuItemsFinderAssetsContainer : AssetsContainer
     {
         private GUIStyle _menuItemButtonStyle;
         private GUIStyle _settingsMenuItemButtonStyle;

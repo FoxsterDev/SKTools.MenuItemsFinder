@@ -1,12 +1,12 @@
 ﻿using System.IO;
-using SKTools.Module.Base;
 using UnityEditor;
+using SKTools.Base.Editor;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsProvider> _targetGui;
+        private Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsContainer> _targetGui;
 
         [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void ShowWindow()
@@ -22,20 +22,26 @@ namespace SKTools.MenuItemsFinder
 
         private void SetUpWindow(bool createIfNotExist)
         {
-            var assetsDirectory = Path.Combine(GetDirectory(GetType()), "Editor Resources");
-            _targetGui = new Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsProvider>(createIfNotExist, assetsDirectory);
-            if (_targetGui.Container == null)
+            var container = CustomEditorWindow<MenuItemsFinderEditorWindow>.GetWindow(createIfNotExist);
+            
+            if (container != null)
             {
-                return;
-            }
+                DiagnosticRun(LoadMenuItems);
+                
+                var assetsDirectory = Path.Combine(GetDirectory(), "Editor Resources");
+                var assets = new MenuItemsFinderAssetsContainer();
+                assets.Load(assetsDirectory);
+                
+                container.DrawGuiCallback = OnWindowGui;
+                container.CloseCallback = OnWindowClosed;
+                container.LostFocusCallback = OnWindowLostFocus;
 
-            _targetGui.Container.DrawGuiCallback = OnWindowGui;
-            _targetGui.Container.CloseCallback = OnWindowClosed;
-            _targetGui.Container.LostFocusCallback = OnWindowLostFocus;
+                _targetGui = new Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsContainer>(container, assets);
 
-            if (createIfNotExist)
-            {
-                _targetGui.Container.Show();
+                if (createIfNotExist)
+                {
+                    container.Show();
+                }
             }
         }
     }

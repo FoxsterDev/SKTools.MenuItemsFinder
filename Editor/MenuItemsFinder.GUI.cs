@@ -1,5 +1,5 @@
 ﻿using System;
-using SKTools.Module.Base;
+using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -15,11 +15,7 @@ namespace SKTools.MenuItemsFinder
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
 
-        
-//        private bool _isLoadedWindowStyles = false;
-
         private bool _wasItemsRemoving;
-        
 
         private string FilterMenuItems
         {

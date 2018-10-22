@@ -4,33 +4,48 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
+using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private string GetDirectory(Type type)
+        private static void DiagnosticRun(Action method)
         {
-            return new FileInfo(new StackTrace(true).GetFrames()[0].GetFileName()).DirectoryName; 
+            
+#if !FOXSTER_DEV_MODE
+            method();
+#else
+            var watch = new Stopwatch();
+            watch.Start();
+
+            method();
+
+            watch.Stop();
+            Debug.LogFormat("DiagnosticRun {0} takes={1}", method.Method.Name, watch.ElapsedMilliseconds + "ms");
+#endif
         }
-        
+
+        private string GetDirectory()
+        {
+            return new FileInfo(new StackTrace(true).GetFrames()[0].GetFileName()).DirectoryName;
+        }
+
         /// <summary>
         /// it is worst by time (about 30 ms) than the current variant with 3-foreaches
         /// </summary>
         /// <returns></returns>
         private IEnumerable<MethodInfo> GetAllStaticMethods()
         {
-            var methods =(from  assembly in AppDomain.CurrentDomain.GetAssemblies()
+            var methods = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from type in assembly.GetTypes()
                 from method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
                 select method).Distinct();
 
             return methods;
         }
-        
+
         /*private T LoadAsset<T>(string assetDirectory, string assetName) where T : UnityEngine.Object
         {
             var assetPath = string.Concat(assetDirectory, assetName);
@@ -38,7 +53,7 @@ namespace SKTools.MenuItemsFinder
             Assert.IsNotNull(asset, "Cant load asset, please check path=" +assetPath);
             return asset;
         }*/
-        
+
         private void OpenFile(string filePath)
         {
 #if !UNITY_EDITOR_WIN

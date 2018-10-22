@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -24,9 +26,12 @@ namespace SKTools.MenuItemsFinder
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_HotKeysExecutor_Initializer()
         {
-            _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
-            UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);
-            EditorApplication.update += KeyboardInputUpdate;
+            DiagnosticRun(() =>
+            {
+                _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+                UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);
+                EditorApplication.update += KeyboardInputUpdate;
+            });
         }
 
         private static void UpdateHotKeysMap(List<MenuItemLink> menuItemLinks)

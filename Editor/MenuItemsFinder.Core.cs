@@ -28,7 +28,6 @@ namespace SKTools.MenuItemsFinder
             if (_instance == null)
             {
                 _instance = new MenuItemsFinder();
-                _instance.LoadMenuItems();
                 return _instance;
             }
             return _instance;
@@ -71,21 +70,13 @@ namespace SKTools.MenuItemsFinder
         
         private List<MenuItemLink> GetMenuItems(List<MenuItemLink> customizedItems)
         {
-            var watch = new Stopwatch();
-            watch.Start();
-
             var menuItemData = LoadMenuItemData();
-
             var menuItemsLinksDict = new Dictionary<string, MenuItemLink>(menuItemData.Count);
-            
             var menuItemLinks = CreateMenuItemLinks(menuItemData, menuItemsLinksDict);
+           
             CustomizeMenuItems(menuItemLinks, customizedItems, menuItemsLinksDict);
-         
-            watch.Stop();
-            
-            Debug.Log("FindAllMenuItems takes=" + watch.ElapsedMilliseconds +  "ms, Count=" + menuItemLinks.Count); //for mac book pro 2018 it takes about 170 ms, it is not critical affects every time to run it
-
             menuItemLinks.Sort((left, right) => left.Path[0] - right.Path[0]);
+            
             return menuItemLinks;
         }
 
