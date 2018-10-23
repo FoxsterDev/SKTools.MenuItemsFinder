@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal class MenuItemsFinderAssetsContainer : AssetsContainer
+    internal class Assets : AssetsContainer
     {
         private GUIStyle _menuItemButtonStyle;
         private GUIStyle _settingsMenuItemButtonStyle;
@@ -107,7 +107,7 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public MenuItemsFinderAssetsContainer(string assetsDirectory) : base(assetsDirectory)
+        public Assets(string assetsDirectory) : base(assetsDirectory)
         {
         }
     }

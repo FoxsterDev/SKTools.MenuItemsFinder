@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -12,6 +13,12 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder 
     {
         private static MenuItemsFinder _instance;
+
+        private static MenuItemsFinder GetFinder()
+        {
+            return _instance ?? (_instance = new MenuItemsFinder());
+        }
+        
         private readonly Preferences _prefs;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
@@ -20,16 +27,6 @@ namespace SKTools.MenuItemsFinder
         {
             _prefs = new Preferences();
             _prefs.Load();
-        }
-
-        private static MenuItemsFinder GetFinder()
-        {
-            if (_instance == null)
-            {
-                _instance = new MenuItemsFinder();
-                return _instance;
-            }
-            return _instance;
         }
         
         private bool IsCustomized(MenuItemLink item)
@@ -181,7 +178,7 @@ namespace SKTools.MenuItemsFinder
         private void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
         {
             var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
-            Utility.OpenFile(directoryPath);
+            SKTools.Base.Editor.Utility.OpenFile(directoryPath);
         }
         ///Users/sergeykha/Library/Unity/cache/packages/packages.unity.com/com.unity.textmeshpro@1.2.4/Scripts/Editor
         ///Users/sergeykha/Projects/Foxster/SKToolsUnity/Packages/manifest.json

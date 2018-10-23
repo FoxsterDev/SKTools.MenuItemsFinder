@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using SKTools.Base.Editor;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
@@ -26,7 +27,10 @@ namespace SKTools.MenuItemsFinder
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_HotKeysExecutor_Initializer()
         {
-            Utility.DiagnosticRun(() =>
+            Debug.Log(Utility.GetDirectory());
+            Debug.Log(Utility.GetPath("Editor Resources"));
+            
+            SKTools.Base.Editor.Utility.DiagnosticRun(() =>
             {
                 _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
                 UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);

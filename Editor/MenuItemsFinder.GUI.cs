@@ -39,21 +39,21 @@ namespace SKTools.MenuItemsFinder
             }
         }
         
-        private void OnWindowLostFocus(Rect position)
+        private void OnWindowLostFocus(IGUIContainer window)
         {
             SavePrefs();
         }
 
-        private void OnWindowClosed(Rect position)
+        private void OnWindowClosed(IGUIContainer window)
         {
             SavePrefs();
         }
 
-        private void OnWindowGui(Rect position)
+        private void OnWindowGui(IGUIContainer window)
         {
             if (!_isLoaded || EditorApplication.isCompiling)
             {
-                DrawUnvailableState(position);
+                DrawUnvailableState(window.Position);
                 return;
             }
 
@@ -331,7 +331,7 @@ namespace SKTools.MenuItemsFinder
             var fullPath = FindScriptWhichContainsMenuItem(item, out error);
             if (!string.IsNullOrEmpty(fullPath))
             {
-                Utility.OpenFile(fullPath);
+                SKTools.Base.Editor.Utility.OpenFile(fullPath);
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }

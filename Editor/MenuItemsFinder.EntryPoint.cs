@@ -5,7 +5,7 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsContainer> _targetGui;
+        private Surrogate<IGUIContainer, Assets> _targetGui;
 
         [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void ShowWindow()
@@ -21,22 +21,22 @@ namespace SKTools.MenuItemsFinder
 
         private void SetUpWindow(bool createIfNotExist)
         {
-            var container = CustomEditorWindow<MenuItemsFinderEditorWindow>.GetWindow(createIfNotExist);
+            var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
             
             if (container != null)
             {
-                Utility.DiagnosticRun(LoadMenuItems);
+                SKTools.Base.Editor.Utility.DiagnosticRun(LoadMenuItems);
                 
-                var assetsDirectory =  Utility.GetPath("Editor Resources");
-                var assets = new MenuItemsFinderAssetsContainer(assetsDirectory);
+                var assetsDirectory = Utility.GetPath("Editor Resources");
+                var assets = new Assets(assetsDirectory);
 
-                Utility.DiagnosticRun(assets.Load);
+                SKTools.Base.Editor.Utility.DiagnosticRun(assets.Load);
                 
                 container.DrawGuiCallback = OnWindowGui;
                 container.CloseCallback = OnWindowClosed;
                 container.LostFocusCallback = OnWindowLostFocus;
 
-                _targetGui = new Surrogate<MenuItemsFinderEditorWindow, MenuItemsFinderAssetsContainer>(container, assets);
+                _targetGui = new Surrogate<IGUIContainer, Assets>(container, assets);
 
                 if (createIfNotExist)
                 {

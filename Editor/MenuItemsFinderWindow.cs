@@ -6,7 +6,7 @@ namespace SKTools.MenuItemsFinder
     /// <summary>
     /// This window will show editable menuitems
     /// </summary>
-    internal class MenuItemsFinderEditorWindow : CustomEditorWindow<MenuItemsFinderEditorWindow>, IGUIContainer
+    internal class Window : CustomEditorWindow<Window>, IGUIContainer
     {
         protected override GUIContent GetTitleContent
         {
@@ -26,6 +26,11 @@ namespace SKTools.MenuItemsFinder
         protected override bool GetAutoRepaintOnSelectionChange
         {
             get { return true; }
+        }
+
+        public Rect Position
+        {
+            get { return position; }
         }
     }
 }

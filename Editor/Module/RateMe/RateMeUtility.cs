@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 
-namespace SKTools.MenuItemsFinder
+namespace SKTools.RateMeWindow
 {
     internal class Utility
     {
