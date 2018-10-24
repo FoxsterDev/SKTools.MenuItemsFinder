@@ -27,10 +27,7 @@ namespace SKTools.MenuItemsFinder
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_HotKeysExecutor_Initializer()
         {
-            Debug.Log(Utility.GetDirectory());
-            Debug.Log(Utility.GetPath("Editor Resources"));
-            
-            SKTools.Base.Editor.Utility.DiagnosticRun(() =>
+            Utility.DiagnosticRun(() =>
             {
                 _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
                 UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);

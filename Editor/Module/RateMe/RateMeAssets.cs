@@ -16,12 +16,17 @@ namespace SKTools.RateMeWindow
         {
         }
 
-        private Texture2D UnstarredImage
+        public GUIStyle[] StarStyles
+        {
+            get { return _starStyles ?? (_starStyles = new GUIStyle[MaxStar]); }
+        }
+        
+        public Texture2D UnstarredImage
         {
             get { return Get<Texture2D>("unstarred"); }
         }
 
-        private Texture2D StarredImage
+        public Texture2D StarredImage
         {
             get { return Get<Texture2D>("starred"); }
         }
@@ -105,9 +110,5 @@ namespace SKTools.RateMeWindow
             }
         }
 
-        public GUIStyle[] StarStyles
-        {
-            get { return _starStyles ?? (_starStyles = new GUIStyle[MaxStar]); }
-        }
     }
 }

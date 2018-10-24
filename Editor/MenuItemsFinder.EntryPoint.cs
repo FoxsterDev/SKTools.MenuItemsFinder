@@ -25,12 +25,12 @@ namespace SKTools.MenuItemsFinder
             
             if (container != null)
             {
-                SKTools.Base.Editor.Utility.DiagnosticRun(LoadMenuItems);
+                Utility.DiagnosticRun(LoadMenuItems);
                 
                 var assetsDirectory = Utility.GetPath("Editor Resources");
                 var assets = new Assets(assetsDirectory);
 
-                SKTools.Base.Editor.Utility.DiagnosticRun(assets.Load);
+                Utility.DiagnosticRun(assets.Load);
                 
                 container.DrawGuiCallback = OnWindowGui;
                 container.CloseCallback = OnWindowClosed;

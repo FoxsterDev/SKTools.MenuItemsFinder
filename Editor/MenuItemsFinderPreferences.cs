@@ -17,25 +17,31 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public string PreviousFilterString = null;
 
-        public void Load()
+        public Preferences Load()
         {
             try
             {
-                var filePath = Utility.GetPath("Prefs.json");
+                var filePath = Utility.GetPath("Editor Resources", "Prefs.json");
                 if (File.Exists(filePath))
+                {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
+                    return this;
+                }
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
             }
+
+            return new Preferences();
         }
 
         public void Save()
         {
             try
             {
-                File.WriteAllText(Utility.GetPath("Prefs.json"), EditorJsonUtility.ToJson(this, true));
+                var filePath = Utility.GetPath("Editor Resources", "Prefs.json");
+                File.WriteAllText(filePath, EditorJsonUtility.ToJson(this, true));
             }
             catch (Exception ex)
             {

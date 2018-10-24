@@ -20,7 +20,7 @@ namespace SKTools.RateMeWindow
 
         protected override Vector2? GetMaxSize
         {
-            get { return new Vector2(400, 400);; }
+            get { return new Vector2(400, 400); }
         }
 
         public Rect Position
