@@ -1,7 +1,8 @@
 {
     "name": "SKTools.MenuItemsFinder",
     "references": [
-        "SKTools.Base.Editor"
+        "SKTools.Base.Editor",
+        "SKTools.Module.RateMeWindow"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

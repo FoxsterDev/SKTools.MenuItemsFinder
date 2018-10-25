@@ -1,5 +1,6 @@
 ﻿using System;
 using SKTools.Base.Editor;
+using SKTools.Module.RateMeWindow;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -60,6 +61,14 @@ namespace SKTools.MenuItemsFinder
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();
+            GUILayout.Space (10);
+            if (GUILayout.Button("Rate Me", EditorStyles.miniButtonMid))
+            {
+                var rateMeAsset = _targetGui.Assets.Get<TextAsset>("RateMeConfig");
+                var rateMeConfig = new RateMeConfig(rateMeAsset.text);
+                RateMe.Show(rateMeConfig);
+            }
+            
             DrawSupportBar();
         }
         
@@ -331,7 +340,7 @@ namespace SKTools.MenuItemsFinder
             var fullPath = FindScriptWhichContainsMenuItem(item, out error);
             if (!string.IsNullOrEmpty(fullPath))
             {
-                SKTools.Base.Editor.Utility.OpenFile(fullPath);
+                Utility.OpenFile(fullPath);
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
         }

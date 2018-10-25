@@ -1,0 +1,18 @@
+{
+    "MinStar": 3,
+    "MaxStar": 5,
+    "RequestLabel": "How do you like it?",
+    "RateButtonText": "Rate",
+    "RateOptionalUrl": "https://assetstore.unity.com/packages/tools/utilities/monkey-editor-commands-productivity-booster-119938",
+    "RateMainUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder",
+    "RateOptionalMessage": "Do you have a github account?",
+    "RateMainButtonText": "Rate me on Github",
+    "RateOptionalButtonText": "Rate me on AssetStore",
+    "FeedbackMessage": "Please enter your message here",
+    "FeedbackTitle": "FEEDBACK/SUGGESTION",
+    "FeedbackBackButtonText": "Back",
+    "FeedbackSendEmailButtonText": "Send Email",
+    "EmailAddress": "s.khalandachev@gmail.com",
+    "EmailSubject": "[Support] SKTools.MenuItemsFinder FEEDBACK/SUGGESTION",
+    "EmailAdditionalInfoFormat": "\n\n\n\n________\n\nPlease Do Not Modify This\n\n{0}\n\n________\n"
+}

@@ -22,26 +22,24 @@ namespace SKTools.MenuItemsFinder
         private void SetUpWindow(bool createIfNotExist)
         {
             var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
-            
-            if (container != null)
+
+            if (container == null) return;
+            Utility.DiagnosticRun(LoadMenuItems);
+                
+            var assetsDirectory = Utility.GetPath("Editor Resources");
+            var assets = new Assets(assetsDirectory);
+
+            Utility.DiagnosticRun(assets.Load);
+   
+            container.DrawGuiCallback = OnWindowGui;
+            container.CloseCallback = OnWindowClosed;
+            container.LostFocusCallback = OnWindowLostFocus;
+
+            _targetGui = new Surrogate<IGUIContainer, Assets>(container, assets);
+
+            if (createIfNotExist)
             {
-                Utility.DiagnosticRun(LoadMenuItems);
-                
-                var assetsDirectory = Utility.GetPath("Editor Resources");
-                var assets = new Assets(assetsDirectory);
-
-                Utility.DiagnosticRun(assets.Load);
-                
-                container.DrawGuiCallback = OnWindowGui;
-                container.CloseCallback = OnWindowClosed;
-                container.LostFocusCallback = OnWindowLostFocus;
-
-                _targetGui = new Surrogate<IGUIContainer, Assets>(container, assets);
-
-                if (createIfNotExist)
-                {
-                    container.Show();
-                }
+                container.Show();
             }
         }
     }
