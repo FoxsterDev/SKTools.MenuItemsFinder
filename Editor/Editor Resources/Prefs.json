@@ -11,6 +11,13 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
+            "Path": "CONTEXT/Rigidbody/Double Mass",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
             "Path": "Edit/Project Settings/TextMeshPro Settings",
             "Notice": ""
         },
@@ -18,14 +25,14 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Window/Package Manager",
+            "Path": "Window/TextMeshPro/Font Asset Creator",
             "Notice": ""
         },
         {
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Window/TextMeshPro/Font Asset Creator",
+            "Path": "Window/Package Manager",
             "Notice": ""
         },
         {

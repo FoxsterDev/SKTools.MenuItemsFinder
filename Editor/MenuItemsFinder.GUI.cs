@@ -140,7 +140,7 @@ namespace SKTools.MenuItemsFinder
             }
 
             _menuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawNormalState);
-            
+          
             GUILayout.EndScrollView();
             
             CleanRemovedItems();
@@ -152,7 +152,7 @@ namespace SKTools.MenuItemsFinder
             
             GUILayout.BeginHorizontal();
             
-            if (GUILayout.Button(string.Concat("<color=red>", "[Missed]", "</color>") + item.Label, _targetGui.Assets.MenuItemButtonStyle))
+            if (GUILayout.Button(item.Label, _targetGui.Assets.MenuItemButtonStyle))
             {
                 try
                 {
@@ -190,20 +190,21 @@ namespace SKTools.MenuItemsFinder
             var label = item.Label;
 
             bool? validated = null;
-            if (item.HasValidate)
+            try
             {
-                try
-                {
-                    validated = item.CanExecute();
-                }
-                catch
-                {
-                    validated = false;
-                }
-
-                if (validated == false) defaultColor = Color.gray;
+                validated = item.CanExecute();
+            }
+            catch
+            {
+                validated = false;
             }
 
+            if (validated == false) defaultColor = Color.gray;
+            if (item.IsContextMenu)
+            {
+                //defaultColor = Color.cyan;// .gray;
+            }
+            
             var previousColor = GUI.color;
             GUI.color = defaultColor;
 
@@ -240,12 +241,11 @@ namespace SKTools.MenuItemsFinder
                 if (ClickButton_ToggleSettings(item))
                 {
                     GUI.FocusControl("RolledOutMenuItemCustomName");
-
                 }
             }
             
             GUILayout.EndHorizontal();
-            
+                      
             if (_selectedMenuItem != null && _selectedMenuItem.Key.Equals(item.Key))
             {
                 DrawSettings(item);
