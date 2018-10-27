@@ -1,5 +1,5 @@
-[*] added unity oackage manager to open file
-[*] refactoring rate me
+[*] added unity package manager to open file
+[Done] refactoring rate me
 [*] disable items with context
 [*] add toolbar with links
 [*] filter by unity / project menuitems (to hide some items)

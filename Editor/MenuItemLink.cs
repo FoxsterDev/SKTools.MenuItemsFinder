@@ -39,10 +39,9 @@ namespace SKTools.MenuItemsFinder
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
- 
-            UpdateLabel();
-            
             Key = Path.ToLower();
+
+            UpdateLabel();
         }
         
         public void UpdateFrom(MenuItemLink item)
@@ -55,9 +54,9 @@ namespace SKTools.MenuItemsFinder
                 Path = item.Path;
             }
             
-            UpdateLabel();
-            
             Key = Path.ToLower();
+
+            UpdateLabel();
         }
        
         public void UpdateLabel()
