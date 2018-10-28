@@ -33,7 +33,7 @@ namespace SKTools.MenuItemsFinder
                     foreach (var item in _menuItems)
                     {
                         item.IsFiltered = string.IsNullOrEmpty(key) ||
-                                          item.Key.Contains(key) ||
+                                          (!string.IsNullOrEmpty(item.Key) && item.Key.Contains(key)) ||
                                           (!string.IsNullOrEmpty(item.CustomName) &&
                                            item.CustomName.ToLower().Contains(key));
                     }

@@ -15,7 +15,6 @@ namespace SKTools.MenuItemsFinder
         public string FilterString = string.Empty;
         public bool ShowOnlyStarred;
         public bool HideUnityItems;
-        public bool HideMissedItems;
         
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public bool ShowMenuBar;

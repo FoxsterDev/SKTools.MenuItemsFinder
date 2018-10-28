@@ -8,8 +8,23 @@
             "Notice": ""
         },
         {
-            "CustomHotKeys": [],
-            "CustomName": "",
+            "CustomHotKeys": [
+                {
+                    "Alt": true,
+                    "Shift": false,
+                    "Cmd": false,
+                    "Key": "a",
+                    "IsVerified": true
+                },
+                {
+                    "Alt": false,
+                    "Shift": false,
+                    "Cmd": true,
+                    "Key": "p",
+                    "IsVerified": true
+                }
+            ],
+            "CustomName": "MyTheBestCustomName",
             "Starred": true,
             "Path": "CONTEXT/Material/Custom context material",
             "Notice": ""
@@ -72,8 +87,7 @@
             "Notice": ""
         }
     ],
-    "FilterString": "",
+    "FilterString": "As",
     "ShowOnlyStarred": false,
-    "HideUnityItems": false,
-    "HideMissedItems": false
+    "HideUnityItems": false
 }
