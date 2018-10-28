@@ -22,11 +22,11 @@ namespace SKTools.MenuItemsFinder
         private void SetUpWindow(bool createIfNotExist)
         {
             var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
-
             if (container == null) return;
+
             Utility.DiagnosticRun(LoadMenuItems);
                 
-            var assetsDirectory = Utility.GetThePathRelativeToCurrentFile("Editor Resources");
+            var assetsDirectory = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources");
             var assets = new Assets(assetsDirectory);
 
             Utility.DiagnosticRun(assets.Load);

@@ -1,3 +1,7 @@
+//0.1.8
+added fill context, invalid context item will be disabled 
+added rate me module
+
 //0.1.7 
 added support bar
 refactoring and bug fixing

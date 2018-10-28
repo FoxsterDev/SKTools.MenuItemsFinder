@@ -1,6 +1,6 @@
 [*] added unity package manager to open file
 [Done] refactoring rate me
-[*] disable items with context
+[Done] disable items with invalid context
 [*] add toolbar with links
 [*] filter by unity / project menuitems (to hide some items)
 [*] add auto updater
@@ -8,7 +8,7 @@
 [Done] add notice to some item
 [Done] add custom hotkey if is available
 [Done] check prefs missed items
-[*] to provide and check context for menu item
+[Done] to provide and check context for menu item <without trees, StateMachineBehaviour and specific another it>
 [Done] to try opening file that contains a menuitem
 
 [Done] to add custom name for menuitem path
