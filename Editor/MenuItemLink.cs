@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
+using Object = UnityEngine.Object;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -10,7 +11,7 @@ namespace SKTools.MenuItemsFinder
         /// <summary>
         /// Shared data between items for getting context, this is faster than GetComponent..
         /// </summary>
-        private static readonly Dictionary<string, object[]> MenuCommandContextComponentCache = new Dictionary<string, object[]>(5);
+        private static readonly Dictionary<string, object[]> MenuCommandSharedContext = new Dictionary<string, object[]>(5);
         /// <summary>
         /// Clear cache
         /// </summary>
@@ -35,7 +36,7 @@ namespace SKTools.MenuItemsFinder
         public string AssemlyFilePath { get; private set; }
         public Type DeclaringType { get; private set; }
         private bool HasMenuCommandParameter = false;
-        private string MenuCommandContextComponentType;
+        private string MenuCommandContextType;
         
         public bool IsMissed
         {
@@ -65,7 +66,7 @@ namespace SKTools.MenuItemsFinder
                     HasMenuCommandParameter = true;
                     var startIndex = IsContextMenu ? 8 : 0;
                     var endIndex = Path.IndexOf('/', startIndex + 1);
-                    MenuCommandContextComponentType = Path.Substring(startIndex, endIndex - startIndex);
+                    MenuCommandContextType = Path.Substring(startIndex, endIndex - startIndex);
                 }
             }
             Key = Path.ToLower();
@@ -133,39 +134,48 @@ namespace SKTools.MenuItemsFinder
             
             if (HasMenuCommandParameter)
             {
+                if (Selection.activeObject == null)
+                    return null;
+                
                 if (_activeInstanceId != Selection.activeInstanceID)
                 {
-                    MenuCommandContextComponentCache.Clear();
+                    MenuCommandSharedContext.Clear();
                     _activeInstanceId = Selection.activeInstanceID;
                 }
+                Object context = null;
                 
-                if (Selection.activeGameObject != null)
+                object[] parameters;
+                if (MenuCommandSharedContext.ContainsKey(MenuCommandContextType))
                 {
-                    object[] comp;
-                    if (MenuCommandContextComponentCache.ContainsKey(MenuCommandContextComponentType))
+                    parameters = MenuCommandSharedContext[MenuCommandContextType];
+                    if (parameters == null)
                     {
-                        comp = MenuCommandContextComponentCache[MenuCommandContextComponentType];
-                        if (comp == null)
-                        {
-                            error = "Cant get menucommand parameter of type " + MenuCommandContextComponentType;
-                            return null;
-                        }
-
-                        return comp;
-                    }
-                    
-                    var comp2 = Selection.activeGameObject.GetComponent(MenuCommandContextComponentType);
-                    if (comp2 != null)
-                    {
-                        comp = new object[] {new MenuCommand(comp2)};
-                        MenuCommandContextComponentCache[MenuCommandContextComponentType] = comp;
-                        return comp;
+                        error = "Cant get menucommand parameter of type " + MenuCommandContextType;
+                        return null;
                     }
 
-                    error = "Cant get menucommand parameter of type " + MenuCommandContextComponentType;
-                    MenuCommandContextComponentCache[MenuCommandContextComponentType] = null;
-                    return null;
+                    return parameters;
                 }
+
+                var activeObjectType = Selection.activeObject.GetType().Name;
+                if (activeObjectType.Equals(MenuCommandContextType))
+                {
+                    context = Selection.activeObject;
+                }
+                else if (Selection.activeGameObject != null)
+                {
+                    context = Selection.activeGameObject.GetComponent(MenuCommandContextType);
+                }
+
+                if (context != null)
+                {
+                    parameters = new object[] {new MenuCommand(context)};
+                    MenuCommandSharedContext[MenuCommandContextType] = parameters;
+                    return parameters;
+                }
+
+                error = "Cant get menucommand parameter of type " + MenuCommandContextType;
+                MenuCommandSharedContext[MenuCommandContextType] = null;
             }
 
             return null;

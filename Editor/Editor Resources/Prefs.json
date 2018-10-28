@@ -11,6 +11,13 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
+            "Path": "CONTEXT/Material/Custom context material",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
             "Path": "CONTEXT/Rigidbody/Double Mass",
             "Notice": ""
         },
@@ -29,13 +36,6 @@
             "Notice": ""
         },
         {
-            "CustomHotKeys": [],
-            "CustomName": "",
-            "Starred": true,
-            "Path": "Window/Package Manager",
-            "Notice": ""
-        },
-        {
             "CustomHotKeys": [
                 {
                     "Alt": true,
@@ -48,6 +48,13 @@
             "CustomName": "OpenProfiler",
             "Starred": true,
             "Path": "Window/Analysis/Profiler",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Window/Package Manager",
             "Notice": ""
         },
         {
