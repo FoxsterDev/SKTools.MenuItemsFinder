@@ -36,6 +36,13 @@
             "Notice": ""
         },
         {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Window/Package Manager",
+            "Notice": ""
+        },
+        {
             "CustomHotKeys": [
                 {
                     "Alt": true,
@@ -54,13 +61,6 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Window/Package Manager",
-            "Notice": ""
-        },
-        {
-            "CustomHotKeys": [],
-            "CustomName": "",
-            "Starred": true,
             "Path": "internal:Window/Internal/Screenshot/Snap View Extended Right",
             "Notice": ""
         },
@@ -72,5 +72,8 @@
             "Notice": ""
         }
     ],
-    "FilterString": ""
+    "FilterString": "",
+    "ShowOnlyStarred": false,
+    "HideUnityItems": false,
+    "HideMissedItems": false
 }

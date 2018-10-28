@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SKTools.Base.Editor;
 using SKTools.Module.RateMeWindow;
 using UnityEditor;
@@ -61,14 +62,6 @@ namespace SKTools.MenuItemsFinder
             DrawSearchBar();
             DrawMenuBar();
             DrawItems();
-            GUILayout.Space (10);
-            if (GUILayout.Button("Rate Me", EditorStyles.miniButtonMid))
-            {
-                var rateMeAsset = _targetGui.Assets.Get<TextAsset>("RateMeConfig");
-                var rateMeConfig = new RateMeConfig(rateMeAsset.text);
-                RateMe.Show(rateMeConfig);
-            }
-            
             DrawSupportBar();
         }
         
@@ -110,37 +103,45 @@ namespace SKTools.MenuItemsFinder
         private void DrawSearchBar()
         {
             var focusControl = _selectedMenuItem == null;
-            FilterMenuItems = GUILayoutCollection.SearchTextField(FilterMenuItems, focusControl, GUILayout.MinWidth(200));
+            FilterMenuItems = DrawSearchBar(FilterMenuItems, focusControl);
         }
 
         private void DrawMenuBar()
         {
-            GUILayout.BeginHorizontal();
-
-            if (!_prefs.HideAllMissed && _menuItems.Find(m => m.IsMissed) != null)
+            _prefs.ShowMenuBar = EditorGUILayout.Foldout(_prefs.ShowMenuBar, "Menu");
+            if (_prefs.ShowMenuBar)
             {
-                if (GUILayout.Button("Hide All Missed", GUILayout.MaxWidth(100)))
-                {
-                    _prefs.HideAllMissed = true;
-                }
-            }
+                GUILayout.BeginHorizontal();
 
-            GUILayout.EndHorizontal();
+                _prefs.HideUnityItems = GUILayout.Toggle(_prefs.HideUnityItems, "Hide Unity Items",
+                    GUILayout.MaxWidth(120), GUILayout.MinWidth(120));
+                
+                _prefs.ShowOnlyStarred = GUILayout.Toggle(_prefs.ShowOnlyStarred, "Show Only Starred",
+                    GUILayout.MaxWidth(120), GUILayout.MinWidth(120));
+                
+                _prefs.HideAllMissed = GUILayout.Toggle(_prefs.HideAllMissed, "Hide Missed Items",
+                    GUILayout.MaxWidth(120), GUILayout.MinWidth(120));
+
+                GUILayout.EndHorizontal();
+            }
         }
 
         private void DrawItems()
         {
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
-            _menuItems.FindAll(m => m.Starred && !m.IsMissed).ForEach(DrawNormalState);
+            _menuItems.FindAll(m => m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu)).ForEach(DrawNormalState);
 
-            if (!_prefs.HideAllMissed)
+            if (!_prefs.ShowOnlyStarred)
             {
-                _menuItems.FindAll(m => m.IsMissed).ForEach(DrawMissedState);
+                if (!_prefs.HideAllMissed)
+                {
+                    _menuItems.FindAll(m => m.IsMissed).ForEach(DrawMissedState);
+                }
+
+                _menuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu)).ForEach(DrawNormalState);
             }
 
-            _menuItems.FindAll(m => m.IsFiltered && !m.Starred && !m.IsMissed).ForEach(DrawNormalState);
-          
             GUILayout.EndScrollView();
             
             CleanRemovedItems();
@@ -200,10 +201,6 @@ namespace SKTools.MenuItemsFinder
             }
 
             if (validated == false) defaultColor = Color.gray;
-            if (item.IsContextMenu)
-            {
-                //defaultColor = Color.cyan;// .gray;
-            }
             
             var previousColor = GUI.color;
             GUI.color = defaultColor;
@@ -283,6 +280,8 @@ namespace SKTools.MenuItemsFinder
             {
                 ClickButton_SetCustomName(item);
             }
+            
+            GUILayout.Label("AssemblyName: " + item.AssemblyName, GUILayout.MinWidth(100));
 
             GUILayout.EndHorizontal();
 
@@ -343,15 +342,6 @@ namespace SKTools.MenuItemsFinder
                 Utility.OpenFile(fullPath);
                 EditorGUIUtility.systemCopyBuffer = item.Path;
             }
-        }
-
-        private void DrawSupportBar()
-        {
-            GUILayoutCollection.SupportFooterBar(
-                Version.Current.ToString(),
-                Version.ReadmeUrl, 
-                Version.ReadmeUrl, 
-                Version.AskQuestionUrlInSkype);
         }
     }
 }

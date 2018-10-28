@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
 using SKTools.Base.Editor;
+using SKTools.Base.Editor.GuiElementsSystem;
+using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -25,12 +27,12 @@ namespace SKTools.MenuItemsFinder
             if (container == null) return;
 
             Utility.DiagnosticRun(LoadMenuItems);
-                
+
             var assetsDirectory = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources");
             var assets = new Assets(assetsDirectory);
 
             Utility.DiagnosticRun(assets.Load);
-   
+
             container.DrawGuiCallback = OnWindowGui;
             container.CloseCallback = OnWindowClosed;
             container.LostFocusCallback = OnWindowLostFocus;

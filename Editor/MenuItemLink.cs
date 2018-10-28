@@ -27,10 +27,12 @@ namespace SKTools.MenuItemsFinder
         
         [NonSerialized] public string Key;
         [NonSerialized] public string CustomNameEditable;
+        [NonSerialized] public string AssemblyName;
         [NonSerialized] public bool ShowNotice;
         [NonSerialized] public bool IsRemoved;
         [NonSerialized] public bool IsFiltered;
         [NonSerialized] public bool IsContextMenu;
+        [NonSerialized] public bool IsUnityMenu;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
@@ -54,7 +56,13 @@ namespace SKTools.MenuItemsFinder
            
             Path = menuItem.TargetAttribute.menuItem;
             DeclaringType = menuItem.TargetMethod.DeclaringType;
-            if (DeclaringType != null) AssemlyFilePath = DeclaringType.Assembly.Location;
+            if (DeclaringType != null)
+            {
+                AssemlyFilePath = DeclaringType.Assembly.Location;
+                AssemblyName = DeclaringType.Assembly.GetName().Name;
+                IsUnityMenu = AssemblyName.Split('.')[0].Contains("Unity");
+            }
+            
             IsContextMenu = Path.Substring(0, 7) == "CONTEXT";
 
             if (menuItem.TargetMethod.GetParameters().Length > 0)
