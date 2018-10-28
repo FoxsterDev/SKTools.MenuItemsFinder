@@ -1,6 +1,8 @@
 # MenuItemsFinder
 
-What problem solved:
+Download unity package [here](https://github.com/FoxsterDev/SKTools/blob/master/UnityPackages/MenuItemsFinder_v0.1.4.unitypackage)
+
+What can the tool help?
 There are a lot of menuitems in a project. Sometimes their menupathes are changed. And you are angry that you need to search. Or menuitempath has a very big construction and difficult to navigate
 
 Features:
@@ -20,10 +22,7 @@ checked 2018.2.8f1, 2017.3.1p4 ,2017.2.2p4, 5.6.5p1, scripting runtime version n
 
 This tool provide an actual collection of all menuitems from the current project and fast navigate by key words. There is hotkey MacOs= (cmd + shift+ m) , Win = (ctrl + shift+M). Or you can click SKTools->MenuItems Finder after it
 You see this:
-<div align="center">
-    <img src="https://github.com/FoxsterDev/SKTools.MenuItemsFinder/blob/master/Editor%20Resources/view2.png"/>
-</div>
+<img width="655" alt="screen shot 2018-10-29 at 1 16 53 am" src="https://user-images.githubusercontent.com/16952880/47622655-7c8b4480-db18-11e8-8563-de4bc8fa1205.png">
 
 Please enter some name of menuitem in searchtoolbar. You see all menuitems from the project that contains your input. After closing window it will ne saved to prefs. Prefs is a json local file and placed inside MenuItemsFinder Editor folder , and your prefs could be available on different machines. 
 
-Download unity package [here](https://github.com/FoxsterDev/SKTools/blob/master/UnityPackages/MenuItemsFinder_v0.1.4.unitypackage)
