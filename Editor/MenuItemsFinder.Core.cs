@@ -39,6 +39,8 @@ namespace SKTools.MenuItemsFinder
             try
             {
                 _menuItems = GetMenuItems(_prefs.CustomizedMenuItems);
+                _prefs.PreviousFilterString = _prefs.FilterString;
+                 SetFilteredItems(_prefs.FilterString);
                 _isLoaded = true;
             }
             catch (Exception ex)

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using SKTools.Base.Editor;
-using SKTools.Module.RateMeWindow;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -25,19 +23,24 @@ namespace SKTools.MenuItemsFinder
             {
                 _prefs.FilterString = value;
                 
-                if (!_prefs.FilterString.Equals(_prefs.PreviousFilterString))
+                if (_prefs.FilterString != _prefs.PreviousFilterString)
                 {
-                    var key = _prefs.FilterString.ToLower();
-                    _prefs.PreviousFilterString = _prefs.FilterString;
+                    var key = !string.IsNullOrEmpty(_prefs.FilterString) ? _prefs.FilterString.ToLower() : string.Empty;
+                        _prefs.PreviousFilterString = _prefs.FilterString = key;
 
-                    foreach (var item in _menuItems)
-                    {
-                        item.IsFiltered = string.IsNullOrEmpty(key) ||
-                                          (!string.IsNullOrEmpty(item.Key) && item.Key.Contains(key)) ||
-                                          (!string.IsNullOrEmpty(item.CustomName) &&
-                                           item.CustomName.ToLower().Contains(key));
-                    }
+                    SetFilteredItems(key);
                 }
+            }
+        }
+
+        private void SetFilteredItems(string key)
+        {
+            foreach (var item in _menuItems)
+            {
+                item.IsFiltered = string.IsNullOrEmpty(key) ||
+                                  (!string.IsNullOrEmpty(item.Key) && item.Key.Contains(key)) ||
+                                  (!string.IsNullOrEmpty(item.CustomName) &&
+                                   item.CustomName.ToLower().Contains(key));
             }
         }
         
