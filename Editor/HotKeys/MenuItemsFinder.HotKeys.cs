@@ -8,20 +8,26 @@ namespace SKTools.MenuItemsFinder
     {
         private ReorderableList _selectedMenuItemCustomHotKeysEditable;
 
-        partial void DrawMenuItemHotKeys()
+        private void DrawMenuItemHotKeys()
         {
             _selectedMenuItemCustomHotKeysEditable.DoLayoutList();
         }
         
-        partial void CustomHotKeysEditable()
+        private void CustomHotKeysEditable()
         {
             _selectedMenuItemCustomHotKeysEditable = new ReorderableList(_selectedMenuItem.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
             _selectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
             {
                 GUI.Label(rect, "HotKeys " + _selectedMenuItem.HotKey);
             };
+            _selectedMenuItemCustomHotKeysEditable.onReorderCallback += CustomHotKeysEditable_OnReorder; 
             _selectedMenuItemCustomHotKeysEditable.drawElementCallback += CustomHotKeysEditable_DrawHotKey;
             _selectedMenuItemCustomHotKeysEditable.onRemoveCallback += CustomHotKeysEditable_OnRemoved;
+        }
+
+        private void CustomHotKeysEditable_OnReorder(ReorderableList list)
+        {
+            UpdateLabel(_selectedMenuItem);
         }
 
         private bool TryAddHotKeyToItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
@@ -29,7 +35,7 @@ namespace SKTools.MenuItemsFinder
             if (!IsValidHotKey(hotkey, out error)) return false;
 
             hotkey.IsVerified = true;
-            menuItem.UpdateLabel();
+            UpdateLabel(menuItem);
             UpdateHotKeysMap(_menuItems);
             return true;
         }
@@ -40,6 +46,7 @@ namespace SKTools.MenuItemsFinder
             if (list.index >= list.list.Count - 1)
                 list.index = list.list.Count - 1;
 
+            UpdateLabel(_selectedMenuItem);
             UpdateHotKeysMap(_menuItems);
         }
         

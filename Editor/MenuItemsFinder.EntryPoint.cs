@@ -25,7 +25,7 @@ namespace SKTools.MenuItemsFinder
         {
             var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
             if (container == null) return;
-
+            
             Utility.DiagnosticRun(LoadMenuItems);
 
             var assetsDirectory = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources");
@@ -36,13 +36,46 @@ namespace SKTools.MenuItemsFinder
             container.DrawGuiCallback = OnWindowGui;
             container.CloseCallback = OnWindowClosed;
             container.LostFocusCallback = OnWindowLostFocus;
+            container.FocusCallback = OnWindowFocus;
 
             _targetGui = new Surrogate<IGUIContainer, Assets>(container, assets);
 
             if (createIfNotExist)
             {
                 container.Show();
+                container.Focus();
             }
+        }
+          
+        private void OnWindowFocus(IGUIContainer window)
+        {
+            _prefs.PreviousFilterString = _prefs.FilterString;
+            SetFilteredItems(_prefs.FilterString);
+            window.Repaint();
+        }
+        
+        private void OnWindowGui(IGUIContainer window)
+        {
+            if (!_isLoaded || EditorApplication.isCompiling)
+            {
+                DrawUnvailableState(window.Position);
+                return;
+            }
+
+            DrawSearchBar();
+            DrawMenuBar();
+            DrawItems();
+            DrawSupportBar();
+        }
+        
+        private void OnWindowLostFocus(IGUIContainer window)
+        {
+            SavePrefs();
+        }
+
+        private void OnWindowClosed(IGUIContainer window)
+        {
+            SavePrefs();
         }
     }
 }

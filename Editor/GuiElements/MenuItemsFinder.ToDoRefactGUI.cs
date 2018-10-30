@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -8,9 +9,6 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        partial void CustomHotKeysEditable();
-        partial void DrawMenuItemHotKeys();
-        
         private MenuItemLink _selectedMenuItem;
         private Vector2 _scrollPosition;
 
@@ -35,6 +33,7 @@ namespace SKTools.MenuItemsFinder
 
         private void SetFilteredItems(string key)
         {
+            //Debug.LogError("SetFilteredItems: "+ key +" count: "+ _menuItems.Count);
             foreach (var item in _menuItems)
             {
                 item.IsFiltered = string.IsNullOrEmpty(key) ||
@@ -43,30 +42,7 @@ namespace SKTools.MenuItemsFinder
                                    item.CustomName.ToLower().Contains(key));
             }
         }
-        
-        private void OnWindowLostFocus(IGUIContainer window)
-        {
-            SavePrefs();
-        }
-
-        private void OnWindowClosed(IGUIContainer window)
-        {
-            SavePrefs();
-        }
-
-        private void OnWindowGui(IGUIContainer window)
-        {
-            if (!_isLoaded || EditorApplication.isCompiling)
-            {
-                DrawUnvailableState(window.Position);
-                return;
-            }
-
-            DrawSearchBar();
-            DrawMenuBar();
-            DrawItems();
-            DrawSupportBar();
-        }
+      
         
         private void CleanRemovedItems()
         {
@@ -252,7 +228,6 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-
         private void DrawSettings(MenuItemLink item)
         {
             GUILayout.BeginHorizontal();
@@ -272,14 +247,14 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            GUILayout.Label("Set name:", GUILayout.MinWidth(80), GUILayout.MaxWidth(80));
+            GUILayout.Label("Custom name:", GUILayout.MinWidth(70), GUILayout.MaxWidth(70));
 
             GUI.SetNextControlName("RolledOutMenuItemCustomName");
 
             _selectedMenuItem.CustomNameEditable = GUILayout.TextField(_selectedMenuItem.CustomNameEditable,
                 GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
 
-            if (GUILayout.Button("+", GUILayout.MinWidth(24), GUILayout.MaxWidth(24)))
+            if (GUILayout.Button("set", EditorStyles.miniButton, GUILayout.MinWidth(36), GUILayout.MaxWidth(36)))
             {
                 ClickButton_SetCustomName(item);
             }
@@ -297,12 +272,12 @@ namespace SKTools.MenuItemsFinder
             DrawMenuItemHotKeys();
         }
 
-        private void ClickButton_SetCustomName(MenuItemLink link)
+        private void ClickButton_SetCustomName(MenuItemLink item)
         {
-            if (_selectedMenuItem != null && !string.IsNullOrEmpty(_selectedMenuItem.CustomNameEditable))
+            if (_selectedMenuItem != null)
             {
-                link.CustomName = _selectedMenuItem.CustomNameEditable;
-                link.UpdateLabel();
+                item.CustomName = _selectedMenuItem.CustomNameEditable;
+                UpdateLabel(item);
             }
         }
 

@@ -49,7 +49,7 @@ namespace SKTools.MenuItemsFinder
 #endif
             }
 
-            if (hotkey.Alt) str += "option+";
+            if (hotkey.Alt) str += "alt+";
 
             if (hotkey.Shift) str += "shift+";
 

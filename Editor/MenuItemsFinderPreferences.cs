@@ -12,13 +12,13 @@ namespace SKTools.MenuItemsFinder
     {
         public List<MenuItemLink> CustomizedMenuItems = new List<MenuItemLink>();
 
-        public string FilterString = string.Empty;
+        public string FilterString;
         public bool ShowOnlyStarred;
         public bool HideUnityItems;
         
         [NonSerialized] public bool HideAllMissed;
         [NonSerialized] public bool ShowMenuBar;
-        [NonSerialized] public string PreviousFilterString = null;
+        [NonSerialized] public string PreviousFilterString;
 
         public Preferences Load()
         {

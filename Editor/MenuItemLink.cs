@@ -79,7 +79,7 @@ namespace SKTools.MenuItemsFinder
             }
             Key = Path.ToLower();
             
-            UpdateLabel();
+            //UpdateLabel();
         }
         
         public void UpdateFrom(MenuItemLink item)
@@ -95,7 +95,7 @@ namespace SKTools.MenuItemsFinder
             IsContextMenu = Path.Substring(0, 7) == "CONTEXT";
             Key = Path.ToLower();
 
-            UpdateLabel();
+            //UpdateLabel();
         }
        
         public void UpdateLabel()
