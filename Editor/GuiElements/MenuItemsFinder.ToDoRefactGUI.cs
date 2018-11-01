@@ -314,12 +314,18 @@ namespace SKTools.MenuItemsFinder
 
         private void ClickButton_TryOpenFileThatContainsThisMenuItem(MenuItemLink item, out string error)
         {
-            var fullPath = FindScriptWhichContainsMenuItem(item, out error);
-            if (!string.IsNullOrEmpty(fullPath))
+            error = null;
+            Utility.DiagnosticRun(() =>
             {
-                Utility.OpenFile(fullPath);
-                EditorGUIUtility.systemCopyBuffer = item.Path;
-            }
+                FindScriptWhichContainsMenuItem(item, (path, e) =>
+                {
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        Utility.OpenFile(path);
+                        EditorGUIUtility.systemCopyBuffer = item.Path;
+                    }
+                });
+            });
         }
     }
 }

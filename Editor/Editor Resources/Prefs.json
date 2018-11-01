@@ -13,7 +13,7 @@
                     "Alt": true,
                     "Shift": false,
                     "Cmd": false,
-                    "Key": "a",
+                    "Key": "o",
                     "IsVerified": true
                 },
                 {
@@ -24,7 +24,7 @@
                     "IsVerified": true
                 }
             ],
-            "CustomName": "MyTheBestCustomName",
+            "CustomName": "",
             "Starred": true,
             "Path": "CONTEXT/Material/Custom context material",
             "Notice": ""
@@ -87,7 +87,7 @@
             "Notice": ""
         }
     ],
-    "FilterString": "As",
+    "FilterString": "packa",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }
