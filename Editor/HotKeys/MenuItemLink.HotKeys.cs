@@ -10,7 +10,7 @@ namespace SKTools.MenuItemsFinder
         /// Original hotkey from menuitem path
         /// </summary>
         [NonSerialized] public MenuItemHotKey HotKey;
-
+        [NonSerialized] public MenuItemHotKey EditHotKey = new MenuItemHotKey();
         public void UpdateOriginalHotKey()
         {
             HotKey = new MenuItemHotKey();
@@ -23,7 +23,7 @@ namespace SKTools.MenuItemsFinder
             {
                 HotKey.IsOriginal = true;
                 HotKey.IsVerified = true;
-                Path = Path.Substring(0, startIndex - 1);
+                //Path = Path.Substring(0, startIndex - 1);
             }
             else
             {
@@ -34,29 +34,6 @@ namespace SKTools.MenuItemsFinder
         public void UpdateCustomHotKeysFrom(MenuItemLink item)
         {
             CustomHotKeys = item.CustomHotKeys;
-        }
-
-        private string AddHotKey(string str, MenuItemHotKey hotKey)
-        {
-            if (hotKey == null) return str;
-            str = string.Concat(str, ", (", hotKey.Formatted, ")");
-            return str;
-        }
-        
-        public void UpdateLabelWithHotKeys()
-        {
-            var hotkeysInfo = string.Empty;
-                hotkeysInfo = AddHotKey(hotkeysInfo, HotKey);
-            
-            foreach (var hotKey in CustomHotKeys)
-            {
-                hotkeysInfo = AddHotKey(hotkeysInfo, hotKey);
-            }
-           
-            if (!string.IsNullOrEmpty(hotkeysInfo))
-            {
-                Label = string.Concat(Label, " <b><color=cyan>", hotkeysInfo, "</color></b>");
-            }
         }
     }
 }

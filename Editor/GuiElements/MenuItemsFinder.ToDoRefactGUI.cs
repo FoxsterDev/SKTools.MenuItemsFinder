@@ -54,20 +54,6 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private void SelectItem(MenuItemLink item)
-        {
-            _selectedMenuItem = item;
-            _selectedMenuItem.CustomNameEditable = _selectedMenuItem.CustomName;
-            CustomHotKeysEditable();
-        }
-
-        private void UnSelectItem()
-        {
-            _selectedMenuItem.CustomHotKeys.RemoveAll(i => !i.IsVerified);
-            _selectedMenuItem = null;
-            _selectedMenuItemCustomHotKeysEditable = null;
-        }
-
         private void DrawUnvailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
@@ -83,8 +69,7 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawSearchBar()
         {
-            //var focusControl = focusControl == null;
-            FilterMenuItems = DrawSearchBar(FilterMenuItems, focusControl == null);
+            FilterMenuItems = DrawSearchBar(FilterMenuItems, itemFocusControl == null);
         }
 
         private void DrawMenuBar()
@@ -112,18 +97,18 @@ namespace SKTools.MenuItemsFinder
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
             _menuItems.FindAll(m => m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
-                .ForEach(DrawNormalState);
+                .ForEach(DrawItem);
 
             if (!_prefs.ShowOnlyStarred)
             {
                 if (!_prefs.HideAllMissed)
                 {
-                    _menuItems.FindAll(m => m.IsMissed).ForEach(DrawMissedState);
+                    _menuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
                 }
 
                 _menuItems.FindAll(m =>
                         m.IsFiltered && !m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
-                    .ForEach(DrawNormalState);
+                    .ForEach(DrawItem);
             }
 
             GUILayout.EndScrollView();
@@ -131,45 +116,9 @@ namespace SKTools.MenuItemsFinder
             CleanRemovedItems();
         }
 
-        private void DrawMissedState(MenuItemLink item)
-        {
-            Assert.IsTrue(item.IsMissed);
-
-            GUILayout.BeginHorizontal();
-
-            if (GUILayout.Button(item.Label, _targetGui.Assets.MenuItemButtonStyle))
-            {
-                try
-                {
-                    EditorUtility.DisplayDialog("Missing!", "Cant execute this option\n" + item.Label, "ok");
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError("[MenuItemsFinder] Cant execute this menu item: " + item + "\n" + ex);
-                }
-            }
-
-            var previousColor = GUI.color;
-            GUI.color = Color.red;
-
-            if (GUILayout.Button("[-]", GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
-            {
-                if (EditorUtility.DisplayDialog("Missing item!", "Do you want to remove this item?\n" + item.Label,
-                    "ok", "cancel"))
-                {
-                    ClickButton_Remove(item);
-                }
-            }
-
-            GUI.color = previousColor;
-
-            GUILayout.EndHorizontal();
-        }
-
-        private string focusControl = null;
+        private string itemFocusControl = null;
         
-        private void DrawNormalState(MenuItemLink item)
+        private void DrawItem(MenuItemLink item)
         {
             GUILayout.BeginHorizontal();
 
@@ -186,7 +135,7 @@ namespace SKTools.MenuItemsFinder
                 validated = false;
             }
 
-            if (validated == false) defaultColor = Color.gray;
+            if (validated == false) defaultColor = item.IsMissed ? Color.red : Color.gray;
 
 
             if (!item.IsEditable)
@@ -199,8 +148,21 @@ namespace SKTools.MenuItemsFinder
                     {
                         if (validated == false)
                         {
-                            EditorUtility.DisplayDialog("Validation fail!", "Cant validate this option\n" + item.Label,
-                                "ok");
+                            if (!item.IsMissed)
+                            {
+                                EditorUtility.DisplayDialog("Validation fail!",
+                                    "Cant validate this option\n" + item.Label,
+                                    "ok");
+                            }
+                            else
+                            {
+                                if (EditorUtility.DisplayDialog("Missing item!", "Do you want to remove this item?\n" + item.Label,
+                                    "ok", "cancel"))
+                                {
+                                    ClickButton_Remove(item);
+                                }
+                            }
+
                             return;
                         }
 
@@ -216,17 +178,58 @@ namespace SKTools.MenuItemsFinder
             }
             else
             {
-                GUI.SetNextControlName("RolledOutMenuItemCustomName");
-                item.CustomNameEditable = GUILayout.TextField(item.CustomNameEditable);
+                if (item.IsEditLabel)
+                {
+                    GUI.SetNextControlName("itemFocusControl");
+                    item.CustomNameEditable = GUILayout.TextField(item.CustomNameEditable);
+                }
+                
+                if(item.IsEditHotkey)
+                {
+                    if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+                    {
+                        var error = "";
+                        if (!TryAddHotKeyToItem(_selectedMenuItem, null, out error))
+                        {
+                            EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
+                        }
+                    }
+                
+                    
+                    item.EditHotKey.Key = GUILayout.TextField(item.EditHotKey.Key);
+                    GUILayout.Label(" Key");
+                 
+                    item.EditHotKey.Alt = GUILayout.Toggle(item.EditHotKey.Alt, " Alt");
+                   
+                    item.EditHotKey.Shift = GUILayout.Toggle( item.EditHotKey.Shift, " Shift");
+                   
+                    item.EditHotKey.Cmd = GUILayout.Toggle(item.EditHotKey.Cmd, " Cmd");
+                }
             }
             
-            // item.IsEditable = EditorGUILayout.Foldout(item.IsEditable, "Edit");
+            var hotKeyLabel = item.HotKey != null ? item.HotKey.Formatted : "+HotKey";
+            if (GUILayout.Button(hotKeyLabel, GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+            {
+                if (item.HotKey == null)
+                {
+                    item.IsEditHotkey = !item.IsEditHotkey;
+                    item.IsEditLabel = false;
+                    SetEditableItem(item);
+                }
+            }
 
             if (GUILayout.Button("Open script", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
             {
                 var error = "";
-                ClickButton_TryOpenFileThatContainsThisMenuItem(item, out error);
+                var filepath = "";
 
+                FindScriptWhichContainsMenuItem(item, out filepath, out error);
+                if (!string.IsNullOrEmpty(filepath))
+                {
+                    Utility.OpenFile(filepath);
+                    EditorGUIUtility.systemCopyBuffer = item.Path;
+                }
+              
                 if (!string.IsNullOrEmpty(error))
                 {
                     var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
@@ -242,134 +245,45 @@ namespace SKTools.MenuItemsFinder
             var texture = (item.Starred ? _targetGui.Assets.StarredImage : _targetGui.Assets.UnstarredImage);
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
-                ClickButton_ToggleStarred(item);
+                item.Starred = !item.Starred;
             }
 
             if (GUILayout.Button(_targetGui.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
-                item.IsEditable = !item.IsEditable;
-                if (item.IsEditable)
-                {
-                    focusControl = "RolledOutMenuItemCustomName";
-                    GUI.FocusControl(focusControl);
-                    item.CustomNameEditable = item.Label;
-                }
-                else
-                {
-                    focusControl = null;
-                }
-                /*
-                if (ClickButton_ToggleSettings(item))
-                {
-                   
-                }*/
+                item.IsEditLabel = !item.IsEditLabel;
+                item.IsEditHotkey = false;
+                SetEditableItem(item);
             }
-
+        
             GUILayout.EndHorizontal();
-
-            /*if (_selectedMenuItem != null && _selectedMenuItem.Key.Equals(item.Key))
-            {
-                DrawSettings(item);
-            }*/
         }
 
-
-        private void DrawSettings(MenuItemLink item)
+        private void SetEditableItem(MenuItemLink item)
         {
-            GUILayout.BeginHorizontal();
-
-            /*if (GUILayout.Button("Open file", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            if (_selectedMenuItem != null && item != _selectedMenuItem)
             {
-                var error = "";
-                ClickButton_TryOpenFileThatContainsThisMenuItem(item, out error);
-                
-                if (!string.IsNullOrEmpty(error))
-                {
-                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
-                        "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
-                    if (ok)
-                    {
-                        OpenAssemblyLocationThatContainsMenuItem(item);
-                    }
-                }
-            }*/
-
-            GUILayout.Label("Custom name:", GUILayout.MinWidth(70), GUILayout.MaxWidth(70));
-
-            GUI.SetNextControlName("RolledOutMenuItemCustomName");
-
-            _selectedMenuItem.CustomNameEditable = GUILayout.TextField(_selectedMenuItem.CustomNameEditable,
-                GUILayout.MinWidth(150), GUILayout.MaxWidth(150));
-
-            if (GUILayout.Button("set", EditorStyles.miniButton, GUILayout.MinWidth(36), GUILayout.MaxWidth(36)))
-            {
-                ClickButton_SetCustomName(item);
+                _selectedMenuItem.IsEditable = false;
             }
-
-            //GUILayout.Label("AssemblyName: " + item.AssemblyName, GUILayout.MinWidth(100));
-
-            GUILayout.EndHorizontal();
-
-            _selectedMenuItem.ShowNotice = EditorGUILayout.Foldout(_selectedMenuItem.ShowNotice, "Add Notice");
-            if (_selectedMenuItem.ShowNotice)
+            _selectedMenuItem = item;
+            item.IsEditable = !item.IsEditable;
+            if (item.IsEditable)
             {
-                _selectedMenuItem.Notice = GUILayout.TextArea(_selectedMenuItem.Notice, GUILayout.MinHeight(60));
+                itemFocusControl = "itemFocusControl";
+                GUI.FocusControl(itemFocusControl);
+                item.CustomNameEditable = item.Label;
             }
-
-            DrawMenuItemHotKeys();
-        }
-
-        private void ClickButton_SetCustomName(MenuItemLink item)
-        {
-            if (_selectedMenuItem != null)
+            else
             {
-                item.CustomName = _selectedMenuItem.CustomNameEditable;
-                UpdateLabel(item);
+                itemFocusControl = null;
             }
         }
-
+  
         private void ClickButton_Remove(MenuItemLink item)
         {
             _wasItemsRemoving = true;
             item.IsRemoved = true;
         }
 
-        private bool ClickButton_ToggleSettings(MenuItemLink item)
-        {
-            if (_selectedMenuItem == null)
-            {
-                SelectItem(item);
-                return true;
-            }
-
-            var newSettings = _selectedMenuItem.Key != item.Key;
-            UnSelectItem();
-
-            if (newSettings)
-            {
-                SelectItem(item);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void ClickButton_ToggleStarred(MenuItemLink item)
-        {
-            item.Starred = !item.Starred;
-        }
-
-        private void ClickButton_TryOpenFileThatContainsThisMenuItem(MenuItemLink item, out string error)
-        {
-            error = null;
-            var filepath = "";
-
-            FindScriptWhichContainsMenuItem(item, out filepath, out error);
-            if (!string.IsNullOrEmpty(filepath))
-            {
-                Utility.OpenFile(filepath);
-                EditorGUIUtility.systemCopyBuffer = item.Path;
-            }
-        }
     }
 }
+

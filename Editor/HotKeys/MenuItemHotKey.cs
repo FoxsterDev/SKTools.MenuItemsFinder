@@ -42,18 +42,18 @@ namespace SKTools.MenuItemsFinder
             if (hotkey.Cmd)
             {
 #if UNITY_EDITOR_OSX
-                str = "cmd+";
+                str = "⌘";
 #else
-                str = "ctrl+";
+                str = "⌥";
                
 #endif
             }
 
-            if (hotkey.Alt) str += "alt+";
+            if (hotkey.Alt) str += "⌥";
 
-            if (hotkey.Shift) str += "shift+";
+            if (hotkey.Shift) str += "⇧";//shift+";
 
-            str += hotkey.Key;
+            str += hotkey.Key.ToUpper();
             return str;
         }
 

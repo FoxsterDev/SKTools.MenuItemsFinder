@@ -80,7 +80,6 @@ namespace SKTools.MenuItemsFinder
         private void UpdateLabel(MenuItemLink item)
         {
             item.UpdateLabel();
-            item.UpdateLabelWithHotKeys();
         }
         
         private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,  Dictionary<string, MenuItemLink> menuItemLinksDict)

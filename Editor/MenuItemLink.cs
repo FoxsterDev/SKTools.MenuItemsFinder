@@ -34,6 +34,8 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool IsContextMenu;
         [NonSerialized] public bool IsUnityMenu;
         [NonSerialized] public bool IsEditable;
+        [NonSerialized] public bool IsEditLabel;
+        [NonSerialized] public bool IsEditHotkey;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
@@ -102,7 +104,11 @@ namespace SKTools.MenuItemsFinder
         public void UpdateLabel()
         {
             Label = !string.IsNullOrEmpty(CustomName) ? CustomName : Path;
-            Label += "  (" + AssemblyName + ")";
+            if (!string.IsNullOrEmpty(AssemblyName))
+            {
+                Label += "  (Assembly: " + AssemblyName + ")";
+            }
+
             if (IsMissed)
             {
                 Label = string.Concat("<color=red>", "[Missed]", "</color>", Label);
@@ -110,7 +116,9 @@ namespace SKTools.MenuItemsFinder
         }
 
         public bool CanExecute()
-        { 
+        {
+            if (IsMissed)
+                return false;
             string error;
             var parameters = GetParameters(out error);
             if (!string.IsNullOrEmpty(error))

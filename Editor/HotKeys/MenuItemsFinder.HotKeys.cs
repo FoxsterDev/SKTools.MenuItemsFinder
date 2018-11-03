@@ -6,7 +6,7 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private ReorderableList _selectedMenuItemCustomHotKeysEditable;
+       /* private ReorderableList _selectedMenuItemCustomHotKeysEditable;
 
         private void DrawMenuItemHotKeys()
         {
@@ -28,7 +28,7 @@ namespace SKTools.MenuItemsFinder
         private void CustomHotKeysEditable_OnReorder(ReorderableList list)
         {
             UpdateLabel(_selectedMenuItem);
-        }
+        }*/
 
         private bool TryAddHotKeyToItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
         {
@@ -40,7 +40,7 @@ namespace SKTools.MenuItemsFinder
             return true;
         }
 
-        private void CustomHotKeysEditable_OnRemoved(ReorderableList list)
+        /*private void CustomHotKeysEditable_OnRemoved(ReorderableList list)
         {
             list.list.RemoveAt(list.index);
             if (list.index >= list.list.Count - 1)
@@ -48,7 +48,7 @@ namespace SKTools.MenuItemsFinder
 
             UpdateLabel(_selectedMenuItem);
             UpdateHotKeysMap(_menuItems);
-        }
+        }*/
         
         /// <summary>
         /// 
@@ -100,7 +100,7 @@ namespace SKTools.MenuItemsFinder
         }
         
         
-        private void CustomHotKeysEditable_DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
+        /*private void CustomHotKeysEditable_DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
         {
             var hotkey = (MenuItemHotKey)  _selectedMenuItemCustomHotKeysEditable.list[index];
             
@@ -142,6 +142,6 @@ namespace SKTools.MenuItemsFinder
             {
                 GUI.Label(rect, hotkey.Formatted);
             }
-        }
+        }*/
     }
 }
