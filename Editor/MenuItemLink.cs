@@ -33,6 +33,7 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool IsFiltered;
         [NonSerialized] public bool IsContextMenu;
         [NonSerialized] public bool IsUnityMenu;
+        [NonSerialized] public bool IsEditable;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
@@ -101,6 +102,7 @@ namespace SKTools.MenuItemsFinder
         public void UpdateLabel()
         {
             Label = !string.IsNullOrEmpty(CustomName) ? CustomName : Path;
+            Label += "  (" + AssemblyName + ")";
             if (IsMissed)
             {
                 Label = string.Concat("<color=red>", "[Missed]", "</color>", Label);
