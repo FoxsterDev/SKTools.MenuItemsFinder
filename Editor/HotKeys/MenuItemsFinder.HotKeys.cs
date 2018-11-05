@@ -6,50 +6,17 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-       /* private ReorderableList _selectedMenuItemCustomHotKeysEditable;
-
-        private void DrawMenuItemHotKeys()
-        {
-            _selectedMenuItemCustomHotKeysEditable.DoLayoutList();
-        }
-        
-        private void CustomHotKeysEditable()
-        {
-            _selectedMenuItemCustomHotKeysEditable = new ReorderableList(_selectedMenuItem.CustomHotKeys, typeof(MenuItemHotKey), true, true, true, true);
-            _selectedMenuItemCustomHotKeysEditable.drawHeaderCallback += (rect) =>
-            {
-                GUI.Label(rect, "HotKeys " + _selectedMenuItem.HotKey);
-            };
-            _selectedMenuItemCustomHotKeysEditable.onReorderCallback += CustomHotKeysEditable_OnReorder; 
-            _selectedMenuItemCustomHotKeysEditable.drawElementCallback += CustomHotKeysEditable_DrawHotKey;
-            _selectedMenuItemCustomHotKeysEditable.onRemoveCallback += CustomHotKeysEditable_OnRemoved;
-        }
-
-        private void CustomHotKeysEditable_OnReorder(ReorderableList list)
-        {
-            UpdateLabel(_selectedMenuItem);
-        }*/
-
         private bool TryAddHotKeyToItem(MenuItemLink menuItem, MenuItemHotKey hotkey, out string error)
         {
             if (!IsValidHotKey(hotkey, out error)) return false;
 
+            menuItem.CustomHotKeys[0] = hotkey;
             hotkey.IsVerified = true;
             UpdateLabel(menuItem);
             UpdateHotKeysMap(_menuItems);
             return true;
         }
 
-        /*private void CustomHotKeysEditable_OnRemoved(ReorderableList list)
-        {
-            list.list.RemoveAt(list.index);
-            if (list.index >= list.list.Count - 1)
-                list.index = list.list.Count - 1;
-
-            UpdateLabel(_selectedMenuItem);
-            UpdateHotKeysMap(_menuItems);
-        }*/
-        
         /// <summary>
         /// 
         /// </summary>
@@ -98,50 +65,5 @@ namespace SKTools.MenuItemsFinder
 
             return true;
         }
-        
-        
-        /*private void CustomHotKeysEditable_DrawHotKey(Rect rect, int index, bool isactive, bool isfocused)
-        {
-            var hotkey = (MenuItemHotKey)  _selectedMenuItemCustomHotKeysEditable.list[index];
-            
-            if (!hotkey.IsVerified && !hotkey.IsOriginal)
-            {
-                var allWidth = rect.width;
-                var width = allWidth * 0.2f;
-
-                rect.width = width;
-                if (GUI.Button(rect, "Check&Add"))
-                {
-                    var error = "";
-                    if (!TryAddHotKeyToItem(_selectedMenuItem, hotkey, out error))
-                    {
-                        EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
-                    }
-                }
-                
-                rect.x += width;
-                
-                width = allWidth * 0.15f;
-                rect.width = width;
-                
-                hotkey.Key = GUI.TextField(rect, hotkey.Key);
-                rect.x += width;
-                
-                GUI.Label(rect, " Key");
-                rect.x += width;
-                
-                hotkey.Alt = GUI.Toggle(rect, hotkey.Alt, " Alt");
-                rect.x += width;
-                
-                hotkey.Shift = GUI.Toggle(rect, hotkey.Shift, " Shift");
-                rect.x += width;
-                
-                hotkey.Cmd = GUI.Toggle(rect, hotkey.Cmd, " Cmd");
-            }
-            else
-            {
-                GUI.Label(rect, hotkey.Formatted);
-            }
-        }*/
     }
 }

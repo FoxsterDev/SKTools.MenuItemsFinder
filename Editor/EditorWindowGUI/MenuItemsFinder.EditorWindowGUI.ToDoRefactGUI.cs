@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -107,45 +108,50 @@ namespace SKTools.MenuItemsFinder
             }
             else
             {
+                //var width = 396;
                 if (item.IsEditName)
                 {
                     GUI.SetNextControlName("itemFocusControl");
-                    item.EditName = GUILayout.TextField(item.EditName);
+                    item.EditName = GUILayout.TextField(item.EditName, GUILayout.MinWidth(326), GUILayout.MaxWidth(326));
 
                     if (item.HotKey == null)
                     {
-                        if (GUILayout.Button("+HotKey", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+                        if (GUILayout.Button("+HotKey", GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
                         {
+                           item.EditHotKey = new MenuItemHotKey();
                             item.IsEditHotkey = true;
                             item.IsEditName = false;
-                            _itemFocusControl = null;
+                            _itemFocusControl = "itemFocusControl";
+                            return;
                         }
                     }
                     else
                     {
-                        GUILayout.Label(item.HotKey.Formatted, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
+                        GUILayout.Label(item.HotKey.Formatted, GUILayout.MinWidth(70), GUILayout.MaxWidth(70));
                     }
                 }
 
                 else if (item.IsEditHotkey)
                 {
-                    if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
-                    {
-                        var error = "";
-                        if (!TryAddHotKeyToItem(item, null, out error))
-                            EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
-                    }
+                    GUI.SetNextControlName("itemFocusControl");
+                    item.EditHotKeySymbol = GUILayout.TextField(item.EditHotKeySymbol);
 
-                    item.EditHotKey.Key = GUILayout.TextField(item.EditHotKey.Key);
                     GUILayout.Label(" Key");
-
                     item.EditHotKey.Alt = GUILayout.Toggle(item.EditHotKey.Alt, " Alt");
 
                     item.EditHotKey.Shift = GUILayout.Toggle(item.EditHotKey.Shift, " Shift");
 
                     item.EditHotKey.Cmd = GUILayout.Toggle(item.EditHotKey.Cmd, " Cmd");
 
-                    if (GUILayout.Button("X", GUILayout.MinWidth(45), GUILayout.MaxWidth(45)))
+                    if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+                    {
+                        var error = "";
+                        item.EditHotKey.Key = item.EditHotKeySymbol;
+                        if (!TryAddHotKeyToItem(item, item.EditHotKey, out error))
+                            EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
+                    }
+
+                    if (GUILayout.Button("X", GUILayout.MinWidth(25), GUILayout.MaxWidth(25)))
                     {
                         item.IsEditHotkey = false;
                         item.IsEditName = true;

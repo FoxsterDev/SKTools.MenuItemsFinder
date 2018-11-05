@@ -1,12 +1,5 @@
 {
-    "CustomizedMenuItems": [
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/create/textmeshpro/sprite asset",
-            "CustomName": "",
-            "Starred": true
-        }
-    ],
+    "CustomizedMenuItems": [],
     "FilterString": "",
     "ShowOnlyStarred": false,
     "HideUnityItems": false

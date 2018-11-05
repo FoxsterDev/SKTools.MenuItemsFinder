@@ -12,7 +12,8 @@ namespace SKTools.MenuItemsFinder
         /// </summary>
         [NonSerialized] public MenuItemHotKey HotKey;
         [NonSerialized] public MenuItemHotKey EditHotKey = new MenuItemHotKey();
-        
+        [NonSerialized] public string EditHotKeySymbol = "";
+
         public void UpdateOriginalHotKey()
         {
             var startIndex = -1;

@@ -24,7 +24,7 @@ namespace SKTools.MenuItemsFinder
 
         [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string AssemblyName;
-        [NonSerialized] public string EditName;
+      
         [NonSerialized] public bool IsContextMenu;
         [NonSerialized] public bool IsEditHotkey;
         [NonSerialized] public bool IsEditName;
@@ -32,7 +32,7 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool IsRemoved;
         [NonSerialized] public bool IsUnityMenu;
         [NonSerialized] public string OriginalName;
-        
+        [NonSerialized] public string EditName;
         public string Key;
         public string CustomName;
         public bool Starred;
