@@ -39,7 +39,8 @@ namespace SKTools.MenuItemsFinder
                 {
                     _menuItemButtonStyle = new GUIStyle(EditorStyles.miniButton)
                     {
-                        fixedHeight = 20, alignment = TextAnchor.MiddleLeft, richText = true
+                        fixedHeight = 20, alignment = TextAnchor.MiddleLeft, richText = true,
+                        fixedWidth = 400
                     };
                 }
 

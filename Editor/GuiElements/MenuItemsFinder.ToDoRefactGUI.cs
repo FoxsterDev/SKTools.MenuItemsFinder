@@ -7,11 +7,11 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private MenuItemLink _selectedMenuItem;
+        private string _itemFocusControl;
         private Vector2 _scrollPosition;
+        private MenuItemLink _selectedMenuItem;
 
         private bool _wasItemsRemoving;
-        private string _itemFocusControl = null;
 
         private string FilterMenuItems
         {
@@ -33,12 +33,10 @@ namespace SKTools.MenuItemsFinder
         private void SetFilteredItems(string key)
         {
             foreach (var item in _menuItems)
-            {
                 item.IsFiltered = string.IsNullOrEmpty(key) ||
-                                  (!string.IsNullOrEmpty(item.Key) && item.Key.Contains(key)) ||
-                                  (!string.IsNullOrEmpty(item.CustomName) &&
-                                   item.CustomName.ToLower().Contains(key));
-            }
+                                  !string.IsNullOrEmpty(item.Key) && item.Key.Contains(key) ||
+                                  !string.IsNullOrEmpty(item.CustomName) &&
+                                  item.CustomName.ToLower().Contains(key);
         }
 
         private void CleanRemovedItems()
@@ -97,10 +95,7 @@ namespace SKTools.MenuItemsFinder
 
             if (!_prefs.ShowOnlyStarred)
             {
-                if (!_prefs.HideAllMissed)
-                {
-                    _menuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
-                }
+                if (!_prefs.HideAllMissed) _menuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
 
                 _menuItems.FindAll(m =>
                         m.IsFiltered && !m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
@@ -116,11 +111,9 @@ namespace SKTools.MenuItemsFinder
         {
             GUILayout.BeginHorizontal();
 
-            var texture = (item.Starred ? _targetGui.Assets.StarredImage : _targetGui.Assets.UnstarredImage);
+            var texture = item.Starred ? _targetGui.Assets.StarredImage : _targetGui.Assets.UnstarredImage;
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
-            {
                 item.Starred = !item.Starred;
-            }
 
             var defaultColor = item.Starred ? Color.green : Color.white;
             var label = item.Label;
@@ -143,7 +136,6 @@ namespace SKTools.MenuItemsFinder
                 var previousColor = GUI.color;
                 GUI.color = defaultColor;
                 if (GUILayout.Button(label, _targetGui.Assets.MenuItemButtonStyle))
-                {
                     try
                     {
                         if (validated == false)
@@ -159,9 +151,7 @@ namespace SKTools.MenuItemsFinder
                                 if (EditorUtility.DisplayDialog("Missing item!",
                                     "Do you want to remove this item?\n" + item.Label,
                                     "ok", "cancel"))
-                                {
                                     ClickButton_Remove(item);
-                                }
                             }
 
                             return;
@@ -173,7 +163,6 @@ namespace SKTools.MenuItemsFinder
                     {
                         Debug.LogError("cant execute this menu item: " + item + "\n" + ex);
                     }
-                }
 
                 GUI.color = previousColor;
             }
@@ -188,11 +177,8 @@ namespace SKTools.MenuItemsFinder
                     {
                         if (GUILayout.Button("+HotKey", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
                         {
-                            item.IsEditHotkey = !item.IsEditHotkey;
+                            item.IsEditHotkey = true;
                             item.IsEditName = false;
-                             
-                           // _itemFocusControl = "itemFocusControl";
-                            //GUI.FocusControl(_itemFocusControl);
                         }
                     }
                     else
@@ -200,16 +186,14 @@ namespace SKTools.MenuItemsFinder
                         GUILayout.Label(item.HotKey.Formatted, GUILayout.MinWidth(90), GUILayout.MaxWidth(90));
                     }
                 }
-                
+
                 else if (item.IsEditHotkey)
                 {
                     if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
                     {
                         var error = "";
                         if (!TryAddHotKeyToItem(_selectedMenuItem, null, out error))
-                        {
                             EditorUtility.DisplayDialog("Something went wrong!", error, "Try again!");
-                        }
                     }
 
                     item.EditHotKey.Key = GUILayout.TextField(item.EditHotKey.Key);
@@ -220,6 +204,14 @@ namespace SKTools.MenuItemsFinder
                     item.EditHotKey.Shift = GUILayout.Toggle(item.EditHotKey.Shift, " Shift");
 
                     item.EditHotKey.Cmd = GUILayout.Toggle(item.EditHotKey.Cmd, " Cmd");
+
+                    if (GUILayout.Button("X", GUILayout.MinWidth(45), GUILayout.MaxWidth(45)))
+                    {
+                        item.IsEditHotkey = false;
+                        item.IsEditName = true;
+                        _itemFocusControl = "itemFocusControl";
+                        GUI.FocusControl(_itemFocusControl);
+                    }
                 }
             }
 
@@ -227,23 +219,29 @@ namespace SKTools.MenuItemsFinder
             {
                 item.IsEditName = !item.IsEditName;
                 item.IsEditHotkey = false;
+
                 if (item.IsEditName)
                 {
                     item.EditName = item.OriginalName;
-                    
+
                     _itemFocusControl = "itemFocusControl";
                     GUI.FocusControl(_itemFocusControl);
                 }
                 else
                 {
-                    
+                    if (item.EditName != item.OriginalName && !string.IsNullOrEmpty(item.EditName))
+                    {
+                        var ok = EditorUtility.DisplayDialog("You changed the current name of this menuItem",
+                           string.Format("Do you want to change the previous name={0} on this new={1}?", item.OriginalName, item.EditName), "ok", "cancel");
+                        if (ok)
+                        {
+                            item.CustomName = item.EditName;
+                            UpdateLabel(item);
+                        }
+                    }
                     _itemFocusControl = null;
                 }
-               
-                //SetEditableItem(item);
             }
-
-            /**/
 
             if (GUILayout.Button("Open script", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
             {
@@ -261,36 +259,13 @@ namespace SKTools.MenuItemsFinder
                 {
                     var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
                         "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
-                    if (ok)
-                    {
-                        OpenAssemblyLocationThatContainsMenuItem(item);
-                    }
+                    if (ok) OpenAssemblyLocationThatContainsMenuItem(item);
                 }
             }
 
 
             GUILayout.EndHorizontal();
         }
-
-        /*private void SetEditableItem(MenuItemLink item)
-        {
-            if (_selectedMenuItem != null && item != _selectedMenuItem)
-            {
-               // _selectedMenuItem.IsEditable = false;
-            }
-
-            _selectedMenuItem = item;
-            //item.IsEditable = !item.IsEditable;
-            if (item.IsEditable)
-            {
-                _itemFocusControl = "itemFocusControl";
-                GUI.FocusControl(_itemFocusControl);
-            }
-            else
-            {
-                _itemFocusControl = null;
-            }
-        }*/
 
         private void ClickButton_Remove(MenuItemLink item)
         {

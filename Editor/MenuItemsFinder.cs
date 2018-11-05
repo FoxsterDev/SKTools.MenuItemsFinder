@@ -42,7 +42,7 @@ namespace SKTools.MenuItemsFinder
             }
             catch (Exception ex)
             {
-                Debug.LogError("[MenuItemsFinder] could not be loaded!");
+                Debug.LogError("[MenuItemsFinder] could not be loaded!\n"+ex);
             }
         }
 
