@@ -13,5 +13,10 @@ namespace SKTools.MenuItemsFinder
             return (_searchBar ?? (_searchBar = new GuiLayoutSearchBar("SearchTextField", _options)))
                 .Draw(text, focusControl);
         }
+
+        private void DrawSearchBar()
+        {
+            FilterMenuItems = DrawSearchBar(FilterMenuItems, _itemFocusControl == null);
+        }
     }
 }

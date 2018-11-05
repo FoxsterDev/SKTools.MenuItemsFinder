@@ -7,7 +7,7 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
         private IGuiElement _supportBar;
-        
+       
         private void DrawSupportBar()
         {
             if (_supportBar == null)

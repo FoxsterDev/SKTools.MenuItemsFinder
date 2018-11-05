@@ -42,7 +42,7 @@ namespace SKTools.MenuItemsFinder
             _menuItem = menuItem;
 
             OriginalPath = _menuItem.TargetAttribute.menuItem;
-            OriginalName = CustomName = OriginalPath;
+            OriginalName = OriginalPath;
             Key = OriginalPath.ToLower();
 
             DeclaringType = menuItem.TargetMethod.DeclaringType;
@@ -89,9 +89,15 @@ namespace SKTools.MenuItemsFinder
         public void UpdateFrom(MenuItemLink item)
         {
             Starred = item.Starred;
-            CustomName = item.CustomName;
+            if (!string.IsNullOrEmpty(item.CustomName))
+            {
+                CustomName = item.CustomName;
+            }
 
-            if (string.IsNullOrEmpty(Key)) Key = item.Key;
+            if (string.IsNullOrEmpty(Key))
+            {
+                Key = item.Key;
+            }
         }
 
         public void UpdateLabel()

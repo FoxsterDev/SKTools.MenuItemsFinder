@@ -21,6 +21,7 @@ namespace SKTools.MenuItemsFinder
         private readonly Preferences _prefs;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
+        private bool _wasItemsRemoving;
 
         private MenuItemsFinder()
         {
@@ -28,6 +29,23 @@ namespace SKTools.MenuItemsFinder
             _prefs.Load();
         }
         
+        private string FilterMenuItems
+        {
+            get { return _prefs.FilterString; }
+            set
+            {
+                _prefs.FilterString = value;
+
+                if (_prefs.FilterString != _prefs.PreviousFilterString)
+                {
+                    var key = !string.IsNullOrEmpty(_prefs.FilterString) ? _prefs.FilterString.ToLower() : string.Empty;
+                    _prefs.PreviousFilterString = _prefs.FilterString = key;
+
+                    SetFilteredItems(key);
+                }
+            }
+        }
+
         private bool IsCustomized(MenuItemLink item)
         {
             return item.Starred || !string.IsNullOrEmpty(item.CustomName) || item.IsMissed || item.CustomHotKeys.Count > 0;
@@ -187,8 +205,26 @@ namespace SKTools.MenuItemsFinder
             var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
             Utility.OpenFile(directoryPath);
         }
-        
-        
-        
+       
+        private void SetFilteredItems(string key)
+        {
+            foreach (var item in _menuItems)
+            {
+                item.IsFiltered = string.IsNullOrEmpty(key) ||
+                                  !string.IsNullOrEmpty(item.Key) && item.Key.Contains(key) ||
+                                  !string.IsNullOrEmpty(item.CustomName) &&
+                                  item.CustomName.ToLower().Contains(key);
+            }
+        }
+
+        private void CleanRemovedItems()
+        {
+            if (_wasItemsRemoving)
+            {
+                _wasItemsRemoving = false;
+                _menuItems = _menuItems.FindAll(i => !i.IsRemoved);
+            }
+        }
+
     }
 }

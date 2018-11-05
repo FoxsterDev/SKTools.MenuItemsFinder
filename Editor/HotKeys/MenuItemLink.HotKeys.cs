@@ -20,7 +20,7 @@ namespace SKTools.MenuItemsFinder
      
             if (startIndex > -1)
             {
-                CustomName = OriginalName = OriginalPath.Substring(0, startIndex - 1);
+                OriginalName = OriginalPath.Substring(0, startIndex - 1);
             }
         }
         
