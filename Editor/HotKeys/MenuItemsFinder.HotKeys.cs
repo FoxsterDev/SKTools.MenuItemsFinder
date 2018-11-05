@@ -86,7 +86,7 @@ namespace SKTools.MenuItemsFinder
                 var item = _menuItems.Find(itemLink => hotkey.Equals(itemLink.HotKey));
                 if (item != null)
                 {
-                    itemPath = item.Path;
+                    itemPath = item.OriginalPath;
                 }
             }
 

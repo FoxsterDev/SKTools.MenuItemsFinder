@@ -53,8 +53,8 @@ namespace SKTools.MenuItemsFinder
 
             if (hotkey.Shift) str += "⇧";//shift+";
 
-            str += hotkey.Key.ToUpper();
-            return str;
+            str += hotkey.Key;
+            return str.ToUpper();
         }
 
         private static string ToPack(MenuItemHotKey hotkey)
@@ -68,6 +68,28 @@ namespace SKTools.MenuItemsFinder
             return str;
         }
 
+        public static MenuItemHotKey Create(string itemPath, out int startIndex)
+        {
+            var hotKey = new MenuItemHotKey();
+            startIndex = -1;
+            string hotkeyString;
+            
+            Parse(itemPath, out startIndex, 
+                out hotkeyString,
+                out hotKey.Key, 
+                out hotKey.Shift,
+                out hotKey.Alt, 
+                out hotKey.Cmd);
+
+            if (startIndex > -1)
+            {
+                hotKey.IsOriginal = true;
+                hotKey.IsVerified = true;
+                return hotKey;
+            }
+
+            return null;
+        }
         /*
         * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
          * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
@@ -75,7 +97,7 @@ namespace SKTools.MenuItemsFinder
          The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
         */
-        public static void ExtractFrom(string itemPath, out int index, out string hotkeyString, out string key,
+        public static void Parse(string itemPath, out int index, out string hotkeyString, out string key,
             out bool shift, out bool alt, out bool cmd)
         {
             key = hotkeyString = string.Empty;

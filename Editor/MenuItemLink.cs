@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -22,33 +23,42 @@ namespace SKTools.MenuItemsFinder
 
         public string CustomName;
         public bool Starred;
-        public string Path;
-        public string Notice;
         
-        [NonSerialized] public string Key;
-        [NonSerialized] public string CustomNameEditable;
+        //[NonSerialized]
+        public string OriginalPath
+        {
+            get { return _menuItem.TargetAttribute.menuItem; }
+        }
+
+        public string OriginalName;
+      
+        //public string Notice;
+        
+        //[NonSerialized] 
+        public string Key;
+        [NonSerialized] public string EditName;
         [NonSerialized] public string AssemblyName;
-        [NonSerialized] public bool ShowNotice;
+        //[NonSerialized] public bool ShowNotice;
         [NonSerialized] public bool IsRemoved;
         [NonSerialized] public bool IsFiltered;
         [NonSerialized] public bool IsContextMenu;
         [NonSerialized] public bool IsUnityMenu;
-        [NonSerialized] public bool IsEditable;
-        [NonSerialized] public bool IsEditLabel;
+       // [NonSerialized] public bool IsEditable;
+        [NonSerialized] public bool IsEditName;
         [NonSerialized] public bool IsEditHotkey;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }
         public Type DeclaringType { get; private set; }
-        private bool HasMenuCommandParameter = false;
-        private string MenuCommandContextType;
+        private readonly bool _hasMenuCommandParameter = false;
+        private readonly string _menuCommandContextType;
         
         public bool IsMissed
         {
             get { return _menuItem == null; }
         }
 
-        public bool HasValidate
+        private bool HasValidate
         {
             get { return _menuItem != null && _menuItem.TargetMethodValidate != null; }
         }
@@ -56,8 +66,10 @@ namespace SKTools.MenuItemsFinder
         public MenuItemLink(MenuItemData menuItem)
         {
             _menuItem = menuItem;
-           
-            Path = menuItem.TargetAttribute.menuItem;
+
+            OriginalName = CustomName = OriginalPath;
+            Key = OriginalPath.ToLower();
+            
             DeclaringType = menuItem.TargetMethod.DeclaringType;
             if (DeclaringType != null)
             {
@@ -66,7 +78,7 @@ namespace SKTools.MenuItemsFinder
                 IsUnityMenu = AssemblyName.Split('.')[0].Contains("Unity");
             }
             
-            IsContextMenu = Path.Substring(0, 7) == "CONTEXT";
+            IsContextMenu = Key.Substring(0, 7) == "context";
 
             if (menuItem.TargetMethod.GetParameters().Length > 0)
             {
@@ -74,39 +86,32 @@ namespace SKTools.MenuItemsFinder
                 
                 if (parameter.ParameterType == typeof(MenuCommand))
                 {
-                    HasMenuCommandParameter = true;
+                    _hasMenuCommandParameter = true;
                     var startIndex = IsContextMenu ? 8 : 0;
-                    var endIndex = Path.IndexOf('/', startIndex + 1);
-                    MenuCommandContextType = Path.Substring(startIndex, endIndex - startIndex);
+                    var endIndex = OriginalPath.IndexOf('/', startIndex + 1);
+                    _menuCommandContextType = OriginalPath.Substring(startIndex, endIndex - startIndex);
                 }
             }
-            Key = Path.ToLower();
-            
-            //UpdateLabel();
         }
         
         public void UpdateFrom(MenuItemLink item)
         {
             Starred = item.Starred;
-            CustomNameEditable = CustomName = item.CustomName;
+            CustomName = item.CustomName;
             
-            if (string.IsNullOrEmpty(Path))
+            if (string.IsNullOrEmpty(Key))
             {
-                Path = item.Path;
+                Key = item.Key;
             }
-            
-            IsContextMenu = Path.Substring(0, 7) == "CONTEXT";
-            Key = Path.ToLower();
-
-            //UpdateLabel();
         }
        
         public void UpdateLabel()
         {
-            Label = !string.IsNullOrEmpty(CustomName) ? CustomName : Path;
+            Label = !string.IsNullOrEmpty(CustomName) ? CustomName : OriginalName;
+             
             if (!string.IsNullOrEmpty(AssemblyName))
             {
-                Label += "  (Assembly: " + AssemblyName + ")";
+                Label = string.Concat(Label, "  (Assembly: " + AssemblyName + ")");
             }
 
             if (IsMissed)
@@ -119,6 +124,7 @@ namespace SKTools.MenuItemsFinder
         {
             if (IsMissed)
                 return false;
+            
             string error;
             var parameters = GetParameters(out error);
             if (!string.IsNullOrEmpty(error))
@@ -150,7 +156,7 @@ namespace SKTools.MenuItemsFinder
         {
             error = null;
             
-            if (HasMenuCommandParameter)
+            if (_hasMenuCommandParameter)
             {
                 if (Selection.activeObject == null)
                     return null;
@@ -163,12 +169,12 @@ namespace SKTools.MenuItemsFinder
                 Object context = null;
                 
                 object[] parameters;
-                if (MenuCommandSharedContext.ContainsKey(MenuCommandContextType))
+                if (MenuCommandSharedContext.ContainsKey(_menuCommandContextType))
                 {
-                    parameters = MenuCommandSharedContext[MenuCommandContextType];
+                    parameters = MenuCommandSharedContext[_menuCommandContextType];
                     if (parameters == null)
                     {
-                        error = "Cant get menucommand parameter of type " + MenuCommandContextType;
+                        error = "Cant get menucommand parameter of type " + _menuCommandContextType;
                         return null;
                     }
 
@@ -176,24 +182,24 @@ namespace SKTools.MenuItemsFinder
                 }
 
                 var activeObjectType = Selection.activeObject.GetType().Name;
-                if (activeObjectType.Equals(MenuCommandContextType))
+                if (activeObjectType.Equals(_menuCommandContextType))
                 {
                     context = Selection.activeObject;
                 }
                 else if (Selection.activeGameObject != null)
                 {
-                    context = Selection.activeGameObject.GetComponent(MenuCommandContextType);
+                    context = Selection.activeGameObject.GetComponent(_menuCommandContextType);
                 }
 
                 if (context != null)
                 {
                     parameters = new object[] {new MenuCommand(context)};
-                    MenuCommandSharedContext[MenuCommandContextType] = parameters;
+                    MenuCommandSharedContext[_menuCommandContextType] = parameters;
                     return parameters;
                 }
 
-                error = "Cant get menucommand parameter of type " + MenuCommandContextType;
-                MenuCommandSharedContext[MenuCommandContextType] = null;
+                error = "Cant get menucommand parameter of type " + _menuCommandContextType;
+                MenuCommandSharedContext[_menuCommandContextType] = null;
             }
 
             return null;

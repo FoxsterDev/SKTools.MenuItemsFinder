@@ -44,7 +44,7 @@ namespace SKTools.MenuItemsFinder
                 foreach (var hotKey in item.CustomHotKeys)
                 {
                     if (!hotKey.IsVerified) continue;
-                    _hotKeysMap[hotKey] = item.Path;
+                    _hotKeysMap[hotKey] = item.OriginalPath;
                 }
             }
         }

@@ -72,7 +72,7 @@ namespace SKTools.MenuItemsFinder
             CustomizeMenuItems(menuItemLinks, customizedItems, menuItemsLinksDict);
             
             menuItemLinks.ForEach(UpdateLabel);
-            menuItemLinks.Sort((left, right) => left.Path[0] - right.Path[0]);
+            menuItemLinks.Sort((left, right) => left.OriginalPath[0] - right.OriginalPath[0]);
             
             return menuItemLinks;
         }
@@ -80,6 +80,7 @@ namespace SKTools.MenuItemsFinder
         private void UpdateLabel(MenuItemLink item)
         {
             item.UpdateLabel();
+            item.UpdateLabelWithHotKey();
         }
         
         private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,  Dictionary<string, MenuItemLink> menuItemLinksDict)
@@ -87,10 +88,10 @@ namespace SKTools.MenuItemsFinder
             MenuItemLink menuItem;
             foreach (var customizedItem in customizedItems)
             {
-                if (string.IsNullOrEmpty(customizedItem.Path))
+                if (string.IsNullOrEmpty(customizedItem.OriginalPath))
                     continue;
 
-                menuItemLinksDict.TryGetValue(customizedItem.Path, out menuItem);
+                menuItemLinksDict.TryGetValue(customizedItem.OriginalPath, out menuItem);
                 
                 if (menuItem == null)
                 {
@@ -121,7 +122,7 @@ namespace SKTools.MenuItemsFinder
                 item.UpdateOriginalHotKey();
                 
                 menuItems.Add(item);
-                menuItemLinksDict[item.Path] = item;
+                menuItemLinksDict[item.OriginalPath] = item;
             }
 
             return menuItems;

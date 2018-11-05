@@ -4,7 +4,21 @@
             "CustomHotKeys": [],
             "CustomName": "",
             "Starred": true,
-            "Path": "Assets/Create/Testing/C# Test Script",
+            "Path": "Assets/Create/GUI Skin",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "Assets/Tools/Copy Full Path %#2",
+            "Notice": ""
+        },
+        {
+            "CustomHotKeys": [],
+            "CustomName": "",
+            "Starred": true,
+            "Path": "CONTEXT/Rigidbody/Double Mass",
             "Notice": ""
         },
         {
@@ -25,15 +39,8 @@
                 }
             ],
             "CustomName": "",
-            "Starred": true,
+            "Starred": false,
             "Path": "CONTEXT/Material/Custom context material",
-            "Notice": ""
-        },
-        {
-            "CustomHotKeys": [],
-            "CustomName": "",
-            "Starred": true,
-            "Path": "CONTEXT/Rigidbody/Double Mass",
             "Notice": ""
         },
         {
@@ -58,18 +65,10 @@
             "Notice": ""
         },
         {
-            "CustomHotKeys": [
-                {
-                    "Alt": true,
-                    "Shift": false,
-                    "Cmd": false,
-                    "Key": "p",
-                    "IsVerified": true
-                }
-            ],
-            "CustomName": "OpenProfiler",
+            "CustomHotKeys": [],
+            "CustomName": "SnapView",
             "Starred": true,
-            "Path": "Window/Analysis/Profiler",
+            "Path": "internal:Window/Internal/Screenshot/Snap View",
             "Notice": ""
         },
         {
@@ -78,16 +77,9 @@
             "Starred": true,
             "Path": "internal:Window/Internal/Screenshot/Snap View Extended Right",
             "Notice": ""
-        },
-        {
-            "CustomHotKeys": [],
-            "CustomName": "SnapView",
-            "Starred": false,
-            "Path": "internal:Window/Internal/Screenshot/Snap View",
-            "Notice": ""
         }
     ],
-    "FilterString": "packa",
+    "FilterString": "",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }
