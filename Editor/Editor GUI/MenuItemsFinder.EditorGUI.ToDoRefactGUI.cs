@@ -76,15 +76,6 @@ namespace SKTools.MenuItemsFinder
                             ClickButton_OpenHotKeyItemEditor(item);
                             return;
                         }
-
-                        if (item.HasCustomHotKey)
-                        {
-                            if (GUILayout.Button("Remove", GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
-                            {
-                                item.CustomHotKeys = new List<MenuItemHotKey>(1);
-                                return;
-                            }
-                        }
                     }
                     else
                     {
@@ -109,6 +100,15 @@ namespace SKTools.MenuItemsFinder
                         ClickButton_AddHotKeyItem(item);
                     }
 
+                    if (item.HasCustomHotKey)
+                    {
+                        if (GUILayout.Button("Remove", GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
+                        {
+                            item.CustomHotKeys = new List<MenuItemHotKey>(1);
+                            return;
+                        }
+                    }
+                    
                     if (GUILayout.Button("X", GUILayout.MinWidth(25), GUILayout.MaxWidth(25)))
                     {
                         ClickButton_CloseHotKeyItemEditor(item);
