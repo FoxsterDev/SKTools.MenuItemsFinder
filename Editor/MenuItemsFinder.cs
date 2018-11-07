@@ -90,7 +90,7 @@ namespace SKTools.MenuItemsFinder
             CustomizeMenuItems(menuItemLinks, customizedItems, menuItemsLinksDict);
             
             menuItemLinks.ForEach(UpdateLabel);
-            menuItemLinks.Sort((left, right) => left.OriginalPath[0] - right.OriginalPath[0]);
+            menuItemLinks.Sort((left, right) => left.Key[0] - right.Key[0]);
             
             return menuItemLinks;
         }
@@ -106,10 +106,10 @@ namespace SKTools.MenuItemsFinder
             MenuItemLink menuItem;
             foreach (var customizedItem in customizedItems)
             {
-                if (string.IsNullOrEmpty(customizedItem.OriginalPath))
+                if (string.IsNullOrEmpty(customizedItem.Key))
                     continue;
 
-                menuItemLinksDict.TryGetValue(customizedItem.OriginalPath, out menuItem);
+                menuItemLinksDict.TryGetValue(customizedItem.Key, out menuItem);
                 
                 if (menuItem == null)
                 {
@@ -140,7 +140,7 @@ namespace SKTools.MenuItemsFinder
                 item.UpdateOriginalHotKey();
                 
                 menuItems.Add(item);
-                menuItemLinksDict[item.OriginalPath] = item;
+                menuItemLinksDict[item.Key] = item;
             }
 
             return menuItems;

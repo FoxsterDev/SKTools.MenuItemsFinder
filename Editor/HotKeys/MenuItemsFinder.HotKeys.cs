@@ -1,7 +1,4 @@
-﻿using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine;
-
+﻿
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
@@ -10,7 +7,15 @@ namespace SKTools.MenuItemsFinder
         {
             if (!IsValidHotKey(hotkey, out error)) return false;
 
-            menuItem.CustomHotKeys[0] = hotkey;
+            if (menuItem.CustomHotKeys.Count < 1)
+            {
+                menuItem.CustomHotKeys.Add(hotkey);
+            }
+            else
+            {
+                menuItem.CustomHotKeys[0] = hotkey;
+            }
+
             hotkey.IsVerified = true;
             UpdateLabel(menuItem);
             UpdateHotKeysMap(_menuItems);
@@ -45,12 +50,21 @@ namespace SKTools.MenuItemsFinder
             }
 
             UpdateHotKeysMap(_menuItems);
+            
             string itemPath;
             _hotKeysMap.TryGetValue(hotkey, out itemPath);
 
             if (itemPath == null)
             {
-                var item = _menuItems.Find(itemLink => hotkey.Equals(itemLink.HotKey));
+                var item = _menuItems.Find(itemLink =>
+                {
+                    if (itemLink.HasCustomHotKey)
+                    {
+                        if (itemLink.CustomHotKeys[0].Equals(hotkey)) return true;
+                    }
+                    return hotkey.Equals(itemLink.OriginalHotKey);
+                });
+                
                 if (item != null)
                 {
                     itemPath = item.OriginalPath;

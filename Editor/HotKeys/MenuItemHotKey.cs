@@ -19,6 +19,20 @@ namespace SKTools.MenuItemsFinder
             get { return ToFormat(this); }
         }
 
+        public MenuItemHotKey()
+        {
+            
+        }
+        
+        public MenuItemHotKey(MenuItemHotKey hotKey)
+        {
+            Alt = hotKey.Alt;
+            Shift = hotKey.Shift;
+            Cmd = hotKey.Cmd;
+            Key = hotKey.Key;
+            IsOriginal = hotKey.IsOriginal;
+        }
+        
         public bool Equals(MenuItemHotKey other)
         {
             return other != null && Key == other.Key && Alt == other.Alt && Shift == other.Shift &&

@@ -24,7 +24,10 @@ namespace SKTools.MenuItemsFinder
 
         [NonSerialized] private readonly MenuItemData _menuItem;
         [NonSerialized] public string AssemblyName;
-      
+        /// <summary>
+        /// With hotkey if it exists
+        /// </summary>
+        [NonSerialized] public string OriginalPath;
         [NonSerialized] public bool IsContextMenu;
         [NonSerialized] public bool IsEditHotkey;
         [NonSerialized] public bool IsEditName;
@@ -68,9 +71,6 @@ namespace SKTools.MenuItemsFinder
                 }
             }
         }
-
-        [NonSerialized]
-        public string OriginalPath;
 
         public string Label { get; private set; }
         public string AssemlyFilePath { get; private set; }

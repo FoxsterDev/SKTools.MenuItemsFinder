@@ -1,7 +1,15 @@
 {
     "CustomizedMenuItems": [
         {
-            "CustomHotKeys": [],
+            "CustomHotKeys": [
+                {
+                    "Alt": true,
+                    "Shift": false,
+                    "Cmd": false,
+                    "Key": "l",
+                    "IsVerified": true
+                }
+            ],
             "Key": "assets/create/testing/c# test script",
             "CustomName": "",
             "Starred": true
@@ -17,9 +25,15 @@
             "Key": "assets/create/textmeshpro/style sheet",
             "CustomName": "",
             "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "window/analysis/profiler %7",
+            "CustomName": "",
+            "Starred": true
         }
     ],
-    "FilterString": "",
+    "FilterString": "s",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }

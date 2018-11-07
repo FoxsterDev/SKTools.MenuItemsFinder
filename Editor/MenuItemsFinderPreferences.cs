@@ -20,7 +20,7 @@ namespace SKTools.MenuItemsFinder
         [NonSerialized] public bool ShowMenuBar;
         [NonSerialized] public string PreviousFilterString;
 
-        public Preferences Load()
+        public void Load()
         {
             try
             {
@@ -28,7 +28,6 @@ namespace SKTools.MenuItemsFinder
                 if (File.Exists(filePath))
                 {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
-                    return this;
                 }
             }
             catch (Exception ex)
@@ -36,7 +35,6 @@ namespace SKTools.MenuItemsFinder
                 Debug.LogException(ex);
             }
 
-            return new Preferences();
         }
 
         public void Save()
