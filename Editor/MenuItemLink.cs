@@ -106,7 +106,7 @@ namespace SKTools.MenuItemsFinder
 
             if (!string.IsNullOrEmpty(AssemblyName)) Label = string.Concat(Label, "  (Assembly: " + AssemblyName + ")");
 
-            if (IsMissed) Label = string.Concat("<color=red>", "[Missed]", "</color>", Label);
+            if (IsMissed) Label = string.Concat("[Missed]", Label);
         }
 
         public bool CanExecute()

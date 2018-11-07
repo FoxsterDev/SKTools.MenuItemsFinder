@@ -44,10 +44,10 @@ namespace SKTools.MenuItemsFinder
                 ClickButton_StarredItem(item);
             }
 
-            var defaultColor = item.Starred ? Color.green : Color.white;
+            var defaultColor = item.Starred ? _settings.ItemStarredColor : _settings.ItemDefaultColor;
             var isExecutable = item.CanExecute();
 
-            if (!isExecutable) defaultColor = item.IsMissed ? Color.red : Color.gray;
+            if (!isExecutable) defaultColor = item.IsMissed ? _settings.ItemMissedColor: _settings.ItemNotExecutableColor;
 
             if (!item.IsEditName && !item.IsEditHotkey)
             {
@@ -117,7 +117,7 @@ namespace SKTools.MenuItemsFinder
 
             if (item.IsEditName || item.IsEditHotkey)
             {
-                GUI.contentColor = Color.yellow;
+                GUI.contentColor = _settings.ItemSelectedContentColor;
             }
 
             if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))

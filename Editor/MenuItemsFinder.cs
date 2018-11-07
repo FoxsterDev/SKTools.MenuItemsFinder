@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using SKTools.Base.Editor;
 using UnityEditor;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
@@ -19,6 +20,7 @@ namespace SKTools.MenuItemsFinder
         }
         
         private readonly Preferences _prefs;
+        private readonly MenuItemsFinderSettings _settings;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
         private bool _wasItemsRemoving;
@@ -27,6 +29,14 @@ namespace SKTools.MenuItemsFinder
         {
             _prefs = new Preferences();
             _prefs.Load();
+            
+             var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
+            _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
+            if (_settings == null)
+            {
+                _settings = ScriptableObject.CreateInstance<MenuItemsFinderSettings>();
+                Debug.LogError("cant load settings from path="+ settingsPath);
+            }
         }
         
         private string FilterMenuItems
