@@ -46,11 +46,6 @@ namespace SKTools.MenuItemsFinder
                     if (!hotKey.IsVerified) continue;
                     _hotKeysMap[hotKey] = item.OriginalPath;
                 }
-
-                if (item.OriginalHotKey != null)
-                {
-                    
-                }
             }
         }
 

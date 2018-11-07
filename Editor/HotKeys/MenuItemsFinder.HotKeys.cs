@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
@@ -39,9 +41,9 @@ namespace SKTools.MenuItemsFinder
                 return false;
             }
 
-            var key = hotkey.Key.ToCharArray();
+            var key = hotkey.Key;
 
-            if (!(key.Length == 1 && (((key[0] - 42) >= 0 && (key[0] - 42) <= 9)) ||
+            if (!(key.Length == 1 && (key[0] - 48) >= 0 && (key[0] - 48) <= 9 ||
                   (key[0] >= 'A' && key[0] <= 'Z') ||
                   (key[0] >= 'a' && key[0] <= 'z')))
             {
@@ -56,14 +58,7 @@ namespace SKTools.MenuItemsFinder
 
             if (itemPath == null)
             {
-                var item = _menuItems.Find(itemLink =>
-                {
-                    if (itemLink.HasCustomHotKey)
-                    {
-                        if (itemLink.CustomHotKeys[0].Equals(hotkey)) return true;
-                    }
-                    return hotkey.Equals(itemLink.OriginalHotKey);
-                });
+                var item = _menuItems.Find(itemLink => hotkey.Equals(itemLink.OriginalHotKey));
                 
                 if (item != null)
                 {
