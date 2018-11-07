@@ -1,5 +1,24 @@
 {
-    "CustomizedMenuItems": [],
+    "CustomizedMenuItems": [
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/create/testing/c# test script",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/create/c# script from buffer %v",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/create/textmeshpro/style sheet",
+            "CustomName": "",
+            "Starred": true
+        }
+    ],
     "FilterString": "",
     "ShowOnlyStarred": false,
     "HideUnityItems": false

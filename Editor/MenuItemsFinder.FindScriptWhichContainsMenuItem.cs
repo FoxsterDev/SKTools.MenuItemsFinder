@@ -75,9 +75,10 @@ namespace SKTools.MenuItemsFinder
 #if UNITY_2018_1_OR_NEWER
                     
                     Debug.Log("Check Unity Packages");
-                    
+                   //todo fix it on windows
                     var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library");
                     var target = Path.Combine(path, "Unity/cache/packages/packages.unity.com");
+                    
                     var directory = new DirectoryInfo(target);
                     var files = directory.GetFiles("*.cs", SearchOption.AllDirectories)
                         .Where(p => p.FullName.Contains("Editor"))

@@ -11,17 +11,18 @@ namespace SKTools.MenuItemsFinder
         private string _itemFocusControl;
         private Vector2 _scrollPosition;
       
-        private void DrawUnvailableState(Rect position)
+        private void DrawUnavailableState(Rect position)
         {
             //pivot = new Vector2(position.xMin + position.width * 0.5f, position.yMin + position.height * 0.5f);
             //var matrixBackup = GUI.matrix;
             //GUIUtility.RotateAroundPivot(angle%360, pivot);
-            var width = _targetGui.Assets.LoadingImage.width;
-            var height = _targetGui.Assets.LoadingImage.height;
-            var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, width,
+            var width = _target.Assets.LoadingImage.width;
+            var height = _target.Assets.LoadingImage.height;
+            var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f, 
+                width,
                 height);
-            GUI.DrawTexture(rect, _targetGui.Assets.LoadingImage);
-            //GUI.matrix = matrixBackup; 
+            GUI.DrawTexture(rect, _target.Assets.LoadingImage);
+            //GUI.matrix = matrixBackup;
         }
 
         private void DrawItems()
@@ -45,39 +46,30 @@ namespace SKTools.MenuItemsFinder
 
         private void DrawItem(MenuItemLink item)
         {
+            var previousColor = GUI.color;
+            
             GUILayout.BeginHorizontal();
 
-            var texture = item.Starred ? _targetGui.Assets.StarredImage : _targetGui.Assets.UnstarredImage;
+            var texture = item.Starred ? _target.Assets.StarredImage : _target.Assets.UnstarredImage;
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 item.Starred = !item.Starred;
             }
 
             var defaultColor = item.Starred ? Color.green : Color.white;
-            var label = item.Label;
-
-            bool? validated = null;
-            try
-            {
-                validated = item.CanExecute();
-            }
-            catch
-            {
-                validated = false;
-            }
-
-            if (validated == false) defaultColor = item.IsMissed ? Color.red : Color.gray;
-
+            var isExecutable = item.CanExecute();
+           
+            if (!isExecutable) defaultColor = item.IsMissed ? Color.red : Color.gray;
+            
             if (!item.IsEditName && !item.IsEditHotkey)
             {
-                var previousColor = GUI.color;
                 GUI.color = defaultColor;
                 
-                if (GUILayout.Button(label, _targetGui.Assets.MenuItemButtonStyle))
+                if (GUILayout.Button(item.Label, _target.Assets.MenuItemButtonStyle))
                 {
                     try
                     {
-                        if (validated == false)
+                        if (isExecutable == false)
                         {
                             if (!item.IsMissed)
                             {
@@ -90,7 +82,7 @@ namespace SKTools.MenuItemsFinder
                                 if (EditorUtility.DisplayDialog("Missing item!",
                                     "Do you want to remove this item?\n" + item.Label,
                                     "ok", "cancel"))
-                                    ClickButton_Remove(item);
+                                    ClickButton_RemoveItem(item);
                             }
 
                             return;
@@ -108,7 +100,6 @@ namespace SKTools.MenuItemsFinder
             }
             else
             {
-                //var width = 396;
                 if (item.IsEditName)
                 {
                     GUI.SetNextControlName("itemFocusControl");
@@ -135,8 +126,8 @@ namespace SKTools.MenuItemsFinder
                 {
                     GUI.SetNextControlName("itemFocusControl");
                     item.EditHotKeySymbol = GUILayout.TextField(item.EditHotKeySymbol);
-
                     GUILayout.Label(" Key");
+  
                     item.EditHotKey.Alt = GUILayout.Toggle(item.EditHotKey.Alt, " Alt");
 
                     item.EditHotKey.Shift = GUILayout.Toggle(item.EditHotKey.Shift, " Shift");
@@ -161,9 +152,31 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            if (GUILayout.Button(_targetGui.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+            previousColor = GUI.contentColor;
+
+            if (item.IsEditName)
             {
-                item.IsEditName = !item.IsEditName;
+                GUI.contentColor = Color.yellow;
+            }
+
+            if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+            {
+               ClickButton_Settings(item);
+            }
+            
+            GUI.contentColor =  previousColor;
+            if (GUILayout.Button("Open script", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
+            {
+               ClickButton_OpenScript(item);
+            }
+
+
+            GUILayout.EndHorizontal();
+        }
+
+        private void ClickButton_Settings(MenuItemLink item)
+        {
+              item.IsEditName = !item.IsEditName;
                 item.IsEditHotkey = false;
 
                 if (item.IsEditName)
@@ -187,33 +200,28 @@ namespace SKTools.MenuItemsFinder
                     }
                     _itemFocusControl = null;
                 }
-            }
-
-            if (GUILayout.Button("Open script", GUILayout.MinWidth(80), GUILayout.MaxWidth(80)))
-            {
-                var error = "";
-                var filepath = "";
-
-                FindScriptWhichContainsMenuItem(item, out filepath, out error);
-                if (!string.IsNullOrEmpty(filepath))
-                {
-                    Utility.OpenFile(filepath);
-                    EditorGUIUtility.systemCopyBuffer = item.OriginalPath;
-                }
-
-                if (!string.IsNullOrEmpty(error))
-                {
-                    var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
-                        "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
-                    if (ok) OpenAssemblyLocationThatContainsMenuItem(item);
-                }
-            }
-
-
-            GUILayout.EndHorizontal();
         }
+        private void ClickButton_OpenScript(MenuItemLink item)
+        {
+            var error = "";
+            var filepath = "";
 
-        private void ClickButton_Remove(MenuItemLink item)
+            FindScriptWhichContainsMenuItem(item, out filepath, out error);
+            if (!string.IsNullOrEmpty(filepath))
+            {
+                Utility.OpenFile(filepath);
+                EditorGUIUtility.systemCopyBuffer = item.OriginalPath;
+            }
+
+            if (!string.IsNullOrEmpty(error))
+            {
+                var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
+                    "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
+                if (ok) OpenAssemblyLocationThatContainsMenuItem(item);
+            }
+        }
+        
+        private void ClickButton_RemoveItem(MenuItemLink item)
         {
             _wasItemsRemoving = true;
             item.IsRemoved = true;

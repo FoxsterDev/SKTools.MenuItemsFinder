@@ -111,27 +111,36 @@ namespace SKTools.MenuItemsFinder
 
         public bool CanExecute()
         {
-            if (IsMissed)
+            try
+            {
+                if (IsMissed)
+                    return false;
+
+                string error;
+                var parameters = GetParameters(out error);
+                if (!string.IsNullOrEmpty(error))
+                    return false;
+
+                if (HasValidate)
+                    return (bool) _menuItem.TargetMethodValidate.Invoke(null, parameters);
+
+                return true;
+            }
+            catch
+            {
                 return false;
-
-            string error;
-            var parameters = GetParameters(out error);
-            if (!string.IsNullOrEmpty(error))
-                return false;
-
-            if (HasValidate) return (bool) _menuItem.TargetMethodValidate.Invoke(null, parameters);
-
-            return true;
+            }
         }
 
         public void Execute()
         {
-            string error;
-            var parameters = GetParameters(out error);
-            if (string.IsNullOrEmpty(error))
+            var parametersError = default(string);
+            var parameters = GetParameters(out parametersError);
+            
+            if (string.IsNullOrEmpty(parametersError))
                 _menuItem.TargetMethod.Invoke(null, parameters);
             else
-                throw new Exception(error);
+                throw new Exception(parametersError);
         }
 
         private object[] GetParameters(out string error)

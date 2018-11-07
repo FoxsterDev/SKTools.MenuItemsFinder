@@ -7,7 +7,7 @@ namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
-        private Surrogate<IGUIContainer, Assets> _targetGui;
+        private Surrogate<IGUIContainer, Assets> _target;
 
         [MenuItem("SKTools/MenuItems Finder #%m")]
         private static void ShowWindow()
@@ -38,7 +38,7 @@ namespace SKTools.MenuItemsFinder
             container.LostFocusCallback = OnWindowLostFocus;
             container.FocusCallback = OnWindowFocus;
 
-            _targetGui = new Surrogate<IGUIContainer, Assets>(container, assets);
+            _target = new Surrogate<IGUIContainer, Assets>(container, assets);
 
             if (createIfNotExist)
             {
@@ -58,7 +58,7 @@ namespace SKTools.MenuItemsFinder
         {
             if (!_isLoaded || EditorApplication.isCompiling)
             {
-                DrawUnvailableState(window.Position);
+                DrawUnavailableState(window.Position);
                 return;
             }
 
