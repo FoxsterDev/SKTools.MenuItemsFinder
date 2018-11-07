@@ -60,59 +60,56 @@ namespace SKTools.MenuItemsFinder
 
                 GUI.color = previousColor;
             }
-            else
+            else if (item.IsEditName)
             {
-                if (item.IsEditName)
-                {
-                    GUI.SetNextControlName("itemFocusControl");
-                    item.EditName =
-                        GUILayout.TextField(item.EditName, GUILayout.MinWidth(326), GUILayout.MaxWidth(326));
+                GUI.SetNextControlName("itemFocusControl");
+                item.EditName =
+                    GUILayout.TextField(item.EditName, GUILayout.MinWidth(326), GUILayout.MaxWidth(326));
 
-                    if (item.OriginalHotKey == null)
+                if (item.OriginalHotKey == null)
+                {
+                    var buttonLabel = !item.HasCustomHotKey ? "+HotKey" : "EditHotKey";
+                    if (GUILayout.Button(buttonLabel, GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
                     {
-                        var buttonLabel = !item.HasCustomHotKey ? "+HotKey" : "EditHotKey";
-                        if (GUILayout.Button(buttonLabel, GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
-                        {
-                            ClickButton_OpenHotKeyItemEditor(item);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        GUILayout.Label(item.OriginalHotKey.Formatted, GUILayout.MinWidth(70), GUILayout.MaxWidth(70));
+                        ClickButton_OpenHotKeyItemEditor(item);
+                        return;
                     }
                 }
-                else if (item.IsEditHotkey)
+                else
                 {
-                    GUI.SetNextControlName("itemFocusControl");
-                    
-                    item.EditHotKeySymbol = GUILayout.TextField(item.EditHotKeySymbol);
-                    GUILayout.Label(" Key");
+                    GUILayout.Label(item.OriginalHotKey.Formatted, GUILayout.MinWidth(70), GUILayout.MaxWidth(70));
+                }
+            }
+            else if (item.IsEditHotkey)
+            {
+                GUI.SetNextControlName("itemFocusControl");
 
-                    item.EditHotKey.Alt = GUILayout.Toggle(item.EditHotKey.Alt, " Alt");
+                item.EditHotKeySymbol = GUILayout.TextField(item.EditHotKeySymbol);
+                GUILayout.Label(" Key");
 
-                    item.EditHotKey.Shift = GUILayout.Toggle(item.EditHotKey.Shift, " Shift");
+                item.EditHotKey.Alt = GUILayout.Toggle(item.EditHotKey.Alt, " Alt");
 
-                    item.EditHotKey.Cmd = GUILayout.Toggle(item.EditHotKey.Cmd, " Cmd");
+                item.EditHotKey.Shift = GUILayout.Toggle(item.EditHotKey.Shift, " Shift");
 
-                    if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+                item.EditHotKey.Cmd = GUILayout.Toggle(item.EditHotKey.Cmd, " Cmd");
+
+                if (GUILayout.Button("Check&Add", GUILayout.MinWidth(90), GUILayout.MaxWidth(90)))
+                {
+                    ClickButton_AddHotKeyItem(item);
+                }
+
+                if (item.HasCustomHotKey)
+                {
+                    if (GUILayout.Button("Remove", GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
                     {
-                        ClickButton_AddHotKeyItem(item);
+                        item.CustomHotKeys = new List<MenuItemHotKey>(1);
+                        return;
                     }
+                }
 
-                    if (item.HasCustomHotKey)
-                    {
-                        if (GUILayout.Button("Remove", GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
-                        {
-                            item.CustomHotKeys = new List<MenuItemHotKey>(1);
-                            return;
-                        }
-                    }
-                    
-                    if (GUILayout.Button("X", GUILayout.MinWidth(25), GUILayout.MaxWidth(25)))
-                    {
-                        ClickButton_CloseHotKeyItemEditor(item);
-                    }
+                if (GUILayout.Button("X", GUILayout.MinWidth(25), GUILayout.MaxWidth(25)))
+                {
+                    ClickButton_CloseHotKeyItemEditor(item);
                 }
             }
 
@@ -188,13 +185,16 @@ namespace SKTools.MenuItemsFinder
             {
                 item.IsEditHotkey = false;
                 EditorUtility.DisplayDialog("",
-                    "HotKey "+ item.CustomHotKeys[0].Formatted + " was successfully added to "+ item.OriginalName+"!", "Ok");
+                    "HotKey " + item.CustomHotKeys[0].Formatted + " was successfully added to " + item.OriginalName +
+                    "!", "Ok");
             }
         }
 
         private void ClickButton_OpenHotKeyItemEditor(MenuItemLink item)
         {
-            item.EditHotKey = item.CustomHotKeys.Count > 0 ? new MenuItemHotKey(item.CustomHotKeys[0]) : new MenuItemHotKey();
+            item.EditHotKey = item.CustomHotKeys.Count > 0
+                ? new MenuItemHotKey(item.CustomHotKeys[0])
+                : new MenuItemHotKey();
             item.EditHotKeySymbol = item.EditHotKey.Key;
             item.IsEditHotkey = true;
             item.IsEditName = false;
@@ -254,7 +254,7 @@ namespace SKTools.MenuItemsFinder
             if (!string.IsNullOrEmpty(error))
             {
                 var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
-                    "There happens tgis=" + error + "\n Do ypu want to open location of assembly?", "ok", "cancel");
+                    "There happens this error=" + error + "\n Do you want to open location of assembly?", "ok", "cancel");
                 if (ok) OpenAssemblyLocationThatContainsMenuItem(item);
             }
         }

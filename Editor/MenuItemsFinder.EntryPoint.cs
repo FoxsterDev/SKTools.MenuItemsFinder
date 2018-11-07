@@ -1,15 +1,22 @@
 ﻿using UnityEditor;
 using SKTools.Base.Editor;
-using SKTools.Base.Editor.GuiElementsSystem;
-using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
+#if !FOXSTER_DEV_MODE
+        private const string MenuAssetPath = "Assets/SKTools/";
+#else
+        private const string MenuAssetPath = "SKTools/";
+#endif
+        
+        
+        private const int Priority = 2000;
+
         private Surrogate<IGUIContainer, Assets> _target;
 
-        [MenuItem("SKTools/MenuItems Finder #%m")]
+        [MenuItem(MenuAssetPath + "MenuItems Finder #%m", false, Priority + 2)]
         private static void ShowWindow()
         {
             GetFinder().SetUpWindow(true);
