@@ -2,18 +2,6 @@
     "CustomizedMenuItems": [
         {
             "CustomHotKeys": [],
-            "Key": "assets/create/gui skin",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/create/tile",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
             "Key": "assets/create/testing/c# test script",
             "CustomName": "",
             "Starred": true
@@ -32,12 +20,18 @@
         },
         {
             "CustomHotKeys": [],
+            "Key": "assets/open c# project",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
             "Key": "window/analysis/profiler %7",
             "CustomName": "",
             "Starred": true
         }
     ],
-    "FilterString": "ss",
+    "FilterString": "ope",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }

@@ -11,9 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d28d3388e83c47ef91fe7ee86f7ece7, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  _itemStarredColor: {r: 0.90588236, g: 0.54256034, b: 0, a: 1}
-  _itemDefaultColor: {r: 1, g: 1, b: 1, a: 1}
+  _itemStarredColor: {r: 0.86319524, g: 0.9056604, b: 0, a: 1}
+  _itemDefaultColor: {r: 0.8915094, g: 1, b: 0.98505634, a: 1}
   _itemMissedColor: {r: 1, g: 0, b: 0, a: 1}
-  _itemNotExecutableColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  _itemSelectedContentColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _itemHotKeyColor: {r: 0, g: 1, b: 1, a: 1}
+  _itemNotExecutableColor: {r: 0.8301887, g: 0.7949448, b: 0.7949448, a: 0.59607846}
+  _itemSelectedContentColor: {r: 0.48581886, g: 1, b: 0, a: 1}
+  _itemHotKeyColor: {r: 0.32258546, g: 0.6509804, b: 0, a: 1}
