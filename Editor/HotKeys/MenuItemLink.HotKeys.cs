@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -12,7 +13,7 @@ namespace SKTools.MenuItemsFinder
         /// </summary>
         [NonSerialized] public MenuItemHotKey OriginalHotKey;
         [NonSerialized] public MenuItemHotKey EditHotKey = new MenuItemHotKey();
-        [NonSerialized] public string EditHotKeySymbol = "";
+        [NonSerialized] public string EditHotKeySymbol = string.Empty;
 
         public bool HasCustomHotKey
         {
@@ -38,12 +39,13 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        public void UpdateLabelWithHotKey()
+        public void UpdateLabelWithHotKey(Color32 color)
         {
             var hotKey = OriginalHotKey ?? (CustomHotKeys.Count > 0 ? CustomHotKeys[0] : null);
             if (hotKey != null)
             {
-                Label = string.Concat(Label, " (<b><color=cyan>", hotKey.Formatted, "</color></b>)");
+                var hexColor = string.Concat(color.r.ToString("X2"), color.g.ToString("X2"), color.b.ToString("X2"));
+                Label = string.Concat(Label, string.Format(" (<b><color=#{0}>", hexColor), hotKey.Formatted, "</color></b>)");
             }
         }
     }

@@ -1,3 +1,4 @@
 #
 *.meta
 !*.png.meta
+!*.asset.meta

@@ -9,7 +9,7 @@ namespace SKTools.MenuItemsFinder
         public bool Alt;
         public bool Shift;
         public bool Cmd;
-        public string Key;
+        public string Key = string.Empty;
         public bool IsVerified;
         
         [NonSerialized] public bool IsOriginal;

@@ -1,15 +1,19 @@
 {
     "CustomizedMenuItems": [
         {
-            "CustomHotKeys": [
-                {
-                    "Alt": true,
-                    "Shift": false,
-                    "Cmd": false,
-                    "Key": "l",
-                    "IsVerified": true
-                }
-            ],
+            "CustomHotKeys": [],
+            "Key": "assets/create/gui skin",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/create/tile",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
             "Key": "assets/create/testing/c# test script",
             "CustomName": "",
             "Starred": true
@@ -33,7 +37,7 @@
             "Starred": true
         }
     ],
-    "FilterString": "s",
+    "FilterString": "ss",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }

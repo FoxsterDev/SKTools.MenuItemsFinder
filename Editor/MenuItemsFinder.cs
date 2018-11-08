@@ -10,7 +10,7 @@ using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
-    internal partial class MenuItemsFinder 
+    internal partial class MenuItemsFinder
     {
         private static MenuItemsFinder _instance;
 
@@ -18,7 +18,7 @@ namespace SKTools.MenuItemsFinder
         {
             return _instance ?? (_instance = new MenuItemsFinder());
         }
-        
+
         private readonly Preferences _prefs;
         private readonly MenuItemsFinderSettings _settings;
         private bool _isLoaded;
@@ -29,16 +29,16 @@ namespace SKTools.MenuItemsFinder
         {
             _prefs = new Preferences();
             _prefs.Load();
-            
-             var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
+
+            var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
             _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
             if (_settings == null)
             {
                 _settings = ScriptableObject.CreateInstance<MenuItemsFinderSettings>();
-                Debug.LogError("cant load settings from path="+ settingsPath);
+                Debug.LogError("cant load settings from path=" + settingsPath);
             }
         }
-        
+
         private string FilterMenuItems
         {
             get { return _prefs.FilterString; }
@@ -58,7 +58,8 @@ namespace SKTools.MenuItemsFinder
 
         private bool IsCustomized(MenuItemLink item)
         {
-            return item.Starred || !string.IsNullOrEmpty(item.CustomName) || item.IsMissed || item.CustomHotKeys.Count > 0;
+            return item.Starred || !string.IsNullOrEmpty(item.CustomName) || item.IsMissed ||
+                   item.CustomHotKeys.Count > 0;
         }
 
         private void LoadMenuItems()
@@ -70,7 +71,7 @@ namespace SKTools.MenuItemsFinder
             }
             catch (Exception ex)
             {
-                Debug.LogError("[MenuItemsFinder] could not be loaded!\n"+ex);
+                Debug.LogError("[MenuItemsFinder] could not be loaded!\n" + ex);
             }
         }
 
@@ -90,28 +91,29 @@ namespace SKTools.MenuItemsFinder
             {
             }
         }
-        
+
         private List<MenuItemLink> GetMenuItems(List<MenuItemLink> customizedItems)
         {
             var menuItemData = LoadMenuItemData();
             var menuItemsLinksDict = new Dictionary<string, MenuItemLink>(menuItemData.Count);
             var menuItemLinks = CreateMenuItemLinks(menuItemData, menuItemsLinksDict);
-           
+
             CustomizeMenuItems(menuItemLinks, customizedItems, menuItemsLinksDict);
-            
+
             menuItemLinks.ForEach(UpdateLabel);
             menuItemLinks.Sort((left, right) => left.Key[0] - right.Key[0]);
-            
+
             return menuItemLinks;
         }
 
         private void UpdateLabel(MenuItemLink item)
         {
             item.UpdateLabel();
-            item.UpdateLabelWithHotKey();
+            item.UpdateLabelWithHotKey(_settings.ItemHotKeyColor);
         }
-        
-        private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,  Dictionary<string, MenuItemLink> menuItemLinksDict)
+
+        private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,
+            Dictionary<string, MenuItemLink> menuItemLinksDict)
         {
             MenuItemLink menuItem;
             foreach (var customizedItem in customizedItems)
@@ -120,7 +122,7 @@ namespace SKTools.MenuItemsFinder
                     continue;
 
                 menuItemLinksDict.TryGetValue(customizedItem.Key, out menuItem);
-                
+
                 if (menuItem == null)
                 {
                     menuItems.Add(customizedItem);
@@ -132,10 +134,11 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private List<MenuItemLink> CreateMenuItemLinks(Dictionary<string, MenuItemData> menuItemData, Dictionary<string, MenuItemLink> menuItemLinksDict)
+        private List<MenuItemLink> CreateMenuItemLinks(Dictionary<string, MenuItemData> menuItemData,
+            Dictionary<string, MenuItemLink> menuItemLinksDict)
         {
             var menuItems = new List<MenuItemLink>(menuItemData.Count);
-            
+
             foreach (var entry in menuItemData)
             {
                 if (entry.Value.TargetMethodValidate != null && entry.Value.TargetMethod == null)
@@ -148,24 +151,24 @@ namespace SKTools.MenuItemsFinder
 
                 var item = new MenuItemLink(entry.Value);
                 item.UpdateOriginalHotKey();
-                
+
                 menuItems.Add(item);
                 menuItemLinksDict[item.Key] = item;
             }
 
             return menuItems;
         }
-        
+
         private Dictionary<string, MenuItemData> LoadMenuItemData()
         {
             var dict = new Dictionary<string, MenuItemData>(200);
-            
+
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            
+
             foreach (var assembly in assemblies)
             {
                 var types = assembly.GetTypes();
-                
+
                 foreach (var type in types)
                 {
                     var methods = type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
@@ -209,13 +212,13 @@ namespace SKTools.MenuItemsFinder
                 data.TargetMethod = method;
             }
         }
-        
+
         private void OpenAssemblyLocationThatContainsMenuItem(MenuItemLink item)
         {
             var directoryPath = new FileInfo(item.DeclaringType.Assembly.Location).DirectoryName;
             Utility.OpenFile(directoryPath);
         }
-       
+
         private void SetFilteredItems(string key)
         {
             foreach (var item in _menuItems)
@@ -235,6 +238,5 @@ namespace SKTools.MenuItemsFinder
                 _menuItems = _menuItems.FindAll(i => !i.IsRemoved);
             }
         }
-
     }
 }
