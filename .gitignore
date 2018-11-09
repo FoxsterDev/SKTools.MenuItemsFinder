@@ -2,3 +2,4 @@
 *.meta
 !*.png.meta
 !*.asset.meta
+!MenuItemsFinderSettings.cs.meta

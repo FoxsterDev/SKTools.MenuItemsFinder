@@ -15,7 +15,7 @@ namespace SKTools.MenuItemsFinder
 
         protected override Vector2? GetMinSize
         {
-            get { return new Vector2(450, 450); }
+            get { return new Vector2(600, 450); }
         }
 
         protected override Rect? GetDefaultPosition
