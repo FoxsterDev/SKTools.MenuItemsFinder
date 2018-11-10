@@ -32,6 +32,7 @@ namespace SKTools.MenuItemsFinder
 
             var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
             _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
+            
             if (_settings == null)
             {
                 _settings = ScriptableObject.CreateInstance<MenuItemsFinderSettings>();
