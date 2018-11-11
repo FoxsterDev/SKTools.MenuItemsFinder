@@ -26,6 +26,24 @@
         },
         {
             "CustomHotKeys": [],
+            "Key": "assets/sktools/copy path in resources %#0",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/sktools/copy path in assets %#1",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
+            "Key": "assets/sktools/copy full path %#2",
+            "CustomName": "",
+            "Starred": true
+        },
+        {
+            "CustomHotKeys": [],
             "Key": "assets/create/c# script from buffer %v",
             "CustomName": "",
             "Starred": true
