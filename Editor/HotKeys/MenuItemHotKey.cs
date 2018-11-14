@@ -11,19 +11,14 @@ namespace SKTools.MenuItemsFinder
         public bool Cmd;
         public string Key = string.Empty;
         public bool IsVerified;
-        
-        [NonSerialized] public bool IsOriginal;
 
-        public string Formatted
-        {
-            get { return ToFormat(this); }
-        }
+        [NonSerialized]
+        public bool IsOriginal;
 
         public MenuItemHotKey()
         {
-            
         }
-        
+
         public MenuItemHotKey(MenuItemHotKey hotKey)
         {
             Alt = hotKey.Alt;
@@ -32,7 +27,12 @@ namespace SKTools.MenuItemsFinder
             Key = hotKey.Key;
             IsOriginal = hotKey.IsOriginal;
         }
-        
+
+        public string Formatted
+        {
+            get { return ToFormat(this); }
+        }
+
         public bool Equals(MenuItemHotKey other)
         {
             return other != null && Key == other.Key && Alt == other.Alt && Shift == other.Shift &&
@@ -46,40 +46,9 @@ namespace SKTools.MenuItemsFinder
 
         public static implicit operator string(MenuItemHotKey k)
         {
-            return k != null ? k.ToString() : default(string);
-        }
-
-        private static string ToFormat(MenuItemHotKey hotkey)
-        {
-            var str = string.Empty;
-
-            if (hotkey.Cmd)
-            {
-#if UNITY_EDITOR_OSX
-                str = "⌘";
-#else
-                str = "⌥";
-               
-#endif
-            }
-
-            if (hotkey.Alt) str += "⌥";
-
-            if (hotkey.Shift) str += "⇧";//shift+";
-
-            str += hotkey.Key;
-            return str.ToUpper();
-        }
-
-        private static string ToPack(MenuItemHotKey hotkey)
-        {
-            //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
-            var str = "";
-            if (hotkey.Cmd) str += "%";
-            if (hotkey.Shift) str += "#";
-            if (hotkey.Alt) str += "&";
-            str += hotkey.Key;
-            return str;
+            return k != null
+                       ? k.ToString()
+                       : default(string);
         }
 
         public static MenuItemHotKey Create(string itemPath, out int startIndex)
@@ -87,12 +56,13 @@ namespace SKTools.MenuItemsFinder
             var hotKey = new MenuItemHotKey();
             startIndex = -1;
             string hotkeyString;
-            
-            Parse(itemPath, out startIndex, 
+
+            Parse(
+                itemPath, out startIndex,
                 out hotkeyString,
-                out hotKey.Key, 
+                out hotKey.Key,
                 out hotKey.Shift,
-                out hotKey.Alt, 
+                out hotKey.Alt,
                 out hotKey.Cmd);
 
             if (startIndex > -1)
@@ -104,6 +74,7 @@ namespace SKTools.MenuItemsFinder
 
             return null;
         }
+
         /*
         * To create a hotkey you can use the following special characters: % (ctrl on Windows, cmd on macOS), # (shift), & (alt). If no special modifier key combinations are required the key can be given after an underscore. For example to create a menu with hotkey shift-alt-g use "MyMenu/Do Something #&g".
          * To create a menu with hotkey g and no key modifiers pressed use "MyMenu/Do Something _g".
@@ -111,7 +82,8 @@ namespace SKTools.MenuItemsFinder
          The keys supported like this are: LEFT, RIGHT, UP, DOWN, F1 .. F12, HOME, END, PGUP, PGDN.
          A hotkey text must be preceded with a space character ("MyMenu/Do_g" won't be interpreted as hotkey, while "MyMenu/Do _g" will).
         */
-        public static void Parse(string itemPath, out int index, out string hotkeyString, out string key,
+        public static void Parse(
+            string itemPath, out int index, out string hotkeyString, out string key,
             out bool shift, out bool alt, out bool cmd)
         {
             key = hotkeyString = string.Empty;
@@ -120,7 +92,9 @@ namespace SKTools.MenuItemsFinder
             alt = false;
             cmd = false;
             if (string.IsNullOrEmpty(itemPath))
+            {
                 return;
+            }
 
             var chars = itemPath.ToCharArray();
             var underScoreIndex = -1;
@@ -132,6 +106,7 @@ namespace SKTools.MenuItemsFinder
             var modifiersIndex = -1;
 
             if (chars[chars.Length - 1] != ' ')
+            {
                 for (var k = chars.Length - 1; k > -1; k--)
                 {
                     var c = chars[k];
@@ -141,7 +116,10 @@ namespace SKTools.MenuItemsFinder
                         break;
                     }
 
-                    if (whiteSpaceIndex > -1) continue;
+                    if (whiteSpaceIndex > -1)
+                    {
+                        continue;
+                    }
 
                     if (c == ' ')
                     {
@@ -158,22 +136,35 @@ namespace SKTools.MenuItemsFinder
                     hotkeyChars.Push(c);
 
                     var modifier = false;
-                    if (c == '#') modifier = shift = true;
+                    if (c == '#')
+                    {
+                        modifier = shift = true;
+                    }
 
-                    if (c == '%') modifier = cmd = true;
+                    if (c == '%')
+                    {
+                        modifier = cmd = true;
+                    }
 
-                    if (c == '&') modifier = alt = true;
+                    if (c == '&')
+                    {
+                        modifier = alt = true;
+                    }
 
                     if (modifier)
                     {
                         indecatorIndex = k;
-                        if (modifiersIndex < 0) modifiersIndex = k;
+                        if (modifiersIndex < 0)
+                        {
+                            modifiersIndex = k;
+                        }
                     }
                     else
                     {
                         keyChars.Push(c);
                     }
                 }
+            }
 
             if (whiteSpaceIndex > -1 && slashIndex > -1 && whiteSpaceIndex > slashIndex)
             {
@@ -192,6 +183,57 @@ namespace SKTools.MenuItemsFinder
                     key = new string(keyChars.ToArray());
                 }
             }
+        }
+
+        private static string ToFormat(MenuItemHotKey hotkey)
+        {
+            var str = string.Empty;
+
+            if (hotkey.Cmd)
+            {
+#if UNITY_EDITOR_OSX
+                str = "⌘";
+#else
+                str = "⌥";
+               
+#endif
+            }
+
+            if (hotkey.Alt)
+            {
+                str += "⌥";
+            }
+
+            if (hotkey.Shift)
+            {
+                str += "⇧"; //shift+";
+            }
+
+            str += hotkey.Key;
+            return str.ToUpper();
+        }
+
+        private static string ToPack(MenuItemHotKey hotkey)
+        {
+            //% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
+            var str = "";
+            if (hotkey.Cmd)
+            {
+                str += "%";
+            }
+
+            if (hotkey.Shift)
+            {
+                str += "#";
+            }
+
+            if (hotkey.Alt)
+            {
+                str += "&";
+            }
+
+            str += hotkey.Key;
+            return str;
         }
     }
 }

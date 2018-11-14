@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using SKTools.Base.Editor;
 using UnityEditor;
-using Debug = UnityEngine.Debug;
+using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -15,10 +15,15 @@ namespace SKTools.MenuItemsFinder
         public string FilterString;
         public bool ShowOnlyStarred;
         public bool HideUnityItems;
-        
-        [NonSerialized] public bool HideAllMissed;
-        [NonSerialized] public bool ShowMenuBar;
-        [NonSerialized] public string PreviousFilterString;
+
+        [NonSerialized]
+        public bool HideAllMissed;
+
+        [NonSerialized]
+        public bool ShowMenuBar;
+
+        [NonSerialized]
+        public string PreviousFilterString;
 
         public void Load()
         {
@@ -34,7 +39,6 @@ namespace SKTools.MenuItemsFinder
             {
                 Debug.LogException(ex);
             }
-
         }
 
         public void Save()

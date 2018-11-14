@@ -1,5 +1,5 @@
-﻿using UnityEditor;
-using SKTools.Base.Editor;
+﻿using SKTools.Base.Editor;
+using UnityEditor;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -10,8 +10,7 @@ namespace SKTools.MenuItemsFinder
 #else
         private const string MenuAssetPath = "SKTools/";
 #endif
-        
-        
+
         private const int Priority = 2000;
 
         private Surrogate<IGUIContainer, Assets> _target;
@@ -31,8 +30,11 @@ namespace SKTools.MenuItemsFinder
         private void SetUpWindow(bool createIfNotExist)
         {
             var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
-            if (container == null) return;
-            
+            if (container == null)
+            {
+                return;
+            }
+
             Utility.DiagnosticRun(LoadMenuItems);
 
             var assetsDirectory = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources");
@@ -53,14 +55,14 @@ namespace SKTools.MenuItemsFinder
                 container.Focus();
             }
         }
-          
+
         private void OnWindowFocus(IGUIContainer window)
         {
             _prefs.PreviousFilterString = _prefs.FilterString;
             SetFilteredItems(_prefs.FilterString);
             window.Repaint();
         }
-        
+
         private void OnWindowGui(IGUIContainer window)
         {
             if (!_isLoaded || EditorApplication.isCompiling)
@@ -74,7 +76,7 @@ namespace SKTools.MenuItemsFinder
             DrawItems();
             DrawSupportBar();
         }
-        
+
         private void OnWindowLostFocus(IGUIContainer window)
         {
             SavePrefs();

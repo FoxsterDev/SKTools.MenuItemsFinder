@@ -44,12 +44,6 @@
         },
         {
             "CustomHotKeys": [],
-            "Key": "assets/create/c# script from buffer %v",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
             "Key": "assets/create/textmeshpro/style sheet",
             "CustomName": "",
             "Starred": true

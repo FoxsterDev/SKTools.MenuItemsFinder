@@ -10,12 +10,11 @@ namespace SKTools.MenuItemsFinder
         {
             Application.OpenURL(@"https://docs.unity3d.com/Manual/PlatformDependentCompilation.html");
         }
-        
+
         [MenuItem(MenuAssetPath + "Links/Log Files", false, Priority)]
         public static void OpenLogFiles()
         {
             Application.OpenURL(@"https://docs.unity3d.com/Manual/LogFiles.html");
         }
-   
     }
 }

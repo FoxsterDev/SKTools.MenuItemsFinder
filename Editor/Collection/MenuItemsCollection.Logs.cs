@@ -1,7 +1,8 @@
-﻿using System;
+﻿#if UNITY_EDITOR_OSX
+using System;
 using System.IO;
-using UnityEditor;
 using SKTools.Base.Editor;
+using UnityEditor;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -20,7 +21,8 @@ namespace SKTools.MenuItemsFinder
             {
                 var path = string.Empty;
 #if UNITY_EDITOR_OSX
-                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                path = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                     "Library/Logs/Unity/Editor.log");
 #elif UNITY_EDITOR_WIN
 //	C:\Users\username\AppData\Local\Unity\Editor\Editor.log
@@ -37,7 +39,8 @@ namespace SKTools.MenuItemsFinder
             {
                 var path = string.Empty;
 #if UNITY_EDITOR_OSX
-                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                path = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                     "Library/Logs/Unity/Player.log");
 #elif UNITY_EDITOR_WIN
 //C:\Users\username\AppData\LocalLow\CompanyName\ProductName\output_log.txt
@@ -49,7 +52,7 @@ namespace SKTools.MenuItemsFinder
                 return path;
             }
         }
-        
+
         [MenuItem(MenuAssetPath + "Logs/Open Editor Log", false, Priority)]
         public static void OpenEditorLog()
         {
@@ -67,7 +70,7 @@ namespace SKTools.MenuItemsFinder
         {
             Utility.OpenFile(PlayerLogFilePath);
         }
-        
+
         [MenuItem(MenuAssetPath + "Logs/Open Player Log", true, Priority)]
         public static bool OpenPlayerLogValidate()
         {
@@ -75,3 +78,4 @@ namespace SKTools.MenuItemsFinder
         }
     }
 }
+#endif

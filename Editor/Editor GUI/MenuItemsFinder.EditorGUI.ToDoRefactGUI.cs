@@ -16,15 +16,19 @@ namespace SKTools.MenuItemsFinder
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
 
             _menuItems.FindAll(m => m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
-                .ForEach(DrawItem);
+                      .ForEach(DrawItem);
 
             if (!_prefs.ShowOnlyStarred)
             {
-                if (!_prefs.HideAllMissed) _menuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
+                if (!_prefs.HideAllMissed)
+                {
+                    _menuItems.FindAll(m => m.IsMissed).ForEach(DrawItem);
+                }
 
-                _menuItems.FindAll(m =>
-                        m.IsFiltered && !m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
-                    .ForEach(DrawItem);
+                _menuItems.FindAll(
+                              m =>
+                                  m.IsFiltered && !m.Starred && !m.IsMissed && (!_prefs.HideUnityItems || !m.IsUnityMenu))
+                          .ForEach(DrawItem);
             }
 
             GUILayout.EndScrollView();
@@ -38,16 +42,25 @@ namespace SKTools.MenuItemsFinder
 
             GUILayout.BeginHorizontal();
 
-            var texture = item.Starred ? _target.Assets.StarredImage : _target.Assets.UnstarredImage;
+            var texture = item.Starred
+                              ? _target.Assets.StarredImage
+                              : _target.Assets.UnstarredImage;
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 ClickButton_StarredItem(item);
             }
 
-            var defaultColor = item.Starred ? _settings.ItemStarredColor : _settings.ItemDefaultColor;
+            var defaultColor = item.Starred
+                                   ? _settings.ItemStarredColor
+                                   : _settings.ItemDefaultColor;
             var isExecutable = item.CanExecute();
 
-            if (!isExecutable) defaultColor = item.IsMissed ? _settings.ItemMissedColor: _settings.ItemNotExecutableColor;
+            if (!isExecutable)
+            {
+                defaultColor = item.IsMissed
+                                   ? _settings.ItemMissedColor
+                                   : _settings.ItemNotExecutableColor;
+            }
 
             if (!item.IsEditName && !item.IsEditHotkey)
             {
@@ -68,7 +81,9 @@ namespace SKTools.MenuItemsFinder
 
                 if (item.OriginalHotKey == null)
                 {
-                    var buttonLabel = !item.HasCustomHotKey ? "+HotKey" : "EditHotKey";
+                    var buttonLabel = !item.HasCustomHotKey
+                                          ? "+HotKey"
+                                          : "EditHotKey";
                     if (GUILayout.Button(buttonLabel, GUILayout.MinWidth(70), GUILayout.MaxWidth(70)))
                     {
                         ClickButton_OpenHotKeyItemEditor(item);
@@ -131,7 +146,6 @@ namespace SKTools.MenuItemsFinder
                 ClickButton_OpenScript(item);
             }
 
-
             GUILayout.EndHorizontal();
         }
 
@@ -150,16 +164,20 @@ namespace SKTools.MenuItemsFinder
                 {
                     if (!item.IsMissed)
                     {
-                        EditorUtility.DisplayDialog("Validation fail!",
+                        EditorUtility.DisplayDialog(
+                            "Validation fail!",
                             "Cant validate this option\n" + item.Label,
                             "ok");
                     }
                     else
                     {
-                        if (EditorUtility.DisplayDialog("Missing item!",
+                        if (EditorUtility.DisplayDialog(
+                            "Missing item!",
                             "Do you want to remove this item?\n" + item.Label,
                             "ok", "cancel"))
+                        {
                             ClickButton_RemoveItem(item);
+                        }
                     }
 
                     return;
@@ -184,7 +202,8 @@ namespace SKTools.MenuItemsFinder
             else
             {
                 item.IsEditHotkey = false;
-                EditorUtility.DisplayDialog("",
+                EditorUtility.DisplayDialog(
+                    "",
                     "HotKey " + item.CustomHotKeys[0].Formatted + " was successfully added to " + item.OriginalName +
                     "!", "Ok");
             }
@@ -193,8 +212,8 @@ namespace SKTools.MenuItemsFinder
         private void ClickButton_OpenHotKeyItemEditor(MenuItemLink item)
         {
             item.EditHotKey = item.CustomHotKeys.Count > 0
-                ? new MenuItemHotKey(item.CustomHotKeys[0])
-                : new MenuItemHotKey();
+                                  ? new MenuItemHotKey(item.CustomHotKeys[0])
+                                  : new MenuItemHotKey();
             item.EditHotKeySymbol = item.EditHotKey.Key;
             item.IsEditHotkey = true;
             item.IsEditName = false;
@@ -225,8 +244,10 @@ namespace SKTools.MenuItemsFinder
             {
                 if (item.EditName != item.OriginalName && !string.IsNullOrEmpty(item.EditName))
                 {
-                    var ok = EditorUtility.DisplayDialog("You changed the current name of this menuItem",
-                        string.Format("Do you want to change the previous name={0} on this new={1}?", item.OriginalName,
+                    var ok = EditorUtility.DisplayDialog(
+                        "You changed the current name of this menuItem",
+                        string.Format(
+                            "Do you want to change the previous name={0} on this new={1}?", item.OriginalName,
                             item.EditName), "ok", "cancel");
                     if (ok)
                     {
@@ -253,9 +274,14 @@ namespace SKTools.MenuItemsFinder
 
             if (!string.IsNullOrEmpty(error))
             {
-                var ok = EditorUtility.DisplayDialog("Can't open file that contains this menuItem",
-                    "There happens this error=" + error + "\n Do you want to open location of assembly?", "ok", "cancel");
-                if (ok) OpenAssemblyLocationThatContainsMenuItem(item);
+                var ok = EditorUtility.DisplayDialog(
+                    "Can't open file that contains this menuItem",
+                    "There happens this error=" + error + "\n Do you want to open location of assembly?", "ok",
+                    "cancel");
+                if (ok)
+                {
+                    OpenAssemblyLocationThatContainsMenuItem(item);
+                }
             }
         }
 

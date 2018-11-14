@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
+using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
-using SKTools.Base.Editor;
-using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -27,12 +25,13 @@ namespace SKTools.MenuItemsFinder
         [InitializeOnLoadMethod]
         private static void MenuItemsFinder_HotKeysExecutor_Initializer()
         {
-            Utility.DiagnosticRun(() =>
-            {
-                _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
-                UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);
-                EditorApplication.update += KeyboardInputUpdate;
-            });
+            Utility.DiagnosticRun(
+                () =>
+                {
+                    _eventInfo = typeof(Event).GetField("s_Current", BindingFlags.Static | BindingFlags.NonPublic);
+                    UpdateHotKeysMap(GetFinder()._prefs.CustomizedMenuItems);
+                    EditorApplication.update += KeyboardInputUpdate;
+                });
         }
 
         private static void UpdateHotKeysMap(List<MenuItemLink> menuItemLinks)
@@ -43,19 +42,28 @@ namespace SKTools.MenuItemsFinder
             {
                 foreach (var hotKey in item.CustomHotKeys)
                 {
-                    if (!hotKey.IsVerified) continue;
+                    if (!hotKey.IsVerified)
+                    {
+                        continue;
+                    }
+
                     _hotKeysMap[hotKey] = item.OriginalPath;
                 }
             }
         }
 
         /// <summary>
-        ///  ev.keyCode only filled when happens KeyUp, another cases with character obuse to match keyboard simbols , if the char is not A-z
+        /// ev.keyCode only filled when happens KeyUp, another cases with character obuse to match keyboard simbols , if the char
+        /// is not A-z
         /// </summary>
         private static void KeyboardInputUpdate()
         {
             var ev = (Event) _eventInfo.GetValue(null);
-            if (ev == null) return;
+            if (ev == null)
+            {
+                return;
+            }
+
             var id = GUIUtility.GetControlID(FocusType.Passive);
             var eventType = ev.GetTypeForControl(id);
 

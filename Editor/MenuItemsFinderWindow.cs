@@ -20,9 +20,9 @@ namespace SKTools.MenuItemsFinder
 
         protected override Rect? GetDefaultPosition
         {
-            get { return new Rect(Screen.width/2 - 600/2,  Screen.height/2 - 450/2, 600, 450); }
+            get { return new Rect(Screen.width / 2 - 600 / 2, Screen.height / 2 - 450 / 2, 600, 450); }
         }
-        
+
         protected override bool GetAutoRepaintOnSceneChange
         {
             get { return true; }

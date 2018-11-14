@@ -6,18 +6,12 @@ using System.Reflection;
 using SKTools.Base.Editor;
 using UnityEditor;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace SKTools.MenuItemsFinder
 {
     internal partial class MenuItemsFinder
     {
         private static MenuItemsFinder _instance;
-
-        private static MenuItemsFinder GetFinder()
-        {
-            return _instance ?? (_instance = new MenuItemsFinder());
-        }
 
         private readonly Preferences _prefs;
         private readonly MenuItemsFinderSettings _settings;
@@ -32,7 +26,7 @@ namespace SKTools.MenuItemsFinder
 
             var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
             _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
-            
+
             if (_settings == null)
             {
                 _settings = ScriptableObject.CreateInstance<MenuItemsFinderSettings>();
@@ -49,12 +43,19 @@ namespace SKTools.MenuItemsFinder
 
                 if (_prefs.FilterString != _prefs.PreviousFilterString)
                 {
-                    var key = !string.IsNullOrEmpty(_prefs.FilterString) ? _prefs.FilterString.ToLower() : string.Empty;
+                    var key = !string.IsNullOrEmpty(_prefs.FilterString)
+                                  ? _prefs.FilterString.ToLower()
+                                  : string.Empty;
                     _prefs.PreviousFilterString = _prefs.FilterString = key;
 
                     SetFilteredItems(key);
                 }
             }
+        }
+
+        private static MenuItemsFinder GetFinder()
+        {
+            return _instance ?? (_instance = new MenuItemsFinder());
         }
 
         private bool IsCustomized(MenuItemLink item)
@@ -81,10 +82,14 @@ namespace SKTools.MenuItemsFinder
             try
             {
                 _prefs.CustomizedMenuItems = _menuItems.FindAll(IsCustomized).ToList();
-                _prefs.CustomizedMenuItems.ForEach(item =>
-                {
-                    if (item.CustomHotKeys.Count > 0) item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
-                });
+                _prefs.CustomizedMenuItems.ForEach(
+                    item =>
+                    {
+                        if (item.CustomHotKeys.Count > 0)
+                        {
+                            item.CustomHotKeys.RemoveAll(h => !h.IsVerified);
+                        }
+                    });
 
                 _prefs.Save();
             }
@@ -113,14 +118,17 @@ namespace SKTools.MenuItemsFinder
             item.UpdateLabelWithHotKey(_settings.ItemHotKeyColor);
         }
 
-        private void CustomizeMenuItems(List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,
+        private void CustomizeMenuItems(
+            List<MenuItemLink> menuItems, List<MenuItemLink> customizedItems,
             Dictionary<string, MenuItemLink> menuItemLinksDict)
         {
             MenuItemLink menuItem;
             foreach (var customizedItem in customizedItems)
             {
                 if (string.IsNullOrEmpty(customizedItem.Key))
+                {
                     continue;
+                }
 
                 menuItemLinksDict.TryGetValue(customizedItem.Key, out menuItem);
 
@@ -135,7 +143,8 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private List<MenuItemLink> CreateMenuItemLinks(Dictionary<string, MenuItemData> menuItemData,
+        private List<MenuItemLink> CreateMenuItemLinks(
+            Dictionary<string, MenuItemData> menuItemData,
             Dictionary<string, MenuItemLink> menuItemLinksDict)
         {
             var menuItems = new List<MenuItemLink>(menuItemData.Count);
@@ -144,9 +153,10 @@ namespace SKTools.MenuItemsFinder
             {
                 if (entry.Value.TargetMethodValidate != null && entry.Value.TargetMethod == null)
                 {
-                    Debug.LogWarning("There is a validate method without execution method=" +
-                                     entry.Value.TargetMethodValidate.Name + " menupath=" +
-                                     entry.Value.TargetAttributeValidate.menuItem);
+                    Debug.LogWarning(
+                        "There is a validate method without execution method=" +
+                        entry.Value.TargetMethodValidate.Name + " menupath=" +
+                        entry.Value.TargetAttributeValidate.menuItem);
                     continue;
                 }
 

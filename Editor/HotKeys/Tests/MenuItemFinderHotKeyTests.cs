@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Reflection;
-using NUnit.Framework;
-using UnityEditor;
-using UnityEngine;
+﻿using NUnit.Framework;
 
 namespace SKTools.MenuItemsFinder.Tests
 {
@@ -20,7 +14,8 @@ namespace SKTools.MenuItemsFinder.Tests
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Parse("Window/Analysis/Profiler %&7", out index, out hotkey, out key, out shift,
+            MenuItemHotKey.Parse(
+                "Window/Analysis/Profiler %&7", out index, out hotkey, out key, out shift,
                 out alt, out cmd);
             Assert.IsTrue(hotkey == "%&7");
             Assert.IsTrue(cmd & alt);
@@ -37,7 +32,8 @@ namespace SKTools.MenuItemsFinder.Tests
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Parse("Window/Analysis/Profiler _g", out index, out hotkey, out key, out shift,
+            MenuItemHotKey.Parse(
+                "Window/Analysis/Profiler _g", out index, out hotkey, out key, out shift,
                 out alt, out cmd);
             Assert.IsTrue(hotkey == "g");
             Assert.IsTrue(key == "g");
@@ -53,7 +49,8 @@ namespace SKTools.MenuItemsFinder.Tests
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Parse("Window/Analysis/Profiler_g", out index, out hotkey, out key, out shift, out alt,
+            MenuItemHotKey.Parse(
+                "Window/Analysis/Profiler_g", out index, out hotkey, out key, out shift, out alt,
                 out cmd);
             Assert.IsTrue(hotkey == string.Empty);
             Assert.IsFalse(cmd);
@@ -71,7 +68,8 @@ namespace SKTools.MenuItemsFinder.Tests
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Parse("Window/Analysis/Profiler Some Some", out index, out hotkey, out key, out shift,
+            MenuItemHotKey.Parse(
+                "Window/Analysis/Profiler Some Some", out index, out hotkey, out key, out shift,
                 out alt, out cmd);
             Assert.IsTrue(hotkey == string.Empty);
             Assert.IsFalse(cmd);
@@ -89,7 +87,8 @@ namespace SKTools.MenuItemsFinder.Tests
             var alt = false;
             var cmd = false;
 
-            MenuItemHotKey.Parse("Window/Analysis/Profiler #LEFT", out index, out hotkey, out key, out shift,
+            MenuItemHotKey.Parse(
+                "Window/Analysis/Profiler #LEFT", out index, out hotkey, out key, out shift,
                 out alt, out cmd);
             Assert.IsTrue(hotkey == "#LEFT");
             Assert.IsTrue(shift);

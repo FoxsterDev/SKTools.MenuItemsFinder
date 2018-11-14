@@ -11,6 +11,11 @@ namespace SKTools.MenuItemsFinder
         private GUIStyle _starredMenuItemButtonStyle;
         private GUIStyle _unstarredMenuItemButtonStyle;
 
+        public Assets(string assetsDirectory)
+            : base(assetsDirectory)
+        {
+        }
+
         public Texture2D UnstarredImage
         {
             get { return Get<Texture2D>("unstarred"); }
@@ -30,7 +35,7 @@ namespace SKTools.MenuItemsFinder
         {
             get { return Get<Texture2D>("settings"); }
         }
-        
+
         public GUIStyle MenuItemButtonStyle
         {
             get
@@ -46,10 +51,6 @@ namespace SKTools.MenuItemsFinder
 
                 return _menuItemButtonStyle;
             }
-        }
-
-        public Assets(string assetsDirectory) : base(assetsDirectory)
-        {
         }
     }
 }

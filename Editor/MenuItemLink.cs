@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
-using Object = UnityEngine.Object;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -9,35 +8,55 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemLink
     {
         /// <summary>
-        ///     Shared data between items for getting context, this is faster than GetComponent..
+        /// Clear cache
+        /// </summary>
+        private static int _activeInstanceId;
+
+        /// <summary>
+        /// Shared data between items for getting context, this is faster than GetComponent..
         /// </summary>
         private static readonly Dictionary<string, object[]> MenuCommandSharedContext =
             new Dictionary<string, object[]>(5);
 
-        /// <summary>
-        ///     Clear cache
-        /// </summary>
-        private static int _activeInstanceId;
-
         private readonly bool _hasMenuCommandParameter;
         private readonly string _menuCommandContextType;
 
-        [NonSerialized] private readonly MenuItemData _menuItem;
-        [NonSerialized] public string AssemblyName;
-        
+        [NonSerialized]
+        private readonly MenuItemData _menuItem;
+
+        [NonSerialized]
+        public string AssemblyName;
+
         /// <summary>
-        ///     With hotkey if it exists
+        /// With hotkey if it exists
         /// </summary>
-        [NonSerialized] public string OriginalPath;
-        [NonSerialized] public bool IsContextMenu;
-        [NonSerialized] public bool IsEditHotkey;
-        [NonSerialized] public bool IsEditName;
-        [NonSerialized] public bool IsFiltered;
-        [NonSerialized] public bool IsRemoved;
-        [NonSerialized] public bool IsUnityMenu;
-        [NonSerialized] public string OriginalName;
-        [NonSerialized] public string EditName;
-        
+        [NonSerialized]
+        public string OriginalPath;
+
+        [NonSerialized]
+        public bool IsContextMenu;
+
+        [NonSerialized]
+        public bool IsEditHotkey;
+
+        [NonSerialized]
+        public bool IsEditName;
+
+        [NonSerialized]
+        public bool IsFiltered;
+
+        [NonSerialized]
+        public bool IsRemoved;
+
+        [NonSerialized]
+        public bool IsUnityMenu;
+
+        [NonSerialized]
+        public string OriginalName;
+
+        [NonSerialized]
+        public string EditName;
+
         public string Key;
         public string CustomName;
         public bool Starred;
@@ -67,7 +86,9 @@ namespace SKTools.MenuItemsFinder
                 if (parameter.ParameterType == typeof(MenuCommand))
                 {
                     _hasMenuCommandParameter = true;
-                    var startIndex = IsContextMenu ? 8 : 0;
+                    var startIndex = IsContextMenu
+                                         ? 8
+                                         : 0;
                     var endIndex = OriginalPath.IndexOf('/', startIndex + 1);
                     _menuCommandContextType = OriginalPath.Substring(startIndex, endIndex - startIndex);
                 }
@@ -88,6 +109,15 @@ namespace SKTools.MenuItemsFinder
             get { return _menuItem != null && _menuItem.TargetMethodValidate != null; }
         }
 
+        public override string ToString()
+        {
+            return string.Format(
+                "MenuItem={0}; Method={1}", Label,
+                !IsMissed
+                    ? _menuItem.TargetMethod.ToString()
+                    : "[Missed]");
+        }
+
         public void UpdateFrom(MenuItemLink item)
         {
             Starred = item.Starred;
@@ -104,11 +134,19 @@ namespace SKTools.MenuItemsFinder
 
         public void UpdateLabel()
         {
-            Label = !string.IsNullOrEmpty(CustomName) ? CustomName : OriginalName;
+            Label = !string.IsNullOrEmpty(CustomName)
+                        ? CustomName
+                        : OriginalName;
 
-            if (!string.IsNullOrEmpty(AssemblyName)) Label = string.Concat(Label, "  (Assembly: " + AssemblyName + ")");
+            if (!string.IsNullOrEmpty(AssemblyName))
+            {
+                Label = string.Concat(Label, "  (Assembly: " + AssemblyName + ")");
+            }
 
-            if (IsMissed) Label = string.Concat("[Missed]", Label);
+            if (IsMissed)
+            {
+                Label = string.Concat("[Missed]", Label);
+            }
         }
 
         public bool CanExecute()
@@ -116,15 +154,21 @@ namespace SKTools.MenuItemsFinder
             try
             {
                 if (IsMissed)
+                {
                     return false;
+                }
 
                 string error;
                 var parameters = GetParameters(out error);
                 if (!string.IsNullOrEmpty(error))
+                {
                     return false;
+                }
 
                 if (HasValidate)
+                {
                     return (bool) _menuItem.TargetMethodValidate.Invoke(null, parameters);
+                }
 
                 return true;
             }
@@ -138,11 +182,15 @@ namespace SKTools.MenuItemsFinder
         {
             var parametersError = default(string);
             var parameters = GetParameters(out parametersError);
-            
+
             if (string.IsNullOrEmpty(parametersError))
+            {
                 _menuItem.TargetMethod.Invoke(null, parameters);
+            }
             else
+            {
                 throw new Exception(parametersError);
+            }
         }
 
         private object[] GetParameters(out string error)
@@ -152,7 +200,9 @@ namespace SKTools.MenuItemsFinder
             if (_hasMenuCommandParameter)
             {
                 if (Selection.activeObject == null)
+                {
                     return null;
+                }
 
                 if (_activeInstanceId != Selection.activeInstanceID)
                 {
@@ -160,7 +210,7 @@ namespace SKTools.MenuItemsFinder
                     _activeInstanceId = Selection.activeInstanceID;
                 }
 
-                Object context = null;
+                UnityEngine.Object context = null;
 
                 object[] parameters;
                 if (MenuCommandSharedContext.ContainsKey(_menuCommandContextType))
@@ -177,13 +227,17 @@ namespace SKTools.MenuItemsFinder
 
                 var activeObjectType = Selection.activeObject.GetType().Name;
                 if (activeObjectType.Equals(_menuCommandContextType))
+                {
                     context = Selection.activeObject;
+                }
                 else if (Selection.activeGameObject != null)
+                {
                     context = Selection.activeGameObject.GetComponent(_menuCommandContextType);
+                }
 
                 if (context != null)
                 {
-                    parameters = new object[] {new MenuCommand(context)};
+                    parameters = new object[] { new MenuCommand(context) };
                     MenuCommandSharedContext[_menuCommandContextType] = parameters;
                     return parameters;
                 }
@@ -193,12 +247,6 @@ namespace SKTools.MenuItemsFinder
             }
 
             return null;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("MenuItem={0}; Method={1}", Label,
-                !IsMissed ? _menuItem.TargetMethod.ToString() : "[Missed]");
         }
     }
 }

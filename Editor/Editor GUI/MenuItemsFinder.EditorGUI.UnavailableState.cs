@@ -11,7 +11,8 @@ namespace SKTools.MenuItemsFinder
             //GUIUtility.RotateAroundPivot(angle%360, pivot);
             var width = _target.Assets.LoadingImage.width;
             var height = _target.Assets.LoadingImage.height;
-            var rect = new Rect(position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f,
+            var rect = new Rect(
+                position.width * 0.5f - width * 0.5f, position.height * 0.5f - height * 0.5f,
                 width,
                 height);
             GUI.DrawTexture(rect, _target.Assets.LoadingImage);
