@@ -135,8 +135,7 @@ namespace SKTools.MenuItemsFinder
         public void UpdateLabel()
         {
             Label = !string.IsNullOrEmpty(CustomName)
-                        ? CustomName
-                        : OriginalName;
+                        ? CustomName : !string.IsNullOrEmpty(OriginalName) ? OriginalName : Key;
 
             if (!string.IsNullOrEmpty(AssemblyName))
             {
@@ -145,7 +144,7 @@ namespace SKTools.MenuItemsFinder
 
             if (IsMissed)
             {
-                Label = string.Concat("[Missed]", Label);
+                Label = string.Concat("[Missed] ", Label);
             }
         }
 
@@ -180,7 +179,7 @@ namespace SKTools.MenuItemsFinder
 
         public void Execute()
         {
-            var parametersError = default(string);
+            string parametersError;
             var parameters = GetParameters(out parametersError);
 
             if (string.IsNullOrEmpty(parametersError))

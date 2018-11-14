@@ -45,6 +45,7 @@ namespace SKTools.MenuItemsFinder
             var texture = item.Starred
                               ? _target.Assets.StarredImage
                               : _target.Assets.UnstarredImage;
+
             if (GUILayout.Button(texture, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
             {
                 ClickButton_StarredItem(item);
@@ -128,22 +129,40 @@ namespace SKTools.MenuItemsFinder
                 }
             }
 
-            previousColor = GUI.contentColor;
-
-            if (item.IsEditName || item.IsEditHotkey)
+            if (!item.IsMissed)
             {
-                GUI.contentColor = _settings.ItemSelectedContentColor;
+                previousColor = GUI.contentColor;
+
+                if (item.IsEditName || item.IsEditHotkey)
+                {
+                    GUI.contentColor = _settings.ItemSelectedContentColor;
+                }
+
+                if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+                {
+                    ClickButton_Settings(item);
+                }
+
+                GUI.contentColor = previousColor;
+                if (GUILayout.Button("Locate it", GUILayout.MinWidth(80)))
+                {
+                    ClickButton_LocateIt(item);
+                }
             }
-
-            if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+            else
             {
-                ClickButton_Settings(item);
-            }
+                previousColor = GUI.contentColor;
+                GUI.contentColor = _settings.ItemNotExecutableColor;
+                if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
+                {
 
-            GUI.contentColor = previousColor;
-            if (GUILayout.Button("Locate it", GUILayout.MinWidth(80)))
-            {
-                ClickButton_OpenScript(item);
+                }
+                GUI.contentColor = previousColor;
+
+                if (GUILayout.Button("Remove it", GUILayout.MinWidth(80)))
+                {
+                    ClickButton_RemoveItem(item);
+                }
             }
 
             GUILayout.EndHorizontal();
@@ -193,7 +212,7 @@ namespace SKTools.MenuItemsFinder
 
         private void ClickButton_AddHotKeyItem(MenuItemLink item)
         {
-            var error = "";
+            string error;
             item.EditHotKey.Key = item.EditHotKeySymbol.ToLower();
             if (!TryAddHotKeyToItem(item, item.EditHotKey, out error))
             {
@@ -260,15 +279,15 @@ namespace SKTools.MenuItemsFinder
             }
         }
 
-        private void ClickButton_OpenScript(MenuItemLink item)
+        private void ClickButton_LocateIt(MenuItemLink item)
         {
-            var error = "";
-            var filepath = "";
+            string error;
+            string filePath;
 
-            FindScriptWhichContainsMenuItem(item, out filepath, out error);
-            if (!string.IsNullOrEmpty(filepath))
+            FindScriptWhichContainsMenuItem(item, out filePath, out error);
+            if (!string.IsNullOrEmpty(filePath))
             {
-                Utility.OpenFile(filepath);
+                Utility.OpenFile(filePath);
                 EditorGUIUtility.systemCopyBuffer = item.OriginalPath;
             }
 

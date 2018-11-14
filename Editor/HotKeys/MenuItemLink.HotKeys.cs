@@ -27,7 +27,7 @@ namespace SKTools.MenuItemsFinder
 
         public void UpdateOriginalHotKey()
         {
-            var startIndex = -1;
+            int startIndex;
             OriginalHotKey = MenuItemHotKey.Create(OriginalPath, out startIndex);
 
             if (startIndex > -1)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemStarredColor: {r: 0.86319524, g: 0.9056604, b: 0, a: 1}
   _itemDefaultColor: {r: 0.8915094, g: 1, b: 0.98505634, a: 1}
-  _itemMissedColor: {r: 1, g: 0, b: 0, a: 1}
+  _itemMissedColor: {r: 1, g: 0.29489392, b: 0, a: 1}
   _itemNotExecutableColor: {r: 0.8301887, g: 0.7949448, b: 0.7949448, a: 0.59607846}
   _itemSelectedContentColor: {r: 0.48581886, g: 1, b: 0, a: 1}
   _itemHotKeyColor: {r: 0.32258546, g: 0.6509804, b: 0, a: 1}

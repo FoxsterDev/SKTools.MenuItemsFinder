@@ -2,60 +2,18 @@
     "CustomizedMenuItems": [
         {
             "CustomHotKeys": [],
-            "Key": "assets/open c# project",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/sktools/collection/logs/open player log",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
             "Key": "assets/sktools/collection/logs/open editor log",
             "CustomName": "",
-            "Starred": true
+            "Starred": false
         },
         {
             "CustomHotKeys": [],
-            "Key": "assets/create/testing/c# test script",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/sktools/copy path in resources %#0",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/sktools/copy path in assets %#1",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/sktools/copy full path %#2",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/create/textmeshpro/style sheet",
-            "CustomName": "",
-            "Starred": true
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "window/analysis/profiler %7",
+            "Key": "sktools/logs/open logcat",
             "CustomName": "",
             "Starred": true
         }
     ],
-    "FilterString": "op",
+    "FilterString": "open",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }

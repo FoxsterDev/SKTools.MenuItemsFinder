@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR_OSX
 using System;
+using System.Diagnostics;
 using System.IO;
 using SKTools.Base.Editor;
 using UnityEditor;
@@ -19,7 +20,7 @@ namespace SKTools.MenuItemsFinder
         {
             get
             {
-                var path = string.Empty;
+                string path;
 #if UNITY_EDITOR_OSX
                 path = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -75,6 +76,59 @@ namespace SKTools.MenuItemsFinder
         public static bool OpenPlayerLogValidate()
         {
             return File.Exists(PlayerLogFilePath);
+        }
+
+        [MenuItem(MenuAssetPath + "Logs/Open Logcat", false, Priority)]
+        public static void OpenLogcatConsole()
+        {
+            var sdkRoot = EditorPrefs.GetString("AndroidSdkRoot");
+            if (!string.IsNullOrEmpty(sdkRoot))
+            {
+                UnityEngine.Debug.Log(sdkRoot);
+
+                ProcessStartInfo startInfo2 = new ProcessStartInfo("/bin/bash");
+                startInfo2.FileName = @"/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
+                startInfo2.WorkingDirectory = "/";
+                startInfo2.UseShellExecute = false;
+                startInfo2.RedirectStandardInput = true;
+                startInfo2.RedirectStandardOutput = true;
+                startInfo2.CreateNoWindow = true;
+                startInfo2.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+                Process process = new Process();
+                process.StartInfo = startInfo2;
+                process.Start();
+
+                process.StandardInput.WriteLine("cd "+sdkRoot);
+                process.StandardInput.WriteLine("exit"); // if no exit then WaitForExit will lockup your program
+                process.StandardInput.Flush();
+
+                string line2 = process.StandardOutput.ReadLine();
+UnityEngine.Debug.Log(line2);
+                process.WaitForExit();
+            return;
+
+            var startInfo = new ProcessStartInfo{
+                    FileName = @"/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal",
+                    //Arguments = "ls",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+                };
+#if UNITY_EDITOR_OSX
+                string splitChar = ":";
+                startInfo.Arguments = "-c";
+#elif UNITY_EDITOR_WIN
+				string splitChar = ";";
+				startInfo.Arguments = "/c";
+				#endif
+                var cmd = "cd "+sdkRoot;
+                startInfo.Arguments += (" \"" + cmd + " \"");
+                var uploadProc = Process.Start(startInfo);//(startInfo);
+                
+                //uploadProc.Start();
+                //uploadProc.be
+            }
         }
     }
 }

@@ -188,15 +188,11 @@ namespace SKTools.MenuItemsFinder
         private static string ToFormat(MenuItemHotKey hotkey)
         {
             var str = string.Empty;
-
+//% (ctrl on Windows, cmd on macOS), # (shift), & (alt)
+#if UNITY_EDITOR_OSX
             if (hotkey.Cmd)
             {
-#if UNITY_EDITOR_OSX
                 str = "⌘";
-#else
-                str = "⌥";
-               
-#endif
             }
 
             if (hotkey.Alt)
@@ -206,8 +202,24 @@ namespace SKTools.MenuItemsFinder
 
             if (hotkey.Shift)
             {
-                str += "⇧"; //shift+";
+                str += "⇧";
             }
+#else
+            if (hotkey.Cmd)
+            {
+                str = "ctrl+";
+            }
+
+            if (hotkey.Alt)
+            {
+                str += "alt+";
+            }
+
+            if (hotkey.Shift)
+            {
+                str += "shift+";
+            }
+#endif
 
             str += hotkey.Key;
             return str.ToUpper();

@@ -21,6 +21,7 @@ namespace SKTools.MenuItemsFinder
 
         private MenuItemsFinder()
         {
+            Debug.Log(Application.systemLanguage);
             _prefs = new Preferences();
             _prefs.Load();
 
@@ -95,6 +96,7 @@ namespace SKTools.MenuItemsFinder
             }
             catch
             {
+                // ignored
             }
         }
 
