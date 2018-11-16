@@ -1,3 +1,9 @@
+//0.1.9
+Added support unity package manager to open a script that contains some menuitem, 
+added color settings asset scheme, reskin main window, fixed missed metas files,
+fixed missing items. remove posibility to add several hotkeys to one item,
+bug fixing and refactoring
+
 //0.1.8
 added fill context, invalid context item will be disabled 
 added rate me module
