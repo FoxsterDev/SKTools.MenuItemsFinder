@@ -2,8 +2,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using SKTools.Base.Editor;
 using UnityEditor;
+using UnityEngine.EventSystems;
 
 namespace SKTools.MenuItemsFinder
 {
@@ -84,28 +86,53 @@ namespace SKTools.MenuItemsFinder
             var sdkRoot = EditorPrefs.GetString("AndroidSdkRoot");
             if (!string.IsNullOrEmpty(sdkRoot))
             {
+                ProcessStartInfo startInfo3 = new ProcessStartInfo("bash");
+                startInfo3.WorkingDirectory = "Users/sergeykha/Projects/FoxsterDev/SKToolsUnity/Assets/SKTools/MenuItemsFinder/Editor/";
+                startInfo3.UseShellExecute = true;
+                startInfo3.Arguments = "term.sh ls";
+                startInfo3.CreateNoWindow = true;
+                //startInfo3.FileName = "term";
+                Process process2 = new Process();
+                process2.StartInfo = startInfo3;
+                process2.Start();
+                
+                ///Users/sergeykha/Projects/FoxsterDev/SKToolsUnity/Assets/SKTools/MenuItemsFinder/Editor/term.sh
+                return;
                 UnityEngine.Debug.Log(sdkRoot);
-
-                ProcessStartInfo startInfo2 = new ProcessStartInfo("/bin/bash");
+                /*var output = "ps aux".Bash();
+                UnityEngine.Debug.Log(output);
+                return;*/
+                /*ShellHelper.ShellRequest req = ShellHelper.ProcessCommand("ls",sdkRoot);
+                req.onLog += delegate(int logType, string log) {
+                    UnityEngine.Debug.Log(log);
+                }; 
+                return;*/
+                ProcessStartInfo startInfo2 = new ProcessStartInfo("bash");
                 startInfo2.FileName = @"/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
-                startInfo2.WorkingDirectory = "/";
+                startInfo2.WorkingDirectory = sdkRoot;//"/";
                 startInfo2.UseShellExecute = false;
                 startInfo2.RedirectStandardInput = true;
-                startInfo2.RedirectStandardOutput = true;
+                startInfo2.RedirectStandardOutput = false;
                 startInfo2.CreateNoWindow = true;
-                startInfo2.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+                startInfo2.WindowStyle = System.Diagnostics.ProcessWindowStyle.Maximized;// .Normal;
 
+                //startInfo2.StandardOutputEncoding = System.Text.UTF8Encoding.UTF8;
+                //startInfo2.StandardErrorEncoding = System.Text.UTF8Encoding.UTF8;
+                
                 Process process = new Process();
                 process.StartInfo = startInfo2;
                 process.Start();
 
+                process.StandardInput.AutoFlush = true;
                 process.StandardInput.WriteLine("cd "+sdkRoot);
-                process.StandardInput.WriteLine("exit"); // if no exit then WaitForExit will lockup your program
+                process.StandardInput.WriteLine("echo helloworld222");
+                //process.StandardInput.WriteLine("exit"); // if no exit then WaitForExit will lockup your program
                 process.StandardInput.Flush();
+                ; 
 
-                string line2 = process.StandardOutput.ReadLine();
-UnityEngine.Debug.Log(line2);
-                process.WaitForExit();
+                //string line2 = process.StandardOutputs.ReadLine();
+//UnityEngine.Debug.Log(line2);
+                //process.WaitForExit();
             return;
 
             var startInfo = new ProcessStartInfo{
