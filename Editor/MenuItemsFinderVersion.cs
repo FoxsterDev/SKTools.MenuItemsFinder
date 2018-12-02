@@ -2,6 +2,6 @@
 {
     internal class Version
     {
-        public static readonly System.Version Current = new System.Version(0, 1, 9);
+        public static readonly System.Version Current = new System.Version(0, 1, 10);
     }
 }
