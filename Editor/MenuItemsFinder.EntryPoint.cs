@@ -37,7 +37,7 @@ namespace SKTools.MenuItemsFinder
 
             Utility.DiagnosticRun(LoadMenuItems);
 
-            var assetsDirectory = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources");
+            var assetsDirectory = Utility.GetPathRelativeToCurrentDirectory("Editor Resources");
             var assets = new Assets(assetsDirectory);
 
             Utility.DiagnosticRun(assets.Load);

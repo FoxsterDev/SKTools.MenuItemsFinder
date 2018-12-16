@@ -29,7 +29,7 @@ namespace SKTools.MenuItemsFinder
         {
             try
             {
-                var filePath = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources", "Prefs.json");
+                var filePath = Utility.GetPathRelativeToCurrentDirectory("Editor Resources", "Prefs.json");
                 if (File.Exists(filePath))
                 {
                     EditorJsonUtility.FromJsonOverwrite(File.ReadAllText(filePath), this);
@@ -45,7 +45,7 @@ namespace SKTools.MenuItemsFinder
         {
             try
             {
-                var filePath = Utility.GetPathRelativeToExecutableCurrentFile("Editor Resources", "Prefs.json");
+                var filePath = Utility.GetPathRelativeToCurrentDirectory("Editor Resources", "Prefs.json");
                 File.WriteAllText(filePath, EditorJsonUtility.ToJson(this, true));
             }
             catch (Exception ex)

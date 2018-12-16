@@ -21,11 +21,10 @@ namespace SKTools.MenuItemsFinder
 
         private MenuItemsFinder()
         {
-            Debug.Log(Application.systemLanguage);
             _prefs = new Preferences();
             _prefs.Load();
 
-            var settingsPath = Utility.GetAssePathRelativeToExecutableCurrentFile("Editor Resources", "Settings.asset");
+            var settingsPath = Utility.GetAssetPathRelativeToCurrentDirectory("Editor Resources", "Settings.asset");
             _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
 
             if (_settings == null)

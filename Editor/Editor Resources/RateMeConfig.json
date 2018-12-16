@@ -1,7 +1,7 @@
 {
     "MinStar": 3,
     "MaxStar": 5,
-    "RequestLabel": "How do you like it?",
+    "RequestLabel": "How do you like this?",
     "RateButtonText": "Rate",
     "RateOptionalUrl": "https://assetstore.unity.com/packages/tools/utilities/monkey-editor-commands-productivity-booster-119938",
     "RateMainUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder",
