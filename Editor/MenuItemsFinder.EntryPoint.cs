@@ -1,4 +1,4 @@
-﻿using SKTools.Base.Editor;
+﻿using SKTools.Core.Editor;
 using UnityEditor;
 
 namespace SKTools.MenuItemsFinder
@@ -29,7 +29,7 @@ namespace SKTools.MenuItemsFinder
 
         private void SetUpWindow(bool createIfNotExist)
         {
-            var container = CustomEditorWindow<Window>.GetWindow(createIfNotExist);
+            var container = CustomEditorWindow<Configuration>.GetWindow(createIfNotExist);
             if (container == null)
             {
                 return;

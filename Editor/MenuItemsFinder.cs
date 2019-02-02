@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SKTools.Base.Editor;
+using SKTools.Core.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ namespace SKTools.MenuItemsFinder
         private static MenuItemsFinder _instance;
 
         private readonly Preferences _prefs;
-        private readonly MenuItemsFinderSettings _settings;
+        private readonly MenuItemsFinderStyles _styles;
         private bool _isLoaded;
         private List<MenuItemLink> _menuItems;
         private bool _wasItemsRemoving;
@@ -24,12 +24,12 @@ namespace SKTools.MenuItemsFinder
             _prefs = new Preferences();
             _prefs.Load();
 
-            var settingsPath = Utility.GetAssetPathRelativeToCurrentDirectory("Editor Resources", "Settings.asset");
-            _settings = AssetDatabase.LoadAssetAtPath<MenuItemsFinderSettings>(settingsPath);
+            var settingsPath = Utility.GetAssetPathRelativeToCurrentDirectory("Editor Resources", "Styles.asset");
+            _styles = AssetDatabase.LoadAssetAtPath<MenuItemsFinderStyles>(settingsPath);
 
-            if (_settings == null)
+            if (_styles == null)
             {
-                _settings = ScriptableObject.CreateInstance<MenuItemsFinderSettings>();
+                _styles = ScriptableObject.CreateInstance<MenuItemsFinderStyles>();
                 Debug.LogError("cant load settings from path=" + settingsPath);
             }
         }
@@ -116,7 +116,7 @@ namespace SKTools.MenuItemsFinder
         private void UpdateLabel(MenuItemLink item)
         {
             item.UpdateLabel();
-            item.UpdateLabelWithHotKey(_settings.ItemHotKeyColor);
+            item.UpdateLabelWithHotKey(_styles.ItemHotKeyColor);
         }
 
         private void CustomizeMenuItems(

@@ -1,4 +1,4 @@
-﻿using SKTools.Base.Editor.GuiElementsSystem;
+﻿using SKTools.Core.Editor.GuiElementsSystem;
 using UnityEditor;
 
 namespace SKTools.MenuItemsFinder

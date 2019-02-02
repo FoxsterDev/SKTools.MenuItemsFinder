@@ -2,10 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using SKTools.Base.Editor;
+using SKTools.Core.Editor;
 using UnityEditor;
-using UnityEngine.EventSystems;
 
 namespace SKTools.MenuItemsFinder
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SKTools.Base.Editor;
+using SKTools.Core.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -52,15 +52,15 @@ namespace SKTools.MenuItemsFinder
             }
 
             var defaultColor = item.Starred
-                                   ? _settings.ItemStarredColor
-                                   : _settings.ItemDefaultColor;
+                                   ? _styles.ItemStarredColor
+                                   : _styles.ItemDefaultColor;
             var isExecutable = item.CanExecute();
 
             if (!isExecutable)
             {
                 defaultColor = item.IsMissed
-                                   ? _settings.ItemMissedColor
-                                   : _settings.ItemNotExecutableColor;
+                                   ? _styles.ItemMissedColor
+                                   : _styles.ItemNotExecutableColor;
             }
 
             if (!item.IsEditName && !item.IsEditHotkey)
@@ -135,7 +135,7 @@ namespace SKTools.MenuItemsFinder
 
                 if (item.IsEditName || item.IsEditHotkey)
                 {
-                    GUI.contentColor = _settings.ItemSelectedContentColor;
+                    GUI.contentColor = _styles.ItemSelectedContentColor;
                 }
 
                 if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
@@ -152,7 +152,7 @@ namespace SKTools.MenuItemsFinder
             else
             {
                 previousColor = GUI.contentColor;
-                GUI.contentColor = _settings.ItemNotExecutableColor;
+                GUI.contentColor = _styles.ItemNotExecutableColor;
                 if (GUILayout.Button(_target.Assets.SettingsImage, GUILayout.MaxWidth(24), GUILayout.MaxHeight(24)))
                 {
 

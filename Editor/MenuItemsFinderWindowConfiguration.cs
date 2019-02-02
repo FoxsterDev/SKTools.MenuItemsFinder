@@ -1,4 +1,4 @@
-﻿using SKTools.Base.Editor;
+﻿using SKTools.Core.Editor;
 using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
@@ -6,7 +6,7 @@ namespace SKTools.MenuItemsFinder
     /// <summary>
     /// This window will show editable menuitems
     /// </summary>
-    internal class Window : CustomEditorWindow<Window>, IGUIContainer
+    internal class Configuration : CustomEditorWindow<Configuration>, IGUIContainer
     {
         protected override GUIContent GetTitleContent
         {

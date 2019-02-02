@@ -5,7 +5,7 @@ namespace SKTools.MenuItemsFinder
     [CreateAssetMenu(
         fileName = "Settings", order = 2000,
         menuName = "SKTools/Create MenuItemsFinder Settings")]
-    internal class MenuItemsFinderSettings : ScriptableObject
+    internal class MenuItemsFinderStyles : ScriptableObject
     {
         [SerializeField]
         private Color _itemStarredColor = Color.green;

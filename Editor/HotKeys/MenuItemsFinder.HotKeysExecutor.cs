@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using SKTools.Base.Editor;
+using SKTools.Core.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,7 +53,7 @@ namespace SKTools.MenuItemsFinder
         }
 
         /// <summary>
-        /// ev.keyCode only filled when happens KeyUp, another cases with character obuse to match keyboard simbols , if the char
+        /// ev.keyCode only filled when happens KeyUp, another cases with characte over to match keyboard simbols , if the char
         /// is not A-z
         /// </summary>
         private static void KeyboardInputUpdate()
