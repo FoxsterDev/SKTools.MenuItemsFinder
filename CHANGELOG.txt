@@ -1,3 +1,6 @@
+//0.2.0
+update Unity to 2020.3
+
 //0.1.9
 Added support unity package manager to open a script that contains some menuitem, 
 added color settings asset scheme, reskin main window, fixed missed metas files,
