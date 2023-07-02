@@ -6,7 +6,7 @@ namespace SKTools.MenuItemsFinder
     internal partial class MenuItemsFinder
     {
 #if !FOXSTER_DEV_MODE
-        private const string MenuAssetPath = "Assets/SKTools/";
+        private const string MenuAssetPath = "SKTools/";//"Assets/SKTools/";
 #else
         private const string MenuAssetPath = "SKTools/";
 #endif

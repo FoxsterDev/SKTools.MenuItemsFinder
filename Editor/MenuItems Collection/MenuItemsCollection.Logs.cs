@@ -93,66 +93,6 @@ namespace SKTools.MenuItemsFinder
                 Process process2 = new Process();
                 process2.StartInfo = startInfo3;
                 process2.Start();
-                
-                ///Users/sergeykha/Projects/FoxsterDev/SKToolsUnity/Assets/SKTools/MenuItemsFinder/Editor/term.sh
-                return;
-                UnityEngine.Debug.Log(sdkRoot);
-                /*var output = "ps aux".Bash();
-                UnityEngine.Debug.Log(output);
-                return;*/
-                /*ShellHelper.ShellRequest req = ShellHelper.ProcessCommand("ls",sdkRoot);
-                req.onLog += delegate(int logType, string log) {
-                    UnityEngine.Debug.Log(log);
-                }; 
-                return;*/
-                ProcessStartInfo startInfo2 = new ProcessStartInfo("bash");
-                startInfo2.FileName = @"/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
-                startInfo2.WorkingDirectory = sdkRoot;//"/";
-                startInfo2.UseShellExecute = false;
-                startInfo2.RedirectStandardInput = true;
-                startInfo2.RedirectStandardOutput = false;
-                startInfo2.CreateNoWindow = true;
-                startInfo2.WindowStyle = System.Diagnostics.ProcessWindowStyle.Maximized;// .Normal;
-
-                //startInfo2.StandardOutputEncoding = System.Text.UTF8Encoding.UTF8;
-                //startInfo2.StandardErrorEncoding = System.Text.UTF8Encoding.UTF8;
-                
-                Process process = new Process();
-                process.StartInfo = startInfo2;
-                process.Start();
-
-                process.StandardInput.AutoFlush = true;
-                process.StandardInput.WriteLine("cd "+sdkRoot);
-                process.StandardInput.WriteLine("echo helloworld222");
-                //process.StandardInput.WriteLine("exit"); // if no exit then WaitForExit will lockup your program
-                process.StandardInput.Flush();
-                ; 
-
-                //string line2 = process.StandardOutputs.ReadLine();
-//UnityEngine.Debug.Log(line2);
-                //process.WaitForExit();
-            return;
-
-            var startInfo = new ProcessStartInfo{
-                    FileName = @"/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal",
-                    //Arguments = "ls",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
-                };
-#if UNITY_EDITOR_OSX
-                string splitChar = ":";
-                startInfo.Arguments = "-c";
-#elif UNITY_EDITOR_WIN
-				string splitChar = ";";
-				startInfo.Arguments = "/c";
-				#endif
-                var cmd = "cd "+sdkRoot;
-                startInfo.Arguments += (" \"" + cmd + " \"");
-                var uploadProc = Process.Start(startInfo);//(startInfo);
-                
-                //uploadProc.Start();
-                //uploadProc.be
             }
         }
     }

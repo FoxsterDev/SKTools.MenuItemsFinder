@@ -1,0 +1,15 @@
+{
+  "name": "com.foxsterdev.sktools.menuitemsfinder",
+  "displayName": "SKTools.MenuItemsFinder",
+  "version": "0.0.2",
+  "unity": "2020.3",
+  "description": "Allow you to operate all menuitems in the project. Plus you can set your custom hot keys for existing menuitems",
+  "keywords": ["MenuItems", "UnityEditor MenuItem"],
+  "license": "MIT",
+  "documentationUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder",
+  "changelogUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder/releases",
+  "licensesUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder/blob/main/LICENSE",
+  "dependencies": {
+    
+  }
+}

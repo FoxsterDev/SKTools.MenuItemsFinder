@@ -1,19 +1,6 @@
 {
-    "CustomizedMenuItems": [
-        {
-            "CustomHotKeys": [],
-            "Key": "assets/sktools/collection/logs/open editor log",
-            "CustomName": "",
-            "Starred": false
-        },
-        {
-            "CustomHotKeys": [],
-            "Key": "sktools/logs/open logcat",
-            "CustomName": "",
-            "Starred": true
-        }
-    ],
-    "FilterString": "open",
+    "CustomizedMenuItems": [],
+    "FilterString": "",
     "ShowOnlyStarred": false,
     "HideUnityItems": false
 }

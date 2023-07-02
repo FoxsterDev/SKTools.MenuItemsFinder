@@ -30,7 +30,7 @@ namespace SKTools.MenuItemsFinder
             if (_styles == null)
             {
                 _styles = ScriptableObject.CreateInstance<MenuItemsFinderStyles>();
-                Debug.LogError("cant load settings from path=" + settingsPath);
+                Debug.LogWarning("cant load settings from path=" + settingsPath);
             }
         }
 

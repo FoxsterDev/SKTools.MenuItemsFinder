@@ -3,17 +3,18 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b1e2fabc2540403c8b2b7e7ab7d16a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b72262e442dd49baa10eac702cb889e, type: 3}
   m_Name: Styles
   m_EditorClassIdentifier: 
-  _itemStarredColor: {r: 0.86319524, g: 0.9056604, b: 0, a: 1}
-  _itemDefaultColor: {r: 0.8915094, g: 1, b: 0.98505634, a: 1}
-  _itemMissedColor: {r: 1, g: 0.29489392, b: 0, a: 1}
-  _itemNotExecutableColor: {r: 0.8301887, g: 0.7949448, b: 0.7949448, a: 0.59607846}
-  _itemSelectedContentColor: {r: 0.48581886, g: 1, b: 0, a: 1}
-  _itemHotKeyColor: {r: 0.32258546, g: 0.6509804, b: 0, a: 1}
+  _itemStarredColor: {r: 0, g: 1, b: 0, a: 1}
+  _itemDefaultColor: {r: 1, g: 1, b: 1, a: 1}
+  _itemMissedColor: {r: 1, g: 0, b: 0, a: 1}
+  _itemNotExecutableColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  _itemSelectedContentColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _itemHotKeyColor: {r: 0, g: 1, b: 1, a: 1}
