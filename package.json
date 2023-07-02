@@ -10,6 +10,6 @@
   "changelogUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder/releases",
   "licensesUrl": "https://github.com/FoxsterDev/SKTools.MenuItemsFinder/blob/main/LICENSE",
   "dependencies": {
-    "com.foxsterdev.sktools": "https://github.com/FoxsterDev/SKTools.git"
+    "com.foxsterdev.sktools": "https://github.com/FoxsterDev/SKTools.git#0.0.2"
   }
 }
