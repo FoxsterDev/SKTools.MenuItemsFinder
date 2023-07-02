@@ -3,9 +3,10 @@
     "rootNamespace": "",
     "references": [
         "SKTools.Base.Editor",
-        "SKTools.Module.RateMeWindow",
+        "SKTools.Editor.Windows.RateMe",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "SKTools.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -1,7 +1,7 @@
 ﻿#if UNITY_EDITOR_OSX
 using System;
 using System.IO;
-using SKTools.Core.Editor;
+using SKTools.Editor;
 using UnityEditor;
 
 namespace SKTools.MenuItemsFinder

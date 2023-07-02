@@ -1,5 +1,5 @@
-﻿using SKTools.Core.Editor.GuiElementsSystem;
-using SKTools.Module.RateMeWindow;
+﻿using SKTools.Editor.GuiElementsSystem;
+using SKTools.Editor.Windows.RateMe;
 using UnityEngine;
 
 namespace SKTools.MenuItemsFinder
