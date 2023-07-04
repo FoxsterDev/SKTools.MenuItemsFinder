@@ -2,11 +2,10 @@
     "name": "SKTools.MenuItemsFinder.Editor",
     "rootNamespace": "",
     "references": [
-        "SKTools.Base.Editor",
+        "SKTools.Editor.Core",
         "SKTools.Editor.Windows.RateMe",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "SKTools.Editor"
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
